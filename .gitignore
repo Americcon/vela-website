@@ -1,0 +1,11 @@
+# OS junk
+.DS_Store
+._*
+Thumbs.db
+
+# Scratch / experiments — excluded from the initial history to keep the repo
+# clean. Remove this line if you want Random/ versioned.
+Random/
+
+# Local tooling
+*.log

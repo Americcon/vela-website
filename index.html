@@ -1,0 +1,2721 @@
+
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth antialiased">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Vela — Second home, first-class care</title>
+  <meta name="description" content="Concierge care for second homes across the Mediterranean. Keyholding, premium cleaning, maintenance, restocking and guest support—handled to your standards.">
+  <link rel="canonical" href="https://vela.es/">
+  <meta property="og:title" content="Vela — Second home, first-class care">
+  <meta property="og:description" content="Concierge care for second homes across the Mediterranean.">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+  <style>
+    :root{
+      --brand:#118A68;   /* Vela green */
+      --tint:#E6F4EF;    /* Soft mint */
+      --ink:#3B4552;     /* Dark gray */
+    }
+    .text-brand{color:var(--brand)}
+    .bg-brand{background:var(--brand)}
+    .ring-brand{--tw-ring-color:var(--brand)}
+    .bg-tint{background:var(--tint)}
+    .hero-image{animation:kenburns 20s ease-in-out alternate infinite}
+    @keyframes kenburns {0%{transform:scale(1) translateY(0)}100%{transform:scale(1.05) translateY(-3%)}}
+    @media (prefers-reduced-motion: reduce){ .hero-image{animation:none} }
+    .card{transition:transform .2s ease, box-shadow .2s ease}
+    @media (hover:hover){ .card:hover{ transform:translateY(-2px); box-shadow:0 20px 45px -22px rgba(0,0,0,.25)} }
+    :focus-visible{outline:2px solid var(--brand); outline-offset:3px}
+    .no-scrollbar::-webkit-scrollbar{display:none}
+    .no-scrollbar{-ms-overflow-style:none;scrollbar-width:none}
+  </style>
+</head>
+
+<body x-data="{menuOpen:false}" x-effect="document.body.classList.toggle('overflow-hidden', menuOpen)" class="text-[15px] text-slate-700 selection:bg-tint selection:text-brand">
+
+<!-- ============ HERO (Quiet Luxury, structured headline + typewriter word + frosted email CTA) ============ -->
+<section id="home" x-data="velaHero()" x-init="init()" class="relative isolate min-h-[100svh] overflow-hidden">
+  <!-- Background video (iOS-safe; src set via JS for better autoplay reliability) -->
+  <video
+    class="hero-video absolute inset-0 h-full w-full object-cover object-[center_35%] pointer-events-none"
+    autoplay
+    muted
+    playsinline
+    webkit-playsinline
+    loop
+    preload="auto"
+    poster="img/velagradient.png"
+    aria-hidden="true"
+  ></video>
+
+  <!-- Subtle dark overlay for contrast -->
+  <div class="absolute inset-0 bg-black/40 mix-blend-multiply"></div>
+
+  <!-- Top overlay brand + nav -->
+  <div class="absolute inset-x-0 top-0 z-20">
+    <div class="max-w-7xl mx-auto px-6 py-6 flex items-center justify-between" style="padding-top:max(1.5rem, env(safe-area-inset-top));">
+      <!-- Brand -->
+      <a href="#home" class="brand-hover text-white font-extrabold tracking-tight text-[clamp(1.5rem,3.2vw,2rem)]">Vela</a>
+
+      <!-- Desktop nav -->
+      <nav class="hidden md:flex items-center gap-7 text-[0.95rem] text-white/90 font-medium">
+        <a href="#product" class="hover:text-white">Product</a>
+        <a href="#services" class="hover:text-white">Services</a>
+        <a href="#pricing" class="hover:text-white">Pricing</a>
+        <a href="#testimonials" class="hover:text-white">Testimonials</a>
+        <a href="#regions" class="hover:text-white">Regions</a>
+
+        <!-- Contact dropdown: plain centered text below trigger -->
+        <div x-data="{ open:false }" @keydown.escape.window="open=false" class="relative">
+          <button
+            @click="open=!open"
+            :aria-expanded="open.toString()"
+            aria-haspopup="menu"
+            class="inline-flex items-center gap-1 hover:text-white focus:outline-none"
+          >
+            <span>Contact</span>
+            <svg x-show="!open" x-cloak class="h-4 w-4 translate-y-[1px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M6 9l6 6 6-6" />
+            </svg>
+            <svg x-show="open" x-cloak class="h-4 w-4 translate-y-[1px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M18 15l-6-6-6 6" />
+            </svg>
+          </button>
+
+          <!-- Just text links; absolutely centered under the button -->
+          <div
+            x-cloak
+            x-show="open"
+            @click.outside="open=false"
+            role="menu"
+            class="absolute left-1/2 -translate-x-1/2 top-full mt-2 text-center text-white"
+            x-transition:enter="transition ease-out duration-200"
+            x-transition:enter-start="opacity-0 -translate-y-2"
+            x-transition:enter-end="opacity-100 translate-y-0"
+            x-transition:leave="transition ease-in duration-150"
+            x-transition:leave-start="opacity-100 translate-y-0"
+            x-transition:leave-end="opacity-0 -translate-y-2"
+          >
+            <a href="/support" role="menuitem" class="block px-2 py-1 hover:text-white hover:underline underline-offset-4">Support</a>
+            <a href="/careers" role="menuitem" class="block px-2 py-1 hover:text-white hover:underline underline-offset-4">Careers</a>
+          </div>
+        </div>
+      </nav>
+
+      <!-- Desktop CTAs (unchanged) -->
+      <div class="hidden md:flex items-center gap-3">
+        <a href="/signup" class="px-3 py-1.5 rounded bg-white/10 text-white font-medium ring-1 ring-white/30 hover:bg-white/20">Log in</a>
+        <a href="/signup" class="px-4 py-2 rounded bg-white text-[color:var(--brand)] font-medium hover:opacity-95">Sign up for free</a>
+      </div>
+
+      <!-- Mobile menu button -->
+      <button @click="menuOpen=true" :aria-expanded="menuOpen.toString()"
+              class="md:hidden text-white/90 text-sm px-3 py-1.5 rounded bg-white/10 ring-1 ring-white/30 hover:bg-white/20"
+              aria-haspopup="dialog" aria-controls="mobileMenu">
+        Menu
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile full-screen menu (unchanged) -->
+  <div id="mobileMenu" x-show="menuOpen" x-transition.opacity x-cloak class="fixed inset-0 z-30 bg-black/70 backdrop-blur" @keydown.escape.window="menuOpen=false">
+    <div class="absolute inset-x-0 top-0 px-6 py-6 flex items-center justify-between" style="padding-top:max(1.5rem, env(safe-area-inset-top));">
+      <span class="brand-hover text-white font-extrabold tracking-tight text-2xl">Vela</span>
+      <button @click="menuOpen=false" class="text-white/90 text-sm px-3 py-1.5 rounded bg-white/10 ring-1 ring-white/30 hover:bg-white/20">Close</button>
+    </div>
+    <nav class="h-full flex items-center justify-center">
+      <ul class="text-white text-2xl space-y-5 text-center font-medium">
+        <li><a @click="menuOpen=false" href="#product" class="hover:underline underline-offset-4">Product</a></li>
+        <li><a @click="menuOpen=false" href="#services" class="hover:underline underline-offset-4">Services</a></li>
+        <li><a @click="menuOpen=false" href="#pricing" class="hover:underline underline-offset-4">Pricing</a></li>
+        <li><a @click="menuOpen=false" href="#testimonials" class="hover:underline underline-offset-4">Testimonials</a></li>
+        <li><a @click="menuOpen=false" href="#regions" class="hover:underline underline-offset-4">Regions</a></li>
+
+        <!-- Mobile Contact dropdown -->
+        <li x-data="{ open:false }" class="pt-1">
+          <button @click="open=!open"
+                  :aria-expanded="open.toString()"
+                  aria-haspopup="true"
+                  class="inline-flex items-center gap-1 hover:underline underline-offset-4">
+            <span>Contact</span>
+            <svg x-show="!open" x-cloak class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M6 9l6 6 6-6" />
+            </svg>
+            <svg x-show="open" x-cloak class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M18 15l-6-6-6 6" />
+            </svg>
+          </button>
+          <ul x-show="open" x-cloak x-transition.opacity class="mt-3 space-y-3">
+            <li><a @click="menuOpen=false" href="/support" class="block hover:underline underline-offset-4">Support</a></li>
+            <li><a @click="menuOpen=false" href="/careers" class="block hover:underline underline-offset-4">Careers</a></li>
+          </ul>
+        </li>
+
+        <li class="pt-6 flex items-center justify-center gap-3">
+          <a href="/signup" class="inline-block px-5 py-2 rounded bg-white/10 text-white ring-1 ring-white/30 hover:bg-white/20 text-base">Log in</a>
+          <a href="/signup" class="inline-block px-5 py-2 rounded bg-white text-[color:var(--brand)] font-medium text-base">Sign up for free</a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+
+  <!-- Main hero content -->
+  <div class="relative z-10 mx-auto flex min-h-[100svh] max-w-7xl flex-col justify-center gap-10 px-6 py-14 lg:flex-row lg:items-center lg:justify-between">
+    <div class="max-w-[46rem] text-left text-white">
+      <!-- NEW main headline with typewriter word -->
+      <h1 class="drop-shadow font-extrabold leading-tight text-[clamp(2rem,6vw,4rem)] tracking-tight">
+        <span class="block">
+          We handle homes, you handle&nbsp;
+          <span class="relative">
+            <span class="inline-block align-baseline" aria-live="polite" x-text="typed"></span>
+            <!-- caret -->
+            <span class="absolute -right-1 top-1/2 -translate-y-1/2 h-[1.2em] w-[2px] bg-white caret-blink" aria-hidden="true"></span>
+          </span>
+        </span>
+      </h1>
+
+      <!-- Subtext (original, with en-dash) -->
+      <p class="mt-5 drop-shadow text-[clamp(1rem,2.6vw,1.35rem)]">
+        Book cleanings, restock the fridge, manage check-ins and mail—in one dashboard.
+      </p>
+
+      <!-- Frosted email -> single CTA -->
+      <form @submit.prevent="signup()" class="mt-7 w-full max-w-xl">
+        <label for="heroEmail" class="sr-only">Email address</label>
+        <div class="flex items-stretch gap-2 rounded-xl bg-white/10 ring-1 ring-white/30 backdrop-blur supports-[backdrop-filter]:backdrop-blur-md p-1.5">
+          <input
+            id="heroEmail"
+            x-model.trim="email"
+            type="email"
+            inputmode="email"
+            autocomplete="email"
+            placeholder="Enter your email"
+            class="min-w-0 flex-1 bg-transparent placeholder-white/70 text-white px-3 py-2 sm:py-2.5 focus:outline-none"
+            :aria-invalid="invalidEmail ? 'true' : 'false'"
+            :class="invalidEmail ? 'ring-2 ring-red-400 rounded-lg' : ''"
+          />
+          <button
+            type="submit"
+            class="shrink-0 inline-flex items-center justify-center rounded-lg bg-white px-4 py-2 sm:px-6 sm:py-3 text-sm sm:text-base font-semibold text-[color:var(--brand)] hover:opacity-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70 transition">
+            Sign up for free
+          </button>
+        </div>
+        <p x-show="invalidEmail" x-cloak class="mt-2 text-sm text-red-200">Please enter a valid email.</p>
+      </form>
+
+      <p class="mt-6 text-sm text-white/85">
+        Trusted by second-home owners across Ibiza &amp; the Costa del Sol.
+      </p>
+    </div>
+  </div>
+
+  <!-- Animated scroll cue -> #product (kept as in original) -->
+  <a href="#product" aria-label="Scroll to product"
+     @click.prevent="document.querySelector('#product')?.scrollIntoView({ behavior: 'smooth' })"
+     class="group absolute bottom-6 left-1/2 -translate-x-1/2 select-none inline-flex items-center justify-center h-8 w-8 bg-transparent hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/60">
+    <svg class="h-5 w-5 text-white transition-transform group-hover:translate-y-[2px] cue-float"
+         viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M6 9l6 6 6-6" />
+    </svg>
+  </a>
+
+  <!-- Local styles -->
+  <style>
+    :root { --brand:#118A68; }
+    .brand-hover{
+      transition: color .18s ease, text-shadow .18s ease, background-size .18s ease;
+      background-image: linear-gradient(var(--brand), var(--brand));
+      background-repeat: no-repeat;
+      background-size: 0% 2px;
+      background-position: 0 100%;
+    }
+    .brand-hover:hover,
+    .brand-hover:focus-visible{
+      color: var(--brand);
+      text-shadow: 0 0 .55rem rgba(17,138,104,.35);
+      background-size: 100% 2px;
+      outline: none;
+    }
+
+    @keyframes cue-bob { 0%,100% { transform: translateY(0) } 50% { transform: translateY(6px) } }
+    .cue-float { animation: cue-bob 2.4s ease-in-out infinite; }
+
+    /* Typewriter caret blink */
+    @keyframes caret-blink { 0%, 49% { opacity: 1 } 50%, 100% { opacity: 0 } }
+    .caret-blink { animation: caret-blink 1s step-end infinite; }
+
+    @media (prefers-reduced-motion: reduce){
+      .cue-float, .caret-blink { animation: none !important; }
+    }
+
+    /* Hide iOS big play overlay / controls */
+    .hero-video::-webkit-media-controls-start-playback-button{ display:none !important; -webkit-appearance:none; }
+    .hero-video::-webkit-media-controls{ display:none !important; }
+  </style>
+</section>
+
+<script>
+  function velaHero () {
+    return {
+      menuOpen: false,
+
+      // ===== Typewriter data =====
+      words: [
+        'sunsets',
+        'sangria',
+        'siestas',
+        'tapas',
+        'daybeds',
+        'beach days',
+      ],
+      typed: '',
+      _wordIndex: 0,
+      _charIndex: 0,
+      _deleting: false,
+      _prefersReduced: window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+      _timer: null,
+      speeds: { type: 90, erase: 40, pauseTyped: 900, pauseErased: 250 },
+
+      // ===== Email field + CTA =====
+      email: '',
+      invalidEmail: false,
+
+      init () {
+        // ===== Video boot =====
+        const v = document.querySelector('.hero-video');
+        if (v) {
+          v.muted = true;
+          v.defaultMuted = true;
+          v.setAttribute('muted','');
+          v.setAttribute('playsinline','');
+          v.setAttribute('webkit-playsinline','');
+          v.src = 'img/velavideotest.mp4';
+          v.load();
+          const tryPlay = () => v.play().catch(() => {});
+          if (document.readyState === 'complete') tryPlay();
+          else window.addEventListener('load', tryPlay, { once:true });
+          v.addEventListener('canplay', tryPlay, { once:true });
+          const io = new IntersectionObserver(entries => {
+            entries.forEach(e => e.isIntersecting ? v.play().catch(()=>{}) : v.pause());
+          }, { threshold: 0.2 });
+          io.observe(v);
+          const resume = () => { v.play().catch(()=>{}); window.removeEventListener('touchstart', resume); window.removeEventListener('scroll', resume); };
+          window.addEventListener('touchstart', resume, { once:true, passive:true });
+          window.addEventListener('scroll', resume, { once:true, passive:true });
+          document.addEventListener('visibilitychange', () => { if (!document.hidden) v.play().catch(()=>{}); });
+        }
+
+        // ===== Typewriter boot =====
+        if (this._prefersReduced) {
+          // show first word without animation
+          this.typed = this.words[0];
+        } else {
+          this._typeLoop();
+          document.addEventListener('visibilitychange', () => {
+            if (document.hidden) clearTimeout(this._timer);
+            else this._typeLoop(true);
+          });
+        }
+      },
+
+      _typeLoop () {
+        clearTimeout(this._timer);
+        const w = this.words[this._wordIndex];
+        if (!this._deleting) {
+          this.typed = w.substring(0, this._charIndex + 1);
+          this._charIndex++;
+          if (this._charIndex === w.length) {
+            this._deleting = true;
+            this._timer = setTimeout(() => this._typeLoop(), this.speeds.pauseTyped);
+            return;
+          }
+          this._timer = setTimeout(() => this._typeLoop(), this.speeds.type);
+        } else {
+          this.typed = w.substring(0, this._charIndex - 1);
+          this._charIndex--;
+          if (this._charIndex === 0) {
+            this._deleting = false;
+            this._wordIndex = (this._wordIndex + 1) % this.words.length;
+            this._timer = setTimeout(() => this._typeLoop(), this.speeds.pauseErased);
+            return;
+          }
+          this._timer = setTimeout(() => this._typeLoop(), this.speeds.erase);
+        }
+      },
+
+      // Save email to localStorage and go to signup
+      signup () {
+        const ok = this._isValidEmail(this.email);
+        this.invalidEmail = !ok;
+        if (!ok) {
+          requestAnimationFrame(() => document.getElementById('heroEmail')?.focus());
+          return;
+        }
+        try {
+          localStorage.setItem('vela.prefillEmail', this.email);
+        } catch (e) { /* storage may be blocked; ignore */ }
+        window.location.href = '/signup';
+      },
+
+      _isValidEmail (val) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(val || '');
+      }
+    }
+  }
+</script>
+
+<!-- ============ PRODUCT — Interactive Dashboard Experience ============ -->
+<section id="product" x-data="velaProductGlass()" x-init="init()" class="relative overflow-hidden py-24 lg:py-32 selection:bg-[#118A68] selection:text-white">
+  
+  <!-- BACKGROUND: Ambient "Aurora" Glow (Animated) -->
+  <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[140%] h-[140%] -z-20 pointer-events-none opacity-40">
+    <div class="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,_rgba(17,138,104,0.15),transparent_60%)] animate-pulse-slow"></div>
+    <div class="absolute top-0 right-0 w-[800px] h-[800px] bg-[#118A68]/5 rounded-full blur-[100px] mix-blend-multiply filter"></div>
+    <div class="absolute bottom-0 left-0 w-[600px] h-[600px] bg-blue-100/30 rounded-full blur-[80px] mix-blend-multiply filter"></div>
+  </div>
+
+  <div class="max-w-7xl mx-auto px-6 grid gap-16 lg:grid-cols-12 items-center">
+    
+    <!-- LEFT: The Dashboard (Hero) -->
+    <div class="order-1 lg:order-none lg:col-span-8 relative perspective-1000 group">
+      
+      <!-- DECORATION: Floating Background Elements -->
+      <div class="absolute -top-12 -left-12 w-24 h-24 bg-stripes-slate opacity-10 rounded-full animate-spin-slow"></div>
+
+      <!-- MAIN CONTAINER: Glass Panel with 3D Float -->
+      <div class="relative z-10 rounded-2xl bg-white/70 backdrop-blur-xl ring-1 ring-white/50 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.1)] transition-all duration-700 ease-out transform group-hover:scale-[1.01] group-hover:-translate-y-2 group-hover:shadow-[0_30px_60px_-12px_rgba(17,138,104,0.15)]">
+        
+        <!-- Browser Header -->
+        <div class="flex items-center justify-between px-5 py-3 border-b border-slate-200/60 bg-white/50">
+          <div class="flex items-center gap-2">
+            <div class="flex gap-1.5">
+              <span class="h-2.5 w-2.5 rounded-full bg-slate-300"></span>
+              <span class="h-2.5 w-2.5 rounded-full bg-slate-300"></span>
+            </div>
+            <div class="ml-3 px-3 py-1 rounded-md bg-slate-100/50 text-[11px] font-medium text-slate-500 flex items-center gap-2 border border-slate-200/50">
+              <svg class="w-3 h-3 text-[#118A68]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+              vela.app
+              <span class="text-slate-300">/</span>
+              <span x-text="current().label" class="text-slate-700"></span>
+            </div>
+          </div>
+          <span class="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-[#118A68] bg-[#118A68]/10 px-2 py-0.5 rounded-full">
+            <span class="relative flex h-2 w-2">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#118A68] opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2 w-2 bg-[#118A68]"></span>
+            </span>
+            Live Demo
+          </span>
+        </div>
+
+        <!-- The Content Area -->
+        <div class="relative aspect-[16/10] bg-slate-50 w-full overflow-hidden rounded-b-2xl">
+          
+          <!-- Loading State Overlay -->
+          <div x-show="loading" 
+               x-transition:enter="transition ease-out duration-300"
+               x-transition:enter-start="opacity-0 backdrop-blur-none"
+               x-transition:enter-end="opacity-100 backdrop-blur-sm"
+               x-transition:leave="transition ease-in duration-300"
+               x-transition:leave-start="opacity-100 backdrop-blur-sm"
+               x-transition:leave-end="opacity-0 backdrop-blur-none"
+               class="absolute inset-0 z-20 bg-white/80 backdrop-blur-sm flex items-center justify-center">
+             <div class="flex flex-col items-center gap-3">
+               <svg class="animate-spin h-8 w-8 text-[#118A68]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+               <span class="text-xs font-semibold text-slate-500 uppercase tracking-widest">Loading View...</span>
+             </div>
+          </div>
+
+          <!-- IFRAME -->
+          <iframe 
+            x-ref="demoFrame"
+            class="absolute inset-0 w-full h-full transition-opacity duration-700"
+            :class="loading ? 'opacity-0 scale-[0.98]' : 'opacity-100 scale-100'"
+            :src="computedIframeSrc()"
+            allowfullscreen
+            loading="lazy"
+            @load="onIframeLoad"
+          ></iframe>
+        </div>
+
+        <!-- WOW FACTOR: Floating "Pop-out" Widget (Simulates Notifications) -->
+        <div 
+            x-show="!loading"
+            x-transition:enter="transition ease-out duration-500 delay-300"
+            x-transition:enter-start="opacity-0 translate-y-8 translate-x-8"
+            x-transition:enter-end="opacity-100 translate-y-0 translate-x-0"
+            class="absolute -bottom-6 -right-6 md:-right-10 bg-white rounded-xl shadow-2xl p-4 w-64 ring-1 ring-slate-100 z-30 transform hover:scale-105 transition-transform cursor-default">
+          <div class="flex items-start gap-3">
+            <div class="h-10 w-10 shrink-0 rounded-full bg-[#118A68]/10 flex items-center justify-center text-[#118A68]">
+               <!-- Dynamic Icon based on scene -->
+               <span x-html="current().icon"></span>
+            </div>
+            <div>
+              <p class="text-xs font-bold text-slate-900" x-text="current().widgetTitle"></p>
+              <p class="text-[10px] text-slate-500 leading-snug mt-0.5" x-text="current().widgetText"></p>
+              <div class="mt-2 h-1 w-full bg-slate-100 rounded-full overflow-hidden">
+                <div class="h-full bg-[#118A68] w-[70%] animate-pulse"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Reflection on top -->
+      <div class="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-white/40 to-transparent pointer-events-none rounded-t-2xl z-20"></div>
+    </div>
+
+    <!-- RIGHT: Controls & Copy -->
+    <div class="order-2 lg:order-none lg:col-span-4 relative">
+      
+      <!-- Scene Selector (Pills) -->
+      <div class="flex flex-wrap gap-2 mb-8">
+        <template x-for="s in scenes" :key="s.id">
+          <button 
+            @click="select(s.id)"
+            class="px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 border"
+            :class="active===s.id 
+              ? 'bg-[#118A68] border-[#118A68] text-white shadow-lg shadow-[#118A68]/20 scale-105' 
+              : 'bg-white border-slate-200 text-slate-600 hover:border-[#118A68]/30 hover:text-[#118A68]'">
+            <span x-text="s.label"></span>
+          </button>
+        </template>
+      </div>
+
+      <!-- Text Content with Slide Transitions -->
+      <div class="min-h-[280px]"> <!-- prevent layout jump -->
+        <template x-for="s in scenes" :key="s.id">
+          <div x-show="active === s.id"
+               x-transition:enter="transition ease-out duration-500"
+               x-transition:enter-start="opacity-0 translate-x-4"
+               x-transition:enter-end="opacity-100 translate-x-0"
+               x-transition:leave="transition ease-in duration-100 absolute"
+               x-transition:leave-start="opacity-100"
+               x-transition:leave-end="opacity-0">
+            
+            <h2 class="text-3xl lg:text-4xl font-extrabold text-slate-900 tracking-tight" x-text="s.title"></h2>
+            <p class="mt-4 text-lg text-slate-600 leading-relaxed" x-text="s.desc"></p>
+            
+            <ul class="mt-8 space-y-4">
+              <template x-for="b in s.bullets" :key="b">
+                <li class="flex items-center gap-3 text-slate-700 font-medium">
+                  <svg class="h-5 w-5 text-[#118A68] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+                  <span x-text="b"></span>
+                </li>
+              </template>
+            </ul>
+          </div>
+        </template>
+      </div>
+
+      <!-- CTA Buttons -->
+      <div class="mt-10 flex items-center gap-4">
+        <a :href="fullscreenHref()" target="_blank" class="group relative px-6 py-3 bg-[#118A68] text-white font-semibold rounded-lg shadow-lg shadow-[#118A68]/30 overflow-hidden hover:shadow-[#118A68]/40 transition-all hover:-translate-y-0.5">
+          <div class="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-shimmer"></div>
+          <span class="relative flex items-center gap-2">
+            Try Interactive Demo
+            <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+          </span>
+        </a>
+        <a href="#pricing" class="text-sm font-semibold text-slate-600 hover:text-[#118A68] transition-colors">
+          View Pricing Plans
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    function velaProductGlass(){
+      return {
+        active: 'dashboard',
+        loading: false, // controls fade/blur
+        iframeSrcBase: '/demo1/', 
+        iframeLoaded: false,
+        iframeError: false,
+        
+        // ADDED: Icon SVG strings and Widget text for the "WOW" floaty card
+        scenes: [
+          { 
+            id:'dashboard', 
+            label:'Dashboard', 
+            route:'', 
+            title:'Calm control, one dashboard.', 
+            desc:'Cleanings, groceries, guest check-ins, and mail—handled in a few taps. Real-time status updates from your property manager.', 
+            bullets:['Everything in one place','Timeline & receipts','Concierge at a tap'],
+            widgetTitle: 'Activity Feed',
+            widgetText: 'Pool cleaning completed 10m ago · Photo attached',
+            icon: `<svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z" /></svg>`
+          },
+          { 
+            id:'clean',     
+            label:'Cleanings', 
+            route:'cleaning.html',    
+            title:'Premium cleanings, on schedule.', 
+            desc:'Book once or set a cadence. Vetted teams, clear checklists, and visual proof sent to your phone immediately.', 
+            bullets:['Hotel-level standards','Eco supplies on request','Photo receipts after visit'],
+            widgetTitle: 'Cleaning Verified',
+            widgetText: 'Isabella uploaded 4 photos of the Living Room.',
+            icon: `<svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456ZM16.894 20.567 16.5 21.75l-.394-1.183a2.25 2.25 0 0 0-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 0 0 1.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 0 0 1.423 1.423l1.183.394-1.183.394a2.25 2.25 0 0 0-1.423 1.423Z" /></svg>`
+          },
+          { 
+            id:'groceries', 
+            label:'Groceries', 
+            route:'groceries.html',   
+            title:'Fridge stocked before you land.', 
+            desc:'Your staples saved as presets. Timed delivery to match arrivals so you never waste a minute of your holiday shopping.', 
+            bullets:['Arrival-timed delivery','Substitution approvals','Digital receipts'],
+            widgetTitle: 'Order Delivered',
+            widgetText: 'Mercadona delivery received at 14:00. Fridge stocked.',
+            icon: `<svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" /></svg>`
+          },
+          { id:'checkins', label:'Check-ins', route:'check-ins.html', title:'Guest arrivals, effortless.', desc:'Smart codes, welcome notes, and arrival confirmation. We handle the "Where is the key?" texts so you do not have to.', bullets:['Auto code rotation','Messaging templates','Arrival confirmation'], widgetTitle: 'Guest Access', widgetText: 'Code generated for "Smith Family". Valid from 15:00 today.', icon: `<svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" /></svg>` },
+          { id:'mail', label:'Digital mail', route:'mail.html', title:'Your post, digitized.', desc:'We receive, scan and sort physical mail in Ibiza. Open, forward or archive real letters directly from your phone.', bullets:['OCR search','Forward to contact','Tag & archive'], widgetTitle: 'New Mail Scanned', widgetText: 'Letter from "Endesa" scanned. Action required?', icon: `<svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" /></svg>` }
+        ],
+
+        current(){ return this.scenes.find(s=>s.id===this.active) || this.scenes[0]; },
+        
+        computedIframeSrc(){
+          const route = this.current().route || '';
+          return (this.iframeSrcBase.endsWith('/') ? this.iframeSrcBase : this.iframeSrcBase + '/') + route;
+        },
+
+        fullscreenHref(){ return this.computedIframeSrc(); },
+
+        select(id){
+          if (this.active===id) return;
+          
+          // Trigger loading animation state
+          this.loading = true;
+          this.active = id;
+
+          this.$nextTick(() => {
+            const f = this.$refs.demoFrame;
+            // Delay source change slightly to allow blur to settle
+            setTimeout(() => {
+              if (f) f.src = this.computedIframeSrc();
+            }, 150);
+          });
+        },
+
+        async init(){
+           // Probing logic (same as before)
+           const candidates = [this.iframeSrcBase, this.iframeSrcBase.endsWith('/') ? this.iframeSrcBase + 'index.html' : this.iframeSrcBase];
+           for (const url of candidates){
+             try { const res = await fetch(url, { cache:'no-store' }); if (res.ok){ this.iframeSrcBase = url.replace(/index\.html$/,''); break; } } catch(_){}
+           }
+        },
+
+        onIframeLoad(){
+          // Add a small artificial delay so the "loading" state feels deliberate and smooth, not glitchy
+          setTimeout(() => {
+             this.loading = false;
+          }, 400); 
+        }
+      }
+    }
+  </script>
+  
+  <style>
+    .perspective-1000 { perspective: 1000px; }
+    .animate-pulse-slow { animation: pulse 8s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+    .animate-spin-slow { animation: spin 12s linear infinite; }
+    .bg-stripes-slate { background-image: linear-gradient(135deg, #cbd5e1 10%, transparent 10%, transparent 50%, #cbd5e1 50%, #cbd5e1 60%, transparent 60%, transparent 100%); background-size: 7.07px 7.07px; }
+    
+    @keyframes shimmer {
+      100% { transform: translateX(100%); }
+    }
+    .animate-shimmer {
+      animation: shimmer 2.5s infinite;
+    }
+  </style>
+</section>
+<!-- ============ HOW IT WORKS (hybrid: minimal, white bg, last card green) ============ -->
+<section id="how" x-data="velaHow()" class="relative isolate overflow-hidden bg-white">
+  <div class="relative max-w-7xl mx-auto px-6 py-16 md:py-24">
+    <!-- Title + ribbon -->
+    <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+      <div>
+        <h2 class="text-3xl md:text-4xl font-extrabold text-[#3B4552]">How Vela works</h2>
+        <p class="mt-1 text-sm text-[#3B4552]/70">Set up once. Book in a tap. Arrive to calm.</p>
+      </div>
+
+      <div class="inline-flex items-center gap-3 rounded-full bg-white/80 ring-1 ring-slate-200/70 px-4 py-2 shadow-sm">
+        <span class="text-[12.5px] text-[#3B4552]">✅ Free to start</span>
+        <span class="h-1 w-1 rounded-full bg-slate-200"></span>
+        <span class="text-[12.5px] text-[#3B4552]">✅ Explore before choosing a plan</span>
+        <span class="h-1 w-1 rounded-full bg-slate-200"></span>
+        <span class="text-[12.5px] text-[#3B4552]">✅ Cancel anytime</span>
+      </div>
+    </div>
+
+    <!-- Steps rail -->
+    <div class="mt-8 relative">
+      <!-- connector line -->
+      <div class="hidden md:block absolute left-0 right-0 top-[52%] -z-10 h-[2px] rounded-full bg-gradient-to-r from-[#118A68]/15 via-[#118A68]/40 to-[#118A68]/15"></div>
+
+      <!-- Desktop: 3-column grid -->
+      <ol class="hidden md:grid grid-cols-3 gap-6" role="list" aria-label="Steps to get started with Vela">
+        <template x-for="(s, i) in steps" :key="s.title">
+          <li
+            class="rounded-3xl ring-1 shadow-lg p-6 hover:-translate-y-0.5 transition will-change-transform"
+            :class="i===steps.length-1
+              ? 'bg-[#118A68] ring-[#118A68] text-white shadow-xl'
+              : 'bg-white ring-slate-200/80 text-[#3B4552]'"
+            :aria-current="i===active ? 'step' : null"
+          >
+            <div class="flex items-center gap-3">
+              <!-- numbered dot -->
+              <span
+                class="inline-flex h-9 w-9 items-center justify-center rounded-full font-bold tabular-nums"
+                :class="i===steps.length-1 ? 'bg-white/15 text-white ring-1 ring-white/20' : 'bg-[#118A68]/10 text-[#118A68]'"
+              >
+                <span x-text="i+1"></span>
+              </span>
+              <h3
+                class="text-lg font-semibold"
+                :class="i===steps.length-1 ? 'text-white' : 'text-[#3B4552]'"
+                x-text="s.title"
+              ></h3>
+            </div>
+
+            <p
+              class="mt-2 text-[13.5px] leading-relaxed"
+              :class="i===steps.length-1 ? 'text-white/90' : 'text-[#3B4552]/80'"
+              x-text="s.body"
+            ></p>
+
+            <div
+              class="mt-4 flex flex-wrap items-center gap-2 text-[12.5px]"
+              :class="i===steps.length-1 ? 'text-white/90' : 'text-[#3B4552]/70'"
+            >
+              <span
+                class="h-2.5 w-2.5 rounded-full"
+                :style="i===steps.length-1 ? 'background: rgba(255,255,255,.95)' : 'background:#118A68'"
+              ></span>
+              <span x-text="s.proof"></span>
+            </div>
+
+            <!-- Inline CTA per step (optional) -->
+            <div class="mt-4" x-show="s.cta">
+              <a :href="s.cta.href"
+                 class="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-[12.5px] font-semibold transition"
+                 :class="i===steps.length-1 ? 'bg-white text-[#118A68]' : 'text-white'"
+                 :style="i===steps.length-1 ? '' : 'background:#118A68'">
+                <span x-text="s.cta.label"></span> →
+              </a>
+            </div>
+          </li>
+        </template>
+      </ol>
+
+      <!-- Mobile: horizontal scroller (same data) -->
+      <div class="md:hidden -mx-6 px-6">
+        <div class="relative">
+          <div class="pointer-events-none absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-white to-transparent"></div>
+          <div class="pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-white to-transparent"></div>
+
+          <ol class="hide-scrollbar flex gap-4 overflow-x-auto snap-x snap-mandatory pb-2"
+              role="list" aria-label="Steps to get started with Vela"
+              @scroll.passive="onScrollSteps">
+            <template x-for="(s, i) in steps" :key="'m'+s.title">
+              <li
+                class="min-w-[85%] snap-center rounded-3xl ring-1 shadow-lg p-5"
+                :class="i===steps.length-1
+                  ? 'bg-[#118A68] ring-[#118A68] text-white'
+                  : 'bg-white ring-slate-200/80 text-[#3B4552]'"
+                :aria-current="i===active ? 'step' : null"
+              >
+                <div class="flex items-center gap-3">
+                  <span
+                    class="inline-flex h-8 w-8 items-center justify-center rounded-full font-bold tabular-nums"
+                    :class="i===steps.length-1 ? 'bg-white/15 text-white ring-1 ring-white/20' : 'bg-[#118A68]/10 text-[#118A68]'"
+                  >
+                    <span x-text="i+1"></span>
+                  </span>
+                  <h3 class="text-base font-semibold" :class="i===steps.length-1 ? 'text-white' : 'text-[#3B4552]'" x-text="s.title"></h3>
+                </div>
+                <p class="mt-2 text-[13px]" :class="i===steps.length-1 ? 'text-white/90' : 'text-[#3B4552]/80'" x-text="s.short"></p>
+                <div class="mt-3 flex items-center gap-2 text-[12px]" :class="i===steps.length-1 ? 'text-white/90' : 'text-[#3B4552]/70'">
+                  <span class="h-2.5 w-2.5 rounded-full" :style="i===steps.length-1 ? 'background: rgba(255,255,255,.95)' : 'background:#118A68'"></span>
+                  <span x-text="s.badge"></span>
+                </div>
+              </li>
+            </template>
+          </ol>
+
+          <!-- step dots -->
+          <div class="mt-2 flex items-center justify-center gap-2" aria-hidden="true">
+            <template x-for="i in steps.length" :key="'dot'+i">
+              <span class="h-1.5 w-1.5 rounded-full"
+                    :class="(i-1)===active ? 'bg-[#118A68]' : 'bg-slate-300/70'"></span>
+            </template>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Two-tap proof (minimal rail) -->
+    <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
+      <a href="/book?service=cleaning" class="inline-flex items-center rounded-full bg-white ring-1 ring-slate-200 px-4 py-2 text-sm font-semibold hover:bg-slate-50">
+        1) Choose service
+      </a>
+      <span class="hidden sm:block h-px w-8 bg-slate-200"></span>
+      <a href="/book?service=cleaning&step=time" class="inline-flex items-center rounded-full bg-white ring-1 ring-slate-200 px-4 py-2 text-sm font-semibold hover:bg-slate-50">
+        2) Pick time
+      </a>
+      <span class="hidden sm:block h-px w-8 bg-slate-200"></span>
+      <span class="inline-flex items-center rounded-full px-4 py-2 text-sm font-semibold" style="color:#118A68">
+        ✓ Booked — get photo proof
+      </span>
+    </div>
+
+    <!-- On-Demand Services (chips prefill booking) -->
+    <div class="mt-10" aria-label="On-demand services">
+      <div class="flex items-center justify-between gap-3">
+        <h3 class="text-sm font-semibold tracking-wide text-[#3B4552] uppercase">On-demand services</h3>
+        <span class="text-xs text-[#3B4552]/70">Tap to book in seconds</span>
+      </div>
+
+      <!-- Desktop grid -->
+      <div class="mt-4 hidden md:grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+        <template x-for="svc in services" :key="svc.slug">
+          <a :href="svcHref(svc)"
+             class="inline-flex items-center gap-2 rounded-full bg-white px-3 py-2 ring-1 ring-slate-200/70 shadow-sm group focus:outline-none focus:ring-2 focus:ring-[#118A68]/40">
+            <span class="text-[#118A68]" aria-hidden="true" x-html="svc.icon"></span>
+            <span class="text-[13px] text-[#3B4552]" x-text="svc.label"></span>
+          </a>
+        </template>
+      </div>
+
+      <!-- Mobile chips -->
+      <div class="mt-4 md:hidden -mx-6 px-6">
+        <div class="relative">
+          <div class="pointer-events-none absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-white to-transparent"></div>
+          <div class="pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-white to-transparent"></div>
+
+          <div class="hide-scrollbar flex gap-2 overflow-x-auto pb-1">
+            <template x-for="svc in services" :key="'m'+svc.slug">
+              <a :href="svcHref(svc)"
+                 class="inline-flex items-center gap-1.5 rounded-full bg-white px-2.5 py-1.5 ring-1 ring-slate-200/70 shadow-sm">
+                <span class="text-[#118A68]" aria-hidden="true" x-html="svc.iconSm"></span>
+                <span class="text-[12px] text-[#3B4552]" x-text="svc.label"></span>
+              </a>
+            </template>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CTA rail with OR divider -->
+    <div class="mt-10 flex flex-col sm:flex-row gap-3 items-center">
+      <a href="/signup?next=/dashboard/onboarding"
+         class="inline-flex items-center justify-center rounded-full bg-[#118A68] text-white px-6 py-3 text-sm font-semibold shadow hover:opacity-95">
+        Create your free account
+      </a>
+
+      <div class="flex items-center justify-center gap-3">
+        <span class="block h-px w-8 bg-slate-200"></span>
+        <span class="text-[11px] tracking-wide text-[#3B4552]/60">OR</span>
+        <span class="block h-px w-8 bg-slate-200"></span>
+      </div>
+
+      <button @click="openDemo()" class="inline-flex items-center justify-center rounded-full bg-white text-[#3B4552] ring-1 ring-slate-200 px-6 py-3 text-sm font-semibold hover:bg-slate-50">
+        Watch 60s demo
+      </button>
+      <a href="#testimonials" class="text-xs text-[#3B4552]/70 sm:ml-2">See what our customers say</a>
+    </div>
+  </div>
+
+  <!-- Demo modal (optional) -->
+  <template x-teleport="body">
+    <div x-cloak x-show="showDemo" x-transition.opacity class="fixed inset-0 z-50 flex items-center justify-center p-6">
+      <div class="absolute inset-0 bg-black/70" @click="closeDemo()" aria-hidden="true"></div>
+      <div class="relative max-w-3xl w-full rounded-2xl bg-white p-4 shadow-2xl">
+        <div class="flex items-center justify-between">
+          <h4 class="text-[#3B4552] font-semibold">Vela in 60 seconds</h4>
+          <button @click="closeDemo()" class="p-2 rounded hover:bg-black/5" aria-label="Close">✕</button>
+        </div>
+        <div class="mt-3 aspect-video rounded-lg ring-1 ring-slate-200 overflow-hidden bg-black">
+          <iframe x-ref="demoFrame" src="about:blank" title="Vela demo" class="h-full w-full" allow="autoplay; picture-in-picture"></iframe>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <!-- JSON-LD: HowTo for SEO -->
+  <script type="application/ld+json" x-init="$el.textContent = JSON.stringify(schemaHowTo(steps))"></script>
+
+  <!-- Alpine data + helpers (unchanged except what's needed here) -->
+  <script>
+    function velaHow(){
+      return {
+        active: 1,
+        showDemo: false,
+
+        steps: [
+          {
+            title: 'Create your free account',
+            short: 'Add your property and preferences in minutes.',
+            body: 'Add your property and preferences in minutes. Import your checklist or start with our template.',
+            badge: 'No credit card required',
+            proof: 'No credit card required',
+            cta: { label:'Create account', href:'/signup?next=/dashboard/onboarding' }
+          },
+          {
+            title: 'Book in two taps',
+            short: 'Schedule cleanings, restocking, or check-ins.',
+            body: 'Schedule cleanings, restocking, or guest check-ins. See timing, photo proof, and receipts.',
+            badge: 'Under 30s on average',
+            proof: 'Average booking time: under 30s',
+            cta: { label:'Book a clean', href:'/book?service=cleaning' }
+          },
+          {
+            title: 'We handle the rest',
+            short: 'Vetted teams + photo proof after every visit.',
+            body: 'Vetted local teams, live status updates, and a calm timeline whenever you check in.',
+            badge: 'Live status updates',
+            proof: 'Photo proof after every visit',
+            cta: { label:'Track a visit', href:'/dashboard/timeline' }
+          }
+        ],
+
+        services: [
+          { slug:'cleaning',      label:'Cleaning',       icon:hero('sparkles',16),   iconSm:hero('sparkles',14) },
+          { slug:'deep-clean',    label:'Deep clean',     icon:hero('beaker',16),     iconSm:hero('beaker',14) },
+          { slug:'linen-change',  label:'Linen change',   icon:hero('swatch',16),     iconSm:hero('swatch',14) },
+          { slug:'guest-checkin', label:'Guest check-in', icon:hero('homemodern',16), iconSm:hero('homemodern',14) },
+          { slug:'restock',       label:'Restock fridge', icon:hero('cart',16),       iconSm:hero('cart',14) },
+          { slug:'maintenance',   label:'Maintenance',    icon:hero('wrenchset',16),  iconSm:hero('wrenchset',14) },
+          { slug:'handyman',      label:'Handyman',       icon:hero('wrench',16),     iconSm:hero('wrench',14) },
+          { slug:'laundry',       label:'Laundry',        icon:hero('arrowpath',16),  iconSm:hero('arrowpath',14) },
+          { slug:'mail-scan',     label:'Mail scan',      icon:hero('envelope',16),   iconSm:hero('envelope',14) },
+          { slug:'pool-garden',   label:'Pool & garden',  icon:hero('sun',16),        iconSm:hero('sun',14) },
+          { slug:'transfer',      label:'Airport transfer',icon:hero('paperair',16),  iconSm:hero('paperair',14) }
+        ],
+
+        svcHref(svc){
+          const params = new URLSearchParams({ service: svc.slug });
+          return `/book?${params.toString()}`;
+        },
+
+        onScrollSteps(e){
+          const el = e.target;
+          const idx = Math.round(el.scrollLeft / (el.firstElementChild?.offsetWidth + 16));
+          if (!Number.isNaN(idx)) this.active = Math.min(Math.max(idx,0), this.steps.length-1);
+        },
+
+        openDemo(){
+          this.showDemo = true;
+          try { this.$refs.demoFrame.src = 'about:blank'; } catch(e){}
+          document.documentElement.classList.add('overflow-hidden');
+        },
+        closeDemo(){
+          this.showDemo = false;
+          try { this.$refs.demoFrame.src = 'about:blank'; } catch(e){}
+          document.documentElement.classList.remove('overflow-hidden');
+        }
+      }
+
+      // --- tiny heroicon factory: inline SVG strings (stroke 1.5) ---
+      function hero(name, size){
+        const s = size || 16;
+        const base = 'xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"';
+        const map = {
+          sparkles:`<path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09Z M18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456Z M16.894 20.567 16.5 21.75l-.394-1.183a2.25 2.25 0 0 0-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 0 0 1.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 0 0 1.423 1.423l1.183.394-1.183.394a2.25 2.25 0 0 0-1.423 1.423Z"/>`,
+          beaker:`<path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 0 1-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 0 1 4.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0 1 12 15a9.065 9.065 0 0 0-6.23-.693L5 14.5m14.8.8 1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0 1 12 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5"/>`,
+          swatch:`<path stroke-linecap="round" stroke-linejoin="round" d="M4.098 19.902a3.75 3.75 0 0 0 5.304 0l6.401-6.402M6.75 21A3.75 3.75 0 0 1 3 17.25V4.125C3 3.504 3.504 3 4.125 3h5.25c.621 0 1.125.504 1.125 1.125v4.072M6.75 21a3.75 3.75 0 0 0 3.75-3.75V8.197M6.75 21h13.125c.621 0 1.125-.504 1.125-1.125v-5.25c0-.621-.504-1.125-1.125-1.125h-4.072M10.5 8.197l2.88-2.88c.438-.439 1.15-.439 1.59 0l3.712 3.713c.44.44.44 1.152 0 1.59l-2.879 2.88M6.75 17.25h.008v.008H6.75v-.008Z"/>`,
+          homemodern:`<path stroke-linecap="round" stroke-linejoin="round" d="M8.25 21v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21m0 0h4.5V3.545M12.75 21h7.5V10.75M2.25 21h1.5m18 0h-18M2.25 9l4.5-1.636M18.75 3l-1.5.545m0 6.205 3 1m1.5.5-1.5-.5M6.75 7.364V3h-3v18m3-13.636 10.5-3.819"/>`,
+          cart:`<path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z"/>`,
+          wrenchset:`<path stroke-linecap="round" stroke-linejoin="round" d="M11.42 15.17 17.25 21A2.652 2.652 0 0 0 21 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 1 1-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 0 0 4.486-6.336l-3.276 3.277a3.004 3.004 0 0 1-2.25-2.25l3.276-3.276a4.5 4.5 0 0 0-6.336 4.486c.091 1.076-.071 2.264-.904 2.95l-.102.085m-1.745 1.437L5.909 7.5H4.5L2.25 3.75l1.5-1.5L7.5 4.5v1.409l4.26 4.26m-1.745 1.437 1.745-1.437m6.615 8.206L15.75 15.75M4.867 19.125h.008v.008h-.008v-.008Z"/>`,
+          wrench:`<path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75a4.5 4.5 0 0 1-4.884 4.484c-1.076-.091-2.264.071-2.95.904l-7.152 8.684a2.548 2.548 0 1 1-3.586-3.586l8.684-7.152c.833-.686.995-1.874.904-2.95a4.5 4.5 0 0 1 6.336-4.486l-3.276 3.276a3.004 3.004 0 0 0 2.25 2.25l3.276-3.276c.256.565.398 1.192.398 1.852Z"/>`,
+          arrowpath:`<path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"/>`,
+          envelope:`<path stroke-linecap="round" stroke-linejoin="round" d="M21.75 9v.906a2.25 2.25 0 0 1-1.183 1.981l-6.478 3.488M2.25 9v.906a2.25 2.25 0 0 0 1.183 1.981l6.478 3.488m8.839 2.51-4.66-2.51m0 0-1.023-.55a2.25 2.25 0 0 0-2.134 0l-1.022.55m0 0-4.661 2.51m16.5 1.615a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V8.844a2.25 2.25 0 0 1 1.183-1.981l7.5-4.039a2.25 2.25 0 0 1 2.134 0l7.5 4.039a2.25 2.25 0 0 1 1.183 1.98V19.5Z"/>`,
+          sun:`<path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z"/>`,
+          paperair:`<path stroke-linecap="round" stroke-linejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5"/>`
+        };
+        return `<svg ${base} class="h-${s} w-${s}" aria-hidden="true">${map[name]||''}</svg>`;
+      }
+
+      // --- Schema.org HowTo builder ---
+      function schemaHowTo(steps){
+        return {
+          "@context":"https://schema.org",
+          "@type":"HowTo",
+          "name":"How Vela works",
+          "step": steps.map((s,i)=>({
+            "@type":"HowToStep",
+            "position": i+1,
+            "name": s.title,
+            "text": s.body
+          }))
+        };
+      }
+    }
+  </script>
+
+  <!-- Utilities -->
+  <style>
+    .hide-scrollbar::-webkit-scrollbar{ display:none }
+    .hide-scrollbar{ -ms-overflow-style:none; scrollbar-width:none }
+  </style>
+</section>
+
+<!-- ============ WHAT WE DO (Fixed Icons) ============ -->
+<section 
+  id="what-we-do" 
+  x-data="velaWhatWeDo()" 
+  class="relative isolate py-24 overflow-hidden bg-slate-50"
+>
+  <!-- Background Ambience -->
+  <div class="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+    <div class="absolute -top-24 -left-24 w-96 h-96 bg-emerald-400/10 rounded-full blur-3xl mix-blend-multiply"></div>
+    <div class="absolute top-1/2 right-0 w-80 h-80 bg-blue-400/10 rounded-full blur-3xl mix-blend-multiply"></div>
+    <svg class="absolute inset-0 h-full w-full opacity-[0.03]" viewBox="0 0 100 100" preserveAspectRatio="none">
+      <defs>
+        <pattern id="grid" width="8" height="8" patternUnits="userSpaceOnUse">
+          <path d="M 8 0 L 0 0 0 8" fill="none" stroke="currentColor" stroke-width="0.5"/>
+        </pattern>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#grid)" />
+    </svg>
+  </div>
+
+  <div class="relative max-w-7xl mx-auto px-6">
+    
+    <!-- HEADER & TOGGLE -->
+    <div class="flex flex-col items-center text-center mb-16">
+      <h2 class="text-4xl md:text-5xl font-extrabold text-[#3B4552] tracking-tight">
+        What we do
+      </h2>
+      
+      <div class="relative h-8 mt-4 w-full max-w-xl">
+        <template x-for="mode in ['owner', 'host']">
+          <p x-show="sub === mode"
+             x-transition:enter="transition ease-out duration-500 absolute inset-0"
+             x-transition:enter-start="opacity-0 translate-y-2"
+             x-transition:enter-end="opacity-100 translate-y-0"
+             x-transition:leave="transition ease-in duration-300 absolute inset-0"
+             x-transition:leave-start="opacity-100 translate-y-0"
+             x-transition:leave-end="opacity-0 -translate-y-2"
+             class="text-base text-[#3B4552]/70 mx-auto"
+             x-text="copy[mode].tagline"
+          ></p>
+        </template>
+      </div>
+
+      <!-- SLIDING TOGGLE -->
+      <div class="mt-8 relative inline-flex items-center p-1.5 rounded-full bg-slate-200/60 shadow-inner ring-1 ring-black/5 backdrop-blur-sm cursor-pointer select-none w-64 h-12"
+           @keydown.right.prevent="cycle(1)" @keydown.left.prevent="cycle(-1)" role="tablist">
+        <div class="absolute top-1.5 bottom-1.5 w-[calc(50%-6px)] bg-white rounded-full shadow-md shadow-emerald-900/5 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]"
+             :class="sub === 'owner' ? 'translate-x-0' : 'translate-x-[100%] left-[6px]'"></div>
+        <button role="tab" :aria-selected="sub==='owner'" @click="set('owner')"
+                class="relative z-10 w-1/2 h-full rounded-full text-sm font-bold transition-colors duration-300"
+                :class="sub==='owner' ? 'text-[#118A68]' : 'text-slate-500 hover:text-slate-700'">
+          I’m an Owner
+        </button>
+        <button role="tab" :aria-selected="sub==='host'" @click="set('host')"
+                class="relative z-10 w-1/2 h-full rounded-full text-sm font-bold transition-colors duration-300"
+                :class="sub==='host' ? 'text-[#118A68]' : 'text-slate-500 hover:text-slate-700'">
+          I’m a Host
+        </button>
+      </div>
+    </div>
+
+    <!-- MAIN CONTENT GRID -->
+    <div class="grid lg:grid-cols-2 gap-12 lg:gap-16 items-start">
+      
+      <!-- LEFT: TIMELINE INFOGRAPHIC -->
+      <div class="relative">
+        <div class="absolute left-[26px] top-8 bottom-8 w-0.5 bg-gradient-to-b from-emerald-200 via-emerald-100 to-transparent"></div>
+        <div class="absolute left-[24px] top-0 w-1.5 h-16 bg-gradient-to-b from-[#118A68] to-transparent blur-[2px] animate-pulse-down opacity-60"></div>
+
+        <ol class="space-y-8 relative">
+          <template x-for="(step, idx) in copy[sub].steps" :key="idx">
+            <li class="relative group">
+              <div class="flex gap-6">
+                <!-- Icon Bubble -->
+                <div class="relative z-10 shrink-0 h-14 w-14 rounded-2xl bg-white shadow-lg shadow-emerald-900/5 ring-1 ring-emerald-50 flex items-center justify-center text-[#118A68] group-hover:scale-110 group-hover:shadow-emerald-500/20 transition-all duration-500 ease-out">
+                  <span x-html="icon(step.icon, 28)" class="transition-transform duration-500 group-hover:-rotate-6 flex items-center justify-center"></span>
+                </div>
+                
+                <!-- Content -->
+                <div class="flex-1 pt-1.5">
+                  <h3 class="text-lg font-bold text-[#3B4552] group-hover:text-[#118A68] transition-colors" x-text="step.title"></h3>
+                  <div class="relative mt-2 p-4 rounded-2xl bg-white border border-slate-100 shadow-sm group-hover:shadow-md transition-all duration-300">
+                    <p class="text-[14px] leading-relaxed text-slate-600" x-text="step.body"></p>
+                    <div class="mt-3 flex flex-wrap gap-2">
+                      <template x-for="t in step.tags" :key="t">
+                        <span class="inline-flex items-center rounded-md bg-emerald-50/50 px-2 py-1 text-[11px] font-semibold text-emerald-700 ring-1 ring-inset ring-emerald-600/10">
+                          <span x-text="t"></span>
+                        </span>
+                      </template>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </li>
+          </template>
+        </ol>
+      </div>
+
+      <!-- RIGHT: SERVICE GRID CARD -->
+      <div class="sticky top-12">
+        <div class="relative rounded-[2.5rem] bg-white p-8 shadow-2xl shadow-slate-200/50 border border-slate-100 overflow-hidden">
+          <div class="absolute top-0 right-0 -mt-10 -mr-10 w-40 h-40 bg-emerald-400/20 rounded-full blur-3xl"></div>
+
+          <div class="relative z-10">
+            <h3 class="text-xl font-bold text-[#3B4552]" x-text="copy[sub].valueTitle"></h3>
+            <p class="mt-2 text-sm text-slate-500 leading-relaxed" x-text="copy[sub].valueBody"></p>
+
+            <div class="mt-8 grid grid-cols-2 gap-3">
+              <template x-for="svc in copy[sub].services" :key="svc.slug">
+                <div class="group flex items-center gap-3 rounded-xl bg-slate-50/80 p-3 hover:bg-[#F4FBF9] hover:ring-1 hover:ring-[#118A68]/30 transition-all duration-300 cursor-default">
+                  <div class="shrink-0 w-9 h-9 rounded-full bg-white shadow-sm flex items-center justify-center text-slate-400 group-hover:text-[#118A68] transition-colors">
+                    <span x-html="icon(svc.icon, 18)" class="flex items-center justify-center"></span>
+                  </div>
+                  <span class="text-[13px] font-semibold text-slate-700 group-hover:text-[#3B4552]" x-text="svc.label"></span>
+                </div>
+              </template>
+            </div>
+
+            <div class="mt-8 pt-6 border-t border-slate-100">
+              <ul class="space-y-3">
+                <template x-for="b in copy[sub].proofs" :key="b">
+                  <li class="flex items-start gap-3 text-sm text-slate-600">
+                    <div class="mt-0.5 shrink-0 w-4 h-4 rounded-full bg-emerald-100 flex items-center justify-center">
+                      <svg class="w-2.5 h-2.5 text-[#118A68]" viewBox="0 0 12 10" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5 6 4.5 9 10.5 1"/></svg>
+                    </div>
+                    <span x-text="b"></span>
+                  </li>
+                </template>
+              </ul>
+            </div>
+
+            <div class="mt-8 flex flex-col sm:flex-row gap-3">
+              <a :href="copy[sub].ctaPrimary.href"
+                 class="group flex-1 inline-flex items-center justify-center rounded-xl px-6 py-3.5 font-bold text-sm text-white shadow-lg shadow-emerald-700/20 transition-all hover:-translate-y-0.5 hover:shadow-emerald-700/30"
+                 style="background:#118A68">
+                <span x-text="copy[sub].ctaPrimary.label"></span>
+                <svg class="ml-2 w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
+              </a>
+              <a :href="copy[sub].ctaSecondary.href"
+                 class="flex-1 inline-flex items-center justify-center rounded-xl bg-white text-slate-600 border border-slate-200 px-6 py-3.5 font-bold text-sm hover:bg-slate-50 hover:text-slate-900 hover:border-slate-300 transition-all">
+                <span x-text="copy[sub].ctaSecondary.label"></span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    @keyframes pulse-down {
+      0% { transform: translateY(-100%); opacity: 0; }
+      50% { opacity: 0.8; }
+      100% { transform: translateY(300px); opacity: 0; }
+    }
+    .animate-pulse-down {
+      animation: pulse-down 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+  </style>
+
+  <!-- Alpine data -->
+  <script>
+    function velaWhatWeDo(){
+      return {
+        sub: 'owner',
+        set(s){ this.sub = s; this.persist(); },
+        cycle(dir){ this.sub = (this.sub==='owner' && dir===1) ? 'host' : (this.sub==='host' && dir===-1) ? 'owner' : this.sub; this.persist(); },
+        persist(){
+          try{ const url = new URL(window.location); url.searchParams.set('who', this.sub); history.replaceState({}, '', url); }catch(e){}
+        },
+        copy: {
+          owner: {
+            tagline: 'We take the hassle away—your second home stays guest-ready, secure, and stocked.',
+            valueTitle: 'For owners',
+            valueBody: 'Book what you need in two taps. We coordinate trusted local teams and keep you updated—so every arrival is calm.',
+            steps: [
+              { title:'Book services from your phone', body:'Cleaning & linens, restocking, keyholding and scheduled checks—pick dates and preferences.', tags:['2-tap booking','Property preferences'], icon:'phone' },
+              { title:'Vela coordinates everything', body:'Our vetted regional teams handle access, tasks and photo receipts. No more back-and-forth.', tags:['Photo proof','Priority scheduling'], icon:'gears' },
+              { title:'You arrive to calm', body:'Clean, stocked, secure. Track past and upcoming visits in your timeline.', tags:['Timeline view','Condition reports'], icon:'home_heart' }
+            ],
+            services: [
+              { slug:'keyholding', label:'Keyholding', icon:'key' },
+              { slug:'turnovers', label:'Cleaning & linens', icon:'sparkles' },
+              { slug:'restock', label:'Restocking', icon:'cart' },
+              { slug:'checkins', label:'Guest check-ins', icon:'user_check' },
+              { slug:'maintenance', label:'Maintenance', icon:'tools' },
+              { slug:'concierge', label:'Concierge', icon:'bell' }
+            ],
+            proofs: ['Photo receipts after every visit', 'Local teams vetted by Vela', 'Cancel anytime • switch plans easily'],
+            ctaPrimary: { label:'Create free account', href:'/signup?role=owner' },
+            ctaSecondary:{ label:'See owner plans', href:'/pricing#panel-owners' }
+          },
+          host: {
+            tagline: 'The new way to host—no more coordinating. Vela manages while you profit.',
+            valueTitle: 'For hosts (Airbnb)',
+            valueBody: 'Connect your listing and set your rules. We handle guests, turnovers and restocking. You watch payouts and reviews improve.',
+            steps: [
+              { title:'Connect your listing', body:'Sync calendar and preferences, set access rules and welcome standards.', tags:['Calendar sync','House rules'], icon:'link' },
+              { title:'We run the operations', body:'Guest messaging, check-ins, turnovers and restocking—coordinated and verified.', tags:['Fast replies','Attended check-ins'], icon:'clipboard' },
+              { title:'You track & get paid', body:'Dashboard shows visits, receipts and payouts. Focus on profit, not pings.', tags:['Payouts tracking','Reviews boost'], icon:'wallet' }
+            ],
+            services: [
+              { slug:'messaging', label:'Guest messaging', icon:'chat' },
+              { slug:'turnovers', label:'Turnovers & linens', icon:'bed' },
+              { slug:'checkins', label:'Attended check-ins', icon:'user_check' },
+              { slug:'restock', label:'Restocking', icon:'cart' },
+              { slug:'maintenance', label:'Maintenance', icon:'tools' },
+              { slug:'reports', label:'Payouts & reports', icon:'chart' }
+            ],
+            proofs: ['Average reply in minutes', 'Photo proof after cleans', 'Transparent fees • you keep the rest'],
+            ctaPrimary: { label:'Start hosting', href:'/signup?role=host' },
+            ctaSecondary:{ label:'See host plans', href:'/pricing#panel-hosts' }
+          }
+        },
+        // Updated Factory: Uses inline styles to fix missing icons
+        icon(name, size){
+          const s = size || 16;
+          // Explicitly setting style prevents Tailwind purge issues
+          const base = `xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:${s}px; height:${s}px;"`;
+          const map = {
+            phone: `<path stroke-linecap="round" stroke-linejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 006 3.75v16.5a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 20.25V3.75a2.25 2.25 0 00-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3" />`,
+            gears: `<path stroke-linecap="round" stroke-linejoin="round" d="M10.343 3.94c.09-.542.56-.94 1.11-.94h1.093c.55 0 1.02.398 1.11.94l.175 1.059c.991.214 1.964.57 2.873 1.055l.971-.532c.483-.265 1.087-.197 1.492.17l.772.701c.404.367.498.963.268 1.458l-.48.913c.692.834 1.258 1.765 1.666 2.768l1.015.193c.54.103.935.57.935 1.118v1.076c0 .548-.395 1.015-.935 1.118l-1.015.193c-.408 1.003-.974 1.934-1.666 2.768l.48.913c.23.495.136 1.091-.268 1.458l-.772.701c-.405.367-1.009.435-1.492.17l-.971-.532c-.909.485-1.882.84-2.873 1.054l-.175 1.06c-.09.54-.56.939-1.11.939h-1.093c-.55 0-1.02-.398-1.11-.94l-.175-1.059c-.991-.214-1.964-.57-2.873-1.055l-.971.532c-.483.265-1.087.197-1.492-.17l-.772-.701c-.404-.367-.498-.963-.268-1.458l.48-.913c-.692-.834-1.258-1.765-1.666-2.768l-1.015-.193c-.54-.103-.935-.57-.935-1.118V10.23c0-.548.395-1.015.935-1.118l1.015-.193c.408-1.003.974-1.934 1.666-2.768l-.48-.913c-.23-.495-.136-1.091.268-1.458l.772-.701c.405-.367 1.009-.435 1.492-.17l.971.532c.909-.485 1.882-.84 2.873-1.054l.175-1.06ZM12 12.75a2.25 2.25 0 100-4.5 2.25 2.25 0 000 4.5z" />`,
+            home_heart: `<path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />`,
+            link: `<path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" />`,
+            clipboard: `<path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z" />`,
+            key: `<path stroke-linecap="round" stroke-linejoin="round" d="M15.75 5.25a3 3 0 013 3m3 0a6 6 0 01-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1121.75 8.25z" />`,
+            sparkles: `<path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09Z" />`,
+            cart: `<path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386l1.2 4.5M7.5 14.25h10.5l3-7.5H5.25M7.5 14.25 5.1 5.25M6 20.25a.75.75 0 1 1-1.5 0m12.75 0a.75.75 0 1 1-1.5 0" />`,
+            user_check: `<path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />`,
+            tools: `<path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75a4.5 4.5 0 01-4.884 4.484c-1.076-.091-2.264.071-2.95.937l-7.515 9.555a.75.75 0 01-1.07.096l-3.146-2.562a.75.75 0 01-.096-1.07l9.555-7.515c.866-.686 1.028-1.874.937-2.95A4.5 4.5 0 0121.75 6.75z" />`,
+            bell: `<path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />`,
+            chat: `<path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" />`,
+            bed: `<path stroke-linecap="round" stroke-linejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 16.153 16.556 18 12 18s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125" />`,
+            chart: `<path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />`,
+            wallet: `<path stroke-linecap="round" stroke-linejoin="round" d="M21 12a2.25 2.25 0 00-2.25-2.25H15a3 3 0 11-6 0H5.25A2.25 2.25 0 003 12m18 0v6a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 18v-6m18 0V9M3 12V9m18 0a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 9m18 0V6a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 6v3" />`
+          };
+          const path = map[name] || map['phone'];
+          return `<svg ${base}>${path}</svg>`;
+        }
+      }
+    }
+  </script>
+</section>
+
+<!-- ============ PRICING (glass, owners in € / hosts in %) ============ -->
+<section id="pricing" x-data="velaStaticPlans()" class="relative isolate" @keydown.window.escape="closeWizard()">
+  <!-- background = same as hero -->
+  <div class="absolute inset-0 -z-10 pointer-events-none">
+    <img src="img/velagirl.png" alt="" class="h-full w-full object-cover" loading="lazy" decoding="async" fetchpriority="low">
+    <div class="absolute inset-0 bg-black/60"></div>
+  </div>
+
+  <div class="max-w-7xl mx-auto px-6 py-14 md:py-20 text-white">
+    <!-- Heading + wizard CTA -->
+    <div class="max-w-3xl mx-auto text-center">
+      <h2 class="font-extrabold tracking-tight leading-tight text-[clamp(1.55rem,6.2vw,2.6rem)] md:text-4xl">
+        Choose your calm.
+      </h2>
+      <p class="mt-2 text-white/85 leading-snug text-[clamp(.95rem,3.6vw,1.05rem)]">
+        From keyholding to concierge, every plan turns “to-do” into “done”.
+      </p>
+
+      <!-- Open /findyourplan in modal (keeps href for fallback) -->
+      <a href="/findyourplan"
+         @click.prevent="openWizard()"
+         class="mt-4 inline-flex items-center gap-2 rounded-full bg-white text-[#118A68] px-4 py-2 text-sm md:text-base font-semibold shadow-sm hover:shadow transition">
+        Find your plan →
+      </a>
+
+      <!-- Trust line -->
+      <p class="mt-3 text-[12px] md:text-xs text-white/75">
+        Cancel anytime. No lock-in. <span class="whitespace-nowrap">Stripe-secured billing.</span>
+      </p>
+    </div>
+
+    <!-- family selector + billing (owners only) -->
+    <div class="mt-6 md:mt-8 flex flex-col items-center gap-3">
+      <div class="flex flex-wrap items-center justify-center gap-3">
+        <!-- Mode tabs (a11y) -->
+        <div role="tablist" aria-label="Plan family"
+             class="rounded-full bg-white/10 backdrop-blur ring-1 ring-white/20 p-1 text-[13px] md:text-sm"
+             @keydown.right.prevent="cycleMode(1)" @keydown.left.prevent="cycleMode(-1)">
+          <button id="tab-owners" role="tab" :tabindex="mode==='vela' ? 0 : -1" :aria-selected="mode==='vela'"
+                  aria-controls="panel-owners" @click="mode='vela'; persistToURL()"
+                  class="px-3 py-1.5 md:px-3.5 md:py-1.5 rounded-full font-semibold transition"
+                  :class="mode==='vela' ? 'bg-white text-[#118A68] shadow-sm' : 'text-white/80 hover:text-white'">
+            Vela (Owners)
+          </button>
+          <button id="tab-hosts" role="tab" :tabindex="mode==='host' ? 0 : -1" :aria-selected="mode==='host'"
+                  aria-controls="panel-hosts" @click="mode='host'; persistToURL()"
+                  class="px-3 py-1.5 md:px-3.5 md:py-1.5 rounded-full font-semibold transition"
+                  :class="mode==='host' ? 'bg-white text-[#118A68] shadow-sm' : 'text-white/80 hover:text-white'">
+            VelaHost (Airbnb)
+          </button>
+        </div>
+
+        <!-- Billing toggle (owners only) -->
+        <div
+          class="rounded-full bg-white/10 backdrop-blur ring-1 ring-white/20 p-1 text-[13px] md:text-sm xfade"
+          :class="mode==='vela' ? 'opacity-100' : 'opacity-0 invisible pointer-events-none select-none'">
+          <button @click="billing='mo'; persistToURL()"
+                  class="px-3 py-1.5 md:px-3.5 md:py-1.5 rounded-full font-semibold transition"
+                  :class="billing==='mo' ? 'bg-white text-[#118A68] shadow-sm' : 'text-white/80 hover:text-white'">
+            Monthly
+          </button>
+          <button @click="billing='yr'; persistToURL()"
+                  class="px-3 py-1.5 md:px-3.5 md:py-1.5 rounded-full font-semibold transition"
+                  :class="billing==='yr' ? 'bg-white text-[#118A68] shadow-sm' : 'text-white/80 hover:text-white'">
+            Annual • Save <span class="ml-1" x-text="maxSave() + '%'"></span>
+          </button>
+        </div>
+      </div>
+
+      <p class="text-[12px] md:text-xs text-white/75 sr-only md:not-sr-only">Switch plans as your needs change.</p>
+    </div>
+
+    <!-- cards -->
+    <div
+      id="pricing-cards"
+      :aria-labelledby="mode==='vela' ? 'tab-owners' : 'tab-hosts'"
+      :id="mode==='vela' ? 'panel-owners' : 'panel-hosts'"
+      role="tabpanel"
+      class="mt-6 md:mt-10
+             grid grid-flow-col auto-cols-[85%] gap-4 overflow-x-auto snap-x snap-mandatory -mx-6 px-6 pb-2 hide-scrollbar
+             sm:auto-cols-[70%]
+             md:mx-0 md:px-0 md:pb-0 md:auto-cols-auto md:grid-flow-row md:grid-cols-3 md:gap-6 md:overflow-visible"
+    >
+      <template x-for="p in current()" :key="p.name">
+        <article
+          class="group snap-center rounded-2xl bg-white/10 backdrop-blur-xl ring-1 ring-white/20 shadow-xl p-4 md:p-6 flex flex-col relative overflow-hidden h-full"
+        >
+          <!-- badges (top-right) -->
+          <div class="absolute top-3 right-3 flex items-center gap-2">
+            <template x-for="badge in badgesList(p)" :key="badge">
+              <span class="text-[10px] tracking-wide px-2 py-0.5 rounded-full bg-white/90 text-[#118A68] font-bold">
+                <span x-text="badge"></span>
+              </span>
+            </template>
+            <!-- Per-plan annual save chip (owners only) -->
+            <span x-show="mode==='vela' && hasAnnual(p)"
+                  class="text-[10px] tracking-wide px-2 py-0.5 rounded-full bg-white/80 text-[#118A68] font-bold">
+              Save <span x-text="savePercentFor(p) + '%'"></span>
+            </span>
+          </div>
+
+          <div class="flex items-start justify-between gap-4">
+            <div>
+              <h3 class="text-[1.05rem] md:text-lg font-semibold" x-text="p.name"></h3>
+              <p class="text-sm text-white/85 mt-1" x-text="p.tagline"></p>
+            </div>
+          </div>
+
+            <!-- Unified price area -->
+            <div class="mt-3 md:mt-4">
+              <div class="flex items-baseline gap-1.5 tabular-nums" aria-live="polite">
+                <span class="text-white/85 text-[11px] uppercase tracking-wide inline-grid">
+                  <span class="col-start-1 row-start-1 xfade" :class="mode==='vela' ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-0.5'">From</span>
+                  <span class="col-start-1 row-start-1 xfade" :class="mode==='host' ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-0.5'">&nbsp;</span>
+                </span>
+
+                <span class="text-[1.9rem] md:text-3xl font-extrabold leading-none inline-grid">
+                  <span
+                    class="col-start-1 row-start-1 xfade"
+                    :class="mode==='vela' && billing==='mo' ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-1 pointer-events-none'"
+                    x-text="fmtEUR(priceMonth(p))">
+                  </span>
+                  <span
+                    class="col-start-1 row-start-1 xfade"
+                    :class="mode==='vela' && billing==='yr' ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-1 pointer-events-none'"
+                    x-text="fmtEUR(perMoFromYear(p))">
+                  </span>
+                  <span
+                    class="col-start-1 row-start-1 xfade"
+                    :class="mode==='host' ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-1 pointer-events-none'"
+                    x-text="hostPercent(p) !== null ? hostPercent(p) + '%' : ''">
+                  </span>
+                </span>
+
+                <span class="text-white/85 text-sm md:text-base inline-grid">
+                  <span class="col-start-1 row-start-1 xfade" :class="mode==='vela' && billing==='mo' ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-1 pointer-events-none'">/mo</span>
+                  <span class="col-start-1 row-start-1 xfade" :class="mode==='vela' && billing==='yr' ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-1 pointer-events-none'">/mo*</span>
+                  <span class="col-start-1 row-start-1 xfade" :class="mode==='host' ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-1 pointer-events-none'">management fee per booking</span>
+                </span>
+              </div>
+
+              <p class="mt-1 text-[11px] text-white/75 h-4 md:h-5 overflow-hidden inline-grid">
+                <span
+                  class="col-start-1 row-start-1 xfade"
+                  :class="mode==='vela' && billing==='yr' ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-0.5 pointer-events-none'"
+                  x-text="'Billed annually ' + fmtEUR(priceYear(p))">
+                </span>
+                <span
+                  class="col-start-1 row-start-1 xfade"
+                  :class="mode==='host' ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-0.5 pointer-events-none'">
+                  We take <span x-text="hostPercent(p) ?? ''"></span>% and pay out the rest.
+                </span>
+              </p>
+            </div>
+
+          <!-- features -->
+          <ul class="mt-4 md:mt-5 text-sm text-white/90 space-y-2 grow">
+            <template x-for="b in bulletsFor(p)" :key="p.name + b">
+              <li class="flex gap-2">
+                <svg class="mt-0.5 h-4 w-4 flex-none" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <circle cx="12" cy="12" r="8" stroke="white" stroke-opacity=".25" />
+                  <path d="M8.5 12.5l2.5 2.5 4.5-5" stroke="#118A68" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span x-text="b"></span>
+              </li>
+            </template>
+          </ul>
+
+          <!-- CTAs -->
+          <div class="mt-5 md:mt-7 space-y-2">
+            <a :href="signupHref(p)"
+               class="inline-flex w-full items-center justify-center rounded-lg px-4 py-2.5 md:px-5 md:py-2.5 font-semibold text-white transition focus:outline-none focus:ring-2 focus:ring-white/50"
+               style="background:#118A68">
+              <span x-text="p.cta"></span>
+            </a>
+
+            <!-- Mobile: toggle long feature lists -->
+            <div class="flex items-center justify-between md:hidden">
+              <button x-show="hasMore(p)" @click="toggleMore(p)"
+                      class="text-xs font-semibold text-white/85 underline underline-offset-2 hover:text-white">
+                <span x-text="isMore(p) ? 'Less' : 'More'"></span>
+              </button>
+
+              <!-- Recommendation opens wizard modal -->
+              <a href="/findyourplan"
+                 @click.prevent="openWizard()"
+                 class="text-xs font-semibold text-white/85 underline underline-offset-2 hover:text-white">
+                Not sure? Get a recommendation →
+              </a>
+            </div>
+
+            <!-- Desktop rec link -->
+            <a href="/findyourplan"
+               @click.prevent="openWizard()"
+               class="hidden md:inline-flex w-full items-center justify-center rounded-lg px-4 py-2.5 font-semibold bg-white/0 ring-1 ring-white/30 text-white/90 hover:bg-white/5 transition">
+              Not sure? Get a recommendation →
+            </a>
+          </div>
+
+          <div class="pointer-events-none absolute inset-0 rounded-2xl ring-1 ring-transparent group-hover:ring-white/30 transition"></div>
+        </article>
+      </template>
+    </div>
+
+    <!-- All plans include -->
+    <div class="mt-6 md:mt-8 mx-auto max-w-4xl">
+      <div class="rounded-xl bg-white/5 ring-1 ring-white/15 p-3 sm:p-4">
+        <div class="text-[13px] md:text-sm text-white/90">
+          <span class="font-semibold">All plans include:</span>
+          <span class="text-white/85"> keyholding, turnovers & linens, photo receipts after every visit, and in-app support.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- comparison + footnotes -->
+    <div class="mt-5 md:mt-6 flex flex-col items-center gap-3">
+      <button @click="showCompare=true" class="text-[12px] md:text-xs font-semibold text-white/90 hover:text-white underline underline-offset-4">
+        See full plan comparison
+      </button>
+      <div class="text-center text-[11px] text-white/70 space-y-1">
+        <p>*Annual shown as monthly equivalent (Owners only). VAT may apply.</p>
+        <p>**Host fees are a percentage of Airbnb booking revenue; cleaning/incidentals are passed through.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Comparison Modal -->
+  <template x-teleport="body">
+    <div x-cloak x-show="showCompare" x-transition class="fixed inset-0 z-50 flex items-center justify-center p-6">
+      <div class="absolute inset-0 bg-black/70" @click="showCompare=false" aria-hidden="true"></div>
+      <div class="relative max-w-5xl w-full rounded-2xl bg-white text-[#3B4552] p-6 shadow-2xl"
+           role="dialog" aria-modal="true" aria-labelledby="cmp-title">
+        <div class="flex items-start justify-between">
+          <h4 id="cmp-title" class="text-lg font-bold">Plan comparison</h4>
+          <button @click="showCompare=false" class="p-2 rounded hover:bg-black/5" aria-label="Close">✕</button>
+        </div>
+
+        <div class="mt-4 overflow-x-auto">
+          <table class="min-w-full text-sm">
+            <thead>
+              <tr class="text-left">
+                <th class="py-3 pr-6 font-semibold text-[#118A68]">Feature</th>
+                <template x-for="p in current()" :key="p.name">
+                  <th class="py-3 px-3 font-semibold" x-text="p.name"></th>
+                </template>
+              </tr>
+            </thead>
+            <tbody class="align-top">
+              <template x-for="row in compareRows()" :key="row.name">
+                <tr class="border-t">
+                  <td class="py-3 pr-6 font-medium" x-text="row.name"></td>
+                  <template x-for="val in row.values" :key="val + Math.random()">
+                    <td class="py-3 px-3">
+                      <template x-if="val===true"><span aria-label="Included">✔</span></template>
+                      <template x-if="val===false"><span class="text-gray-400/80" aria-label="Not included">—</span></template>
+                      <template x-if="typeof val==='string'"><span x-text="val"></span></template>
+                    </td>
+                  </template>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="mt-6 flex flex-wrap items-center justify-between gap-3">
+          <a href="/findyourplan"
+             @click.prevent="openWizard()"
+             class="inline-flex items-center gap-2 rounded-lg px-4 py-2.5 font-semibold text-white"
+             style="background:#118A68">
+            Help me choose →
+          </a>
+          <button @click="showCompare=false" class="text-sm font-semibold text-[#118A68] underline underline-offset-4">
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <!-- Find-Your-Plan Wizard Modal (iframe) -->
+  <template x-teleport="body">
+    <div x-cloak x-show="showWizard" x-transition.opacity class="fixed inset-0 z-[60]">
+      <div class="absolute inset-0 bg-black/70" @click="closeWizard()" aria-hidden="true"></div>
+      <button @click="closeWizard()" class="absolute top-4 right-4 z-[61] p-2 rounded text-white/90 hover:text-white focus:outline-none focus:ring-2 focus:ring-white/40" aria-label="Close wizard">✕</button>
+
+      <div class="absolute inset-4 sm:inset-6 md:inset-10">
+        <div class="relative w-full h-full">
+          <iframe
+            x-ref="wizardFrame"
+            :src="wizardSrc"
+            @load="_onWizardLoad"
+            class="w-full h-full rounded-2xl shadow-2xl ring-1 ring-slate-200 bg-white"
+            title="Vela – Find your plan"
+            loading="eager">
+          </iframe>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <!-- inline JS for this section -->
+  <script>
+    function velaStaticPlans(){
+      return {
+        mode: 'vela',           // 'vela' | 'host'
+        showCompare: false,
+        billing: 'mo',          // owners only: 'mo' | 'yr'
+
+        // --- wizard modal state ---
+        showWizard: false,
+        wizardSrc: '/findyourplan?embed=1', // set per mode on open
+        _boundWizardMessage: null,
+
+        // --- mobile feature toggles ---
+        showMore: {},           // keyed by plan name
+        isMd: window.matchMedia('(min-width: 768px)').matches,
+
+        // ------- data (unchanged) -------
+        plans: {
+          vela: [
+            { name:'Essential',
+              badges:['Most Popular'],
+              tagline:'Keyholding, cleaning, the basics handled.',
+              priceEUR:{ mo:99,  yr:999 },
+              bullets:['Turnovers & fresh linens','Photo receipts after every visit','In-app support'],
+              cta:'Choose Essential', href:'/signup'
+            },
+            { name:'Plus',
+              badges:[],
+              tagline:'Everything in Essential + dedicated concierge when you need it.',
+              priceEUR:{ mo:199, yr:1990 },
+              bullets:['Concierge bookings (restaurants, transfers, etc.)','Restocking & welcome packs','Priority scheduling'],
+              cta:'Choose Plus', href:'/signup'
+            },
+            { name:'Premium',
+              badges:['VIP'],
+              tagline:'White-glove care with a dedicated regional coordinator.',
+              priceEUR:{ mo:349, yr:3490 },
+              bullets:['Dedicated coordinator','Bi-monthly condition reports','Members-only local perks'],
+              cta:'Choose Premium', href:'/signup'
+            }
+          ],
+          host: [
+            { name:'Host Basic',
+              badges:[],
+              tagline:'Reliable turnovers so your reviews stay glowing.',
+              feePercent:15,
+              bullets:['Keyholding & guest access','Turnovers & linens','Photo receipts after each clean'],
+              cta:'Choose Host Basic', href:'/signup'
+            },
+            { name:'Host Plus',
+              badges:['Most Popular'],
+              tagline:'For active Airbnbs that need concierge-level help.',
+              feePercent:18,
+              bullets:['Priority scheduling','Restocking & welcome packs','Guest messaging support'],
+              cta:'Choose Host Plus', href:'/signup'
+            },
+            { name:'Host Premium',
+              badges:['VIP'],
+              tagline:'Premium hosting with a dedicated coordinator.',
+              feePercent:22,
+              bullets:['Dedicated coordinator','Monthly condition reports','Local partner perks'],
+              cta:'Choose Host Premium', href:'/signup'
+            }
+          ]
+        },
+
+        // ------- computed / helpers -------
+        current(){ return this.mode === 'host' ? this.plans.host : this.plans.vela; },
+
+        bulletsFor(p){
+          if (this.isMd) return p.bullets;
+          const more = !!this.showMore[p.name];
+          return more ? p.bullets : p.bullets.slice(0, 3);
+        },
+        hasMore(p){ return !this.isMd && p.bullets && p.bullets.length > 3; },
+        isMore(p){ return !!this.showMore[p.name]; },
+        toggleMore(p){ this.showMore[p.name] = !this.showMore[p.name]; },
+
+        compareRows(){
+          const base = [
+            { name: 'Keyholding',            vela: [true, true, true], host:[true, true, true] },
+            { name: 'Turnovers & linens',    vela: [true, true, true], host:[true, true, true] },
+            { name: 'Photo receipts',        vela: [true, true, true], host:[true, true, true] },
+            { name: 'Concierge bookings',    vela: [false, true, true], host:[false, true, true] },
+            { name: 'Restocking',            vela: [false, true, true], host:[false, true, true] },
+            { name: 'Priority scheduling',   vela: [false, true, true], host:[true, true, true] },
+            { name: 'Dedicated coordinator', vela: [false, false, true], host:[false, false, true] },
+            { name: 'Reports',               vela: ['—','Bi-monthly','Bi-monthly'], host:['—','—','Monthly'] },
+          ];
+          const fam = this.mode==='host' ? 'host' : 'vela';
+          return base.map(row => ({ name: row.name, values: row[fam] }));
+        },
+
+        badgesList(p){
+          if (Array.isArray(p.badges)) return p.badges;
+          if (p.badge) return [p.badge];
+          return [];
+        },
+
+        fmtEUR(amount){
+          try {
+            const lang = (navigator && navigator.language) ? navigator.language : 'en-IE';
+            return new Intl.NumberFormat(lang, { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(amount);
+          } catch(e){ return '€' + amount; }
+        },
+        priceMonth(p){ return p.priceEUR?.mo ?? null; },
+        priceYear(p){  return p.priceEUR?.yr ?? null; },
+        perMoFromYear(p){
+          const y = this.priceYear(p);
+          if(!y) return null;
+          return Math.round((y/12));
+        },
+        hasAnnual(p){ return !!(p.priceEUR?.mo && p.priceEUR?.yr); },
+        savePercentFor(p){
+          if(!this.hasAnnual(p)) return 0;
+          const full = p.priceEUR.mo * 12;
+          const y = p.priceEUR.yr;
+          return Math.max(0, Math.round((1 - (y/full)) * 100));
+        },
+        maxSave(){
+          const owners = this.plans.vela.filter(pl => this.hasAnnual(pl));
+          if(!owners.length) return 0;
+          return Math.max(...owners.map(this.savePercentFor.bind(this)));
+        },
+        hostPercent(p){ return (typeof p?.feePercent === 'number') ? p.feePercent : null; },
+
+        signupHref(p){
+          const params = new URLSearchParams({
+            plan: p.name,
+            mode: this.mode,
+            billing: this.billing
+          });
+          return `${p.href}?${params.toString()}`;
+        },
+
+        // Tabs keyboard helper
+        cycleMode(dir){
+          this.mode = (this.mode === 'vela' && dir===1) ? 'host'
+                    : (this.mode === 'host' && dir===-1) ? 'vela'
+                    : this.mode;
+          this.persistToURL();
+        },
+
+        // Persist / restore from URL for deep links
+        persistToURL(){
+          const url = new URL(window.location);
+          url.searchParams.set('mode', this.mode);
+          if(this.mode==='vela') url.searchParams.set('billing', this.billing);
+          else url.searchParams.delete('billing');
+          history.replaceState({}, '', url);
+        },
+        restoreFromURL(){
+          const url = new URL(window.location);
+          const m = url.searchParams.get('mode');
+          const b = url.searchParams.get('billing');
+          if(m === 'host' || m === 'vela') this.mode = m;
+          if(b === 'yr' || b === 'mo') this.billing = b;
+        },
+
+        // ------- wizard helpers -------
+        wizardUrl(){
+          const params = new URLSearchParams({ embed:'1', mode:this.mode });
+          return `/findyourplan?${params.toString()}`;
+        },
+        openWizard(){
+          this.wizardSrc = this.wizardUrl();
+          this.showWizard = true;
+          document.documentElement.classList.add('overflow-hidden');
+          window.addEventListener('message', this._boundWizardMessage);
+        },
+        closeWizard(){
+          this.showWizard = false;
+          document.documentElement.classList.remove('overflow-hidden');
+          window.removeEventListener('message', this._boundWizardMessage);
+        },
+        _onWizardLoad(){
+          try { this.$refs.wizardFrame.contentWindow.postMessage({ type:'findmyplan:open' }, '*'); } catch(e){}
+        },
+
+        // --- init: keep isMd responsive & bind message handler ---
+        init(){
+          const mq = window.matchMedia('(min-width: 768px)');
+          const onChange = () => { this.isMd = mq.matches; };
+          if (mq.addEventListener) mq.addEventListener('change', onChange);
+          else mq.addListener(onChange); // Safari
+
+          this._boundWizardMessage = (e) => {
+            if (e?.data?.type === 'findmyplan:close') this.closeWizard();
+          };
+
+          this.restoreFromURL();
+        },
+
+        /* ---------- OPTIONAL: hydrate owners from Firestore products ----------
+
+           Keeps site pricing copy synced with backend (products collection).
+           Only call this.hydrateFromFirestore() after Firebase is initialized.
+
+           products doc fields used: productname, productprice, producttype, perks
+           (see Firestore schema).  */
+        async hydrateFromFirestore(){
+          try{
+            // eslint-disable-next-line no-undef
+            const db = firebase.firestore();
+            const snap = await db.collection('products')
+              .where('producttype','==','subscription')
+              .get();
+
+            const owners = [];
+            snap.forEach(doc => {
+              const d = doc.data();
+              owners.push({
+                name: d.productname,
+                badges: [],
+                tagline: '', // keep existing taglines or map via a local dictionary
+                priceEUR: { mo: d.productprice, yr: Math.round(d.productprice * 12 * 0.84) }, // example annual with ~16% off; replace with real Stripe price if you store it
+                bullets: Array.isArray(d.perks) ? d.perks : [],
+                cta: `Choose ${d.productname}`, href:'/signup'
+              });
+            });
+            if(owners.length){
+              // Preserve ordering to Essential/Plus/Premium if present
+              const order = ['Essential','Plus','Premium'];
+              owners.sort((a,b)=> order.indexOf(a.name) - order.indexOf(b.name));
+              this.plans.vela = owners;
+            }
+          }catch(e){ /* no-op: safe fallback to static */ }
+        }
+      }
+    }
+  </script>
+
+  <!-- Tiny utility to hide mobile scrollbar + motion helpers -->
+  <style>
+    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    .hide-scrollbar::-webkit-scrollbar { display: none; }
+    /* Smooth cross-fades (respect reduced motion) */
+    .xfade { transition: opacity 250ms ease, transform 250ms ease; }
+    @media (prefers-reduced-motion: reduce){
+      .xfade { transition: none; transform: none !important; }
+    }
+    /* Prevent teleported modals from flashing before Alpine boots */
+    [x-cloak] { display: none !important; }
+  </style>
+</section>
+
+
+<!-- ============ TESTIMONIALS (Clean, Static Phone + Infinite Wall) ============ -->
+<section
+  id="testimonials"
+  class="relative py-24 overflow-hidden bg-[#F4FBF9]"
+  x-data="velaTestimonials()"
+  x-init="init()"
+>
+  <!-- CSS for Animations -->
+  <style>
+    /* Slow Scroll for Background */
+    @keyframes scrollLeft { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+    @keyframes scrollRight { 0% { transform: translateX(-50%); } 100% { transform: translateX(0%); } }
+    .animate-scroll-left { animation: scrollLeft 160s linear infinite; }
+    .animate-scroll-right { animation: scrollRight 180s linear infinite; }
+    
+    /* Pause on hover */
+    .hover-pause:hover .animate-scroll-left, .hover-pause:hover .animate-scroll-right { animation-play-state: paused; }
+    
+    /* Floating Particles */
+    @keyframes float { 0% { transform: translateY(0px); opacity: 0; } 50% { opacity: 0.5; } 100% { transform: translateY(-100px); opacity: 0; } }
+    .particle { animation: float 15s infinite linear; }
+    
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+
+  <!-- LAYER 0: FLOATING PARTICLES -->
+  <div class="absolute inset-0 pointer-events-none overflow-hidden">
+    <template x-for="i in 8">
+      <div class="particle absolute rounded-full bg-emerald-400/20 blur-[1px]" 
+           :style="`width: ${Math.random() * 4 + 2}px; height: ${Math.random() * 4 + 2}px; left: ${Math.random() * 100}%; top: ${Math.random() * 100 + 20}%; animation-delay: ${Math.random() * 5}s; animation-duration: ${Math.random() * 10 + 15}s`">
+      </div>
+    </template>
+  </div>
+
+  <!-- LAYER 1: BACKGROUND MARQUEE -->
+  <div class="absolute inset-0 z-0 flex flex-col justify-center gap-8 pointer-events-none md:pointer-events-auto select-none [mask-image:linear-gradient(to_right,transparent,black_15%,black_85%,transparent)] opacity-100">
+    <!-- Top Row -->
+    <div class="flex gap-6 w-max animate-scroll-left hover:z-10 relative will-change-transform hover-pause">
+      <template x-for="i in 4">
+        <div class="flex gap-6">
+          <template x-for="t in testimonials">
+            <div class="group w-[300px] p-6 bg-white rounded-2xl shadow-sm border border-emerald-100/60 flex flex-col h-[230px] justify-between transition-all duration-300 hover:shadow-lg hover:border-emerald-200">
+              <div class="flex gap-0.5">
+                 <template x-for="s in 5"><svg class="h-4 w-4 text-[#118A68]" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.018 3.134a1 1 0 00.95.69h3.297c.969 0 1.371 1.24.588 1.81l-2.668 1.94a1 1 0 00-.364 1.118l1.018 3.134c.3.921-.755 1.688-1.54 1.118l-2.668-1.94a1 1 0 00-1.176 0l-2.668 1.94c-.784.57-1.838-.197-1.539-1.118l1.017-3.134a1 1 0 00-.363-1.118L2.096 8.56c-.784-.57-.38-1.81.588-1.81h3.297a1 1 0 00.95-.69l1.018-3.134z"/></svg></template>
+              </div>
+              <p class="text-[14px] text-gray-600 leading-relaxed line-clamp-4 italic group-hover:text-gray-900 transition-colors" x-text="t.quote"></p>
+              <div class="flex items-center gap-3 pt-3 border-t border-emerald-50/50">
+                <img :src="t.img" :alt="t.name" class="w-10 h-10 rounded-full object-cover ring-2 ring-white shadow-sm" loading="lazy" />
+                <div class="flex flex-col items-start">
+                  <div class="text-xs font-bold text-gray-900" x-text="t.name"></div>
+                  <span class="mt-1 inline-block rounded-md bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-[#118A68] border border-emerald-100" x-text="t.plan"></span>
+                </div>
+              </div>
+            </div>
+          </template>
+        </div>
+      </template>
+    </div>
+    <!-- Bottom Row -->
+    <div class="flex gap-6 w-max animate-scroll-right hover:z-10 relative will-change-transform hover-pause">
+       <template x-for="i in 4">
+        <div class="flex gap-6">
+          <template x-for="t in [...testimonials].reverse()">
+            <div class="group w-[300px] p-6 bg-white rounded-2xl shadow-sm border border-emerald-100/60 flex flex-col h-[230px] justify-between transition-all duration-300 hover:shadow-lg hover:border-emerald-200">
+              <div class="flex gap-0.5">
+                 <template x-for="s in 5"><svg class="h-4 w-4 text-[#118A68]" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.018 3.134a1 1 0 00.95.69h3.297c.969 0 1.371 1.24.588 1.81l-2.668 1.94a1 1 0 00-.364 1.118l1.018 3.134c.3.921-.755 1.688-1.54 1.118l-2.668-1.94a1 1 0 00-1.176 0l-2.668 1.94c-.784.57-1.838-.197-1.539-1.118l1.017-3.134a1 1 0 00-.363-1.118L2.096 8.56c-.784-.57-.38-1.81.588-1.81h3.297a1 1 0 00.95-.69l1.018-3.134z"/></svg></template>
+              </div>
+              <p class="text-[14px] text-gray-600 leading-relaxed line-clamp-4 italic group-hover:text-gray-900 transition-colors" x-text="t.quote"></p>
+              <div class="flex items-center gap-3 pt-3 border-t border-emerald-50/50">
+                <img :src="t.img" :alt="t.name" class="w-10 h-10 rounded-full object-cover ring-2 ring-white shadow-sm" loading="lazy" />
+                <div class="flex flex-col items-start">
+                  <div class="text-xs font-bold text-gray-900" x-text="t.name"></div>
+                  <span class="mt-1 inline-block rounded-md bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-[#118A68] border border-emerald-100" x-text="t.plan"></span>
+                </div>
+              </div>
+            </div>
+          </template>
+        </div>
+      </template>
+    </div>
+  </div>
+
+  <!-- LAYER 2: CENTRAL IPHONE CONTAINER + TRUSTPILOT -->
+  <div class="relative z-20 flex flex-col justify-center items-center min-h-[600px] gap-10">
+    
+    <!-- Phone Frame -->
+    <div class="relative bg-white w-full max-w-[400px] rounded-[3.5rem] border-[14px] border-slate-50 shadow-[0_25px_50px_-12px_rgba(0,0,0,0.15)] overflow-hidden flex flex-col transform transition-transform hover:scale-[1.01] duration-500">
+      
+      <!-- Static Glass Sheen -->
+      <div class="pointer-events-none absolute inset-0 z-50 opacity-30" style="background: linear-gradient(120deg, rgba(255,255,255,0) 30%, rgba(255,255,255,0.8) 50%, rgba(255,255,255,0) 70%);"></div>
+
+      <!-- Dynamic Island -->
+      <div class="absolute top-0 left-0 right-0 z-30 flex justify-center pt-5 pointer-events-none">
+        <div class="h-7 w-28 bg-slate-100 rounded-full shadow-inner"></div>
+      </div>
+
+      <!-- Phone Content -->
+      <div class="flex-1 flex flex-col items-center text-center px-6 pt-16 pb-10 bg-gradient-to-b from-white to-slate-50/50">
+        <h2 class="text-3xl font-extrabold text-[#3B4552] tracking-tight leading-tight">Owners love Vela</h2>
+        
+        <!-- Rating Pill -->
+        <div class="mt-4 inline-flex items-center gap-2 rounded-full border border-emerald-100 bg-white shadow-sm px-4 py-1.5">
+           <span class="flex -space-x-1">
+             <template x-for="i in 5"><svg class="h-4 w-4 text-[#118A68]" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.018 3.134a1 1 0 00.95.69h3.297c.969 0 1.371 1.24.588 1.81l-2.668 1.94a1 1 0 00-.364 1.118l1.018 3.134c.3.921-.755 1.688-1.54 1.118l-2.668-1.94a1 1 0 00-1.176 0l-2.668 1.94c-.784.57-1.838-.197-1.539-1.118l1.017-3.134a1 1 0 00-.363-1.118L2.096 8.56c-.784-.57-.38-1.81.588-1.81h3.297a1 1 0 00.95-.69l1.018-3.134z"/></svg></template>
+           </span>
+           <span class="text-xs font-bold text-[#3B4552]">4.9/5 Rating</span>
+        </div>
+
+        <!-- Avatar Stack -->
+        <div class="mt-4 flex items-center justify-center -space-x-2">
+            <img src="img/testimonials/manuel.png" class="w-8 h-8 rounded-full ring-2 ring-white object-cover shadow-sm" />
+            <img src="img/testimonials/oliver_june.png" class="w-8 h-8 rounded-full ring-2 ring-white object-cover shadow-sm" />
+            <img src="img/testimonials/lotte.png" class="w-8 h-8 rounded-full ring-2 ring-white object-cover shadow-sm" />
+            <div class="w-8 h-8 rounded-full ring-2 ring-white bg-[#118A68] text-white grid place-items-center text-[10px] font-bold shadow-sm z-10 relative">+5</div>
+        </div>
+        <div class="mt-1 text-[10px] text-gray-400 font-medium">Genuine owners, verified accounts</div>
+
+        <!-- Metrics Grid -->
+        <div class="mt-8 grid grid-cols-2 gap-3 w-full">
+          <template x-for="(val, key) in {Cleanings: stats.cleanings, 'Check-ins': stats.checkins, Regions: stats.regions, 'Reply Time': stats.responseMins}">
+            <div class="p-4 rounded-2xl bg-white border border-slate-100 flex flex-col items-center shadow-[0_2px_8px_-3px_rgba(0,0,0,0.05)] hover:scale-[1.02] transition-transform duration-200">
+              <div class="text-2xl font-bold tabular-nums text-[#118A68]" x-text="val"></div>
+              <div class="text-[10px] text-gray-500 font-semibold uppercase tracking-wider mt-1" x-text="key"></div>
+            </div>
+          </template>
+        </div>
+
+        <!-- CTA Button -->
+        <div class="mt-8 w-full group">
+          <a href="/reviews" class="relative overflow-hidden flex w-full items-center justify-center gap-2 rounded-xl bg-[#118A68] text-white px-6 py-4 font-bold shadow-lg shadow-emerald-700/20 hover:shadow-emerald-700/30 transition-all duration-300 transform group-hover:-translate-y-1">
+            <div class="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-in-out skew-x-12"></div>
+            <span class="relative z-10">Read owner stories</span>
+            <svg class="relative z-10 w-4 h-4 transition-transform group-hover:translate-x-1" viewBox="0 0 20 20" fill="currentColor"><path d="M10.293 15.707a1 1 0 010-1.414L12.586 12H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"/></svg>
+          </a>
+          <div class="mt-3 text-xs text-[#3B4552]/50">
+             Trusted in <span class="font-bold text-[#118A68]" x-text="stats.cities"></span> cities
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NEW: Trustpilot Badge (CLEAN - NO CARD) -->
+    <div class="relative group cursor-pointer transition-transform duration-300 hover:scale-110">
+      
+      <!-- Subtle Glow behind elements only on hover -->
+      <div class="absolute -inset-6 bg-white/40 blur-2xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+      
+      <div class="relative flex flex-col items-center gap-3">
+        <!-- Logo (Larger: h-12) -->
+        <img src="img/trust.png" alt="Trustpilot" class="h-12 w-auto object-contain drop-shadow-sm" />
+        
+        <!-- Text (Larger font: text-[17px]) -->
+        <div class="flex items-center gap-3 text-[17px] leading-none text-slate-800 tracking-tight">
+          <span class="font-normal">TrustScore <span class="font-bold tabular-nums" x-text="stats.trustScore">4.8</span></span>
+          <span class="h-4 w-px bg-slate-400/50"></span>
+          <span class="font-normal"><span class="font-bold tabular-nums" x-text="stats.trustReviews">347</span> reviews</span>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+    function velaTestimonials(){
+      return {
+        hasStarted: false,
+        stats: { cleanings: '0', checkins: '0', regions: '0', responseMins: '0', cities: '0', trustScore: '0.0', trustReviews: '0' },
+        testimonials: [
+          { name: 'Manuel R.', plan: 'PREMIUM PLAN', img: 'img/testimonials/manuel.png', quote: '“I’m in Madrid most of the year. Vela handles keyholding, quick WhatsApp replies and small fixes. I arrive to a home that’s clean, secure, and ready.”' },
+          { name: 'Oliver & June', plan: 'PLUS PLAN', img: 'img/testimonials/oliver_june.png', quote: '“Our flight landed after midnight. The beds were made, the house spotless. Vela checked in on WhatsApp earlier and took care of everything.”' },
+          { name: 'Lotte V.', plan: 'ESSENTIAL PLAN', img: 'img/testimonials/lotte.png', quote: '“Running my Málaga Airbnb from the Netherlands is finally calm. Vela manages guest check-ins, cleanings, and maintenance.”' },
+          { name: 'Sarah J.', plan: 'ESSENTIAL PLAN', img: 'placeholder.png', quote: '“Peace of mind is priceless. Vela sends me video updates of the apartment after every storm. Knowing they are checking for humidity is a relief.”' },
+          { name: 'David & Tom', plan: 'PREMIUM PLAN', img: 'placeholder.png', quote: '“We renovated our kitchen while back in the UK. Vela acted as our eyes and ears, managing the contractors and sending daily photo reports. Flawless.”' },
+          { name: 'Elena M.', plan: 'PLUS PLAN', img: 'placeholder.png', quote: '“The gardening team they recommended is fantastic. My villa looks lived-in and vibrant even when I haven’t visited for months. Highly recommend.”' },
+          { name: 'James P.', plan: 'PREMIUM PLAN', img: 'placeholder.png', quote: '“We had a leak at 2 AM. Vela’s emergency line picked up immediately and had a plumber there within the hour. That alone makes the service worth it.”' },
+          { name: 'Sophie L.', plan: 'ESSENTIAL PLAN', img: 'placeholder.png', quote: '“I love the monthly transparency reports. I see exactly what was cleaned, what was spent, and any issues flagged. No hidden costs, just great service.”' }
+        ],
+        init(){
+          const io = new IntersectionObserver((entries) => {
+            if (entries[0].isIntersecting && !this.hasStarted) {
+              this.hasStarted = true;
+              this.startCounters({ cleanings: 1265, checkins: 819, regions: 3, responseMins: 8, cities: 12, trustScore: 4.8, trustReviews: 347 });
+              io.disconnect();
+            }
+          }, { threshold: 0.3 });
+          io.observe(this.$el);
+        },
+        startCounters(targets){
+          const easeOutCubic = t => 1 - Math.pow(1 - t, 3);
+          const animateValue = (key, target) => {
+            const start = performance.now();
+            const tick = (now) => {
+              const t = Math.min((now - start) / 2500, 1);
+              
+              let val;
+              if (key === 'trustScore') {
+                 val = (easeOutCubic(t) * target).toFixed(1); 
+              } else {
+                 val = Math.round(easeOutCubic(t) * target);
+              }
+
+              this.stats[key] = (key === 'responseMins' || key === 'trustScore') ? val : val.toLocaleString();
+              
+              if (t < 1) requestAnimationFrame(tick);
+            };
+            requestAnimationFrame(tick);
+          };
+          Object.entries(targets).forEach(([k, v]) => animateValue(k, v));
+        }
+      }
+    }
+  </script>
+</section>
+
+<!-- ============ REGIONS (data-driven, filters, city search, status-aware CTAs, SEO) ============ -->
+<section id="regions" class="relative isolate" x-data="velaRegions()" x-init="init()">
+  <!-- Brand backdrop -->
+  <div class="absolute inset-0 -z-10 bg-[#118A68]">
+    <div class="absolute inset-0 opacity-[.18] pointer-events-none"
+         style="background:
+           radial-gradient(8px 8px at 40% 30%, rgba(255,255,255,.5) 1px, transparent 2px),
+           radial-gradient(8px 8px at 60% 70%, rgba(255,255,255,.35) 1px, transparent 2px);
+           background-size: 200px 200px, 220px 220px;"></div>
+    <div class="absolute inset-0 bg-[radial-gradient(1000px_400px_at_50%_-10%,rgba(255,255,255,.18),transparent)] animate-sway"></div>
+  </div>
+
+  <div class="max-w-7xl mx-auto px-6 py-14 md:py-20 text-white">
+    <h2 class="text-center font-extrabold tracking-tight leading-tight text-[clamp(1.55rem,6.2vw,2.6rem)] md:text-4xl">
+      Where we’re available
+    </h2>
+    <p class="mt-2 text-center text-white/85 leading-snug text-[clamp(.95rem,3.6vw,1.05rem)] md:text-lg">
+      Island &amp; coast coverage. New homes accepted where marked “Open”.
+    </p>
+
+    <!-- Controls: availability filter + city search -->
+    <div class="mt-6 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+      <!-- Availability pills -->
+      <div class="inline-flex items-center gap-1 rounded-full bg-white/10 backdrop-blur ring-1 ring-white/20 p-1 text-[12.5px]">
+        <button @click="status='all'"
+                class="px-3 py-1.5 rounded-full font-semibold transition"
+                :class="status==='all' ? 'bg-white text-[#118A68] shadow-sm' : 'text-white/85 hover:text-white'">
+          All
+        </button>
+        <button @click="status='open'"
+                class="px-3 py-1.5 rounded-full font-semibold transition"
+                :class="status==='open' ? 'bg-white text-[#118A68] shadow-sm' : 'text-white/85 hover:text-white'">
+          Open now
+        </button>
+        <button @click="status='limited'"
+                class="px-3 py-1.5 rounded-full font-semibold transition"
+                :class="status==='limited' ? 'bg-white text-[#118A68] shadow-sm' : 'text-white/85 hover:text-white'">
+          Limited
+        </button>
+        <button @click="status='waitlist'"
+                class="px-3 py-1.5 rounded-full font-semibold transition"
+                :class="status==='waitlist' ? 'bg-white text-[#118A68] shadow-sm' : 'text-white/85 hover:text-white'">
+          Waitlist
+        </button>
+      </div>
+
+      <!-- City search -->
+      <label class="relative w-full md:w-80">
+        <span class="sr-only">Search city</span>
+        <input
+          x-model="q"
+          @input="onSearch()"
+          type="search"
+          placeholder="Search a city (e.g. Deià, Marbella)"
+          class="w-full rounded-full bg-white/90 text-[#3B4552] placeholder-[#3B4552]/50 px-4 py-2.5 text-sm shadow ring-1 ring-emerald-200 focus:outline-none focus:ring-2 focus:ring-white"
+        />
+        <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[#118A68]/90">
+          <!-- Heroicon: MagnifyingGlass -->
+          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        </span>
+        <p class="mt-1 text-[11px] text-white/85" x-show="q">
+          <span x-text="matchCount"></span> match<span x-text="matchCount===1?'':'es'"></span>
+        </p>
+      </label>
+    </div>
+
+    <!-- Region cards — Mobile: horizontal snap; md+: grid -->
+    <div
+      class="regions-grid mt-8 md:mt-10
+             grid grid-flow-col auto-cols-[85%] gap-4 overflow-x-auto snap-x snap-mandatory -mx-6 px-6 pb-2 hide-scrollbar
+             sm:auto-cols-[70%]
+             md:mx-0 md:px-0 md:pb-0 md:auto-cols-auto md:grid-flow-row md:grid-cols-3 md:gap-6 md:overflow-visible"
+      role="list" aria-label="Regions"
+    >
+      <template x-for="r in filtered()" :key="r.slug">
+        <article class="region-card group relative overflow-hidden rounded-2xl ring-1 ring-white/20 shadow-xl p-0 snap-center" role="listitem">
+          <!-- Background image -->
+          <img class="media-img" :src="r.img" :alt="`${r.name} scenery`" loading="lazy" decoding="async" sizes="(min-width:768px) 33vw, 85vw">
+          <!-- On-brand scrim -->
+          <span aria-hidden="true" class="media-scrim"></span>
+
+          <!-- Card content -->
+          <div class="content p-4 md:p-6">
+            <!-- Status pill -->
+            <div class="absolute right-4 top-4 inline-flex items-center gap-2 text-xs font-semibold">
+              <span class="relative inline-flex h-2.5 w-2.5 rounded-full"
+                    :class="r.status==='open' ? 'bg-emerald-300' : (r.status==='limited' ? 'bg-amber-300' : 'bg-white/60')">
+                <span class="absolute inset-0 rounded-full animate-ping"
+                      :class="r.status==='open' ? 'bg-emerald-200' : (r.status==='limited' ? 'bg-amber-200' : 'bg-white/40')"></span>
+              </span>
+              <span x-text="cap(r.status)"></span>
+            </div>
+
+            <h3 class="text-[1.05rem] md:text-xl font-semibold pr-16" x-text="r.name"></h3>
+            <p class="mt-1 text-sm text-white/85" x-text="r.tagline"></p>
+
+            <!-- Services quick chips (cleaning, check-ins, restocking, maintenance) -->
+            <div class="mt-3 flex flex-wrap gap-1.5 text-[12px] text-white/90">
+              <template x-for="s in r.services" :key="r.slug + s">
+                <span class="inline-flex items-center gap-1 rounded-full bg-white/10 ring-1 ring-white/25 px-2 py-1">
+                  <span x-html="svcIcon(s)"></span><span x-text="s"></span>
+                </span>
+              </template>
+            </div>
+
+            <!-- City chips -->
+            <div class="mt-3 md:mt-4 flex flex-wrap gap-2">
+              <template x-for="city in r.cities" :key="r.slug + city">
+                <span class="chip" :class="highlightCity(city) ? 'ring-2 ring-white/80' : ''" x-text="city"></span>
+              </template>
+            </div>
+
+            <!-- CTA -->
+            <a :href="ctaHref(r)"
+               class="cta"
+               :class="r.status==='waitlist' ? 'bg-white/0 text-white ring-1 ring-white/70 hover:bg-white/5' : ''"
+               x-text="r.status==='waitlist' ? 'Join waitlist' : 'Manage my home here'"></a>
+
+            <!-- Native expand (no JS) -->
+            <details class="mt-3 details">
+              <summary class="summary">
+                <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 10.94l3.71-3.71a.75.75 0 1 1 1.06 1.06l-4.24 4.25a.75.75 0 0 1-1.06 0L5.21 8.29a.75.75 0 0 1 .02-1.08z"/></svg>
+                Region details
+              </summary>
+              <div class="mt-3 grid grid-cols-3 gap-3 text-sm">
+                <div class="detail"><span class="label">Hubs</span><span x-text="r.hubs.join(' • ')"></span></div>
+                <div class="detail"><span class="label">Onboarding</span><span x-text="r.onboarding"></span></div>
+                <div class="detail"><span class="label">Coverage</span><span x-text="r.coverage"></span></div>
+              </div>
+              <p class="mt-2 text-xs text-white/80">Concierge, cleaning, keyholding and restocking available in all listed cities.</p>
+            </details>
+          </div>
+
+          <span aria-hidden="true" class="ring-hover"></span>
+          <span aria-hidden="true" class="sheen"></span>
+        </article>
+      </template>
+    </div>
+
+    <!-- Helper row -->
+    <div class="mt-8 md:mt-10 text-center">
+      <p class="text-[13px] md:text-sm text-white/85">
+        Don’t see your area?
+        <a href="#contact" class="underline decoration-white/60 hover:decoration-white">Join the waitlist</a>
+        and we’ll notify you on launch.
+      </p>
+    </div>
+  </div>
+
+  <!-- JSON-LD injected via Alpine (areas served) -->
+  <script type="application/ld+json" x-ref="schema"></script>
+
+  <script>
+    function velaRegions(){
+      return {
+        status: 'all',   // 'all' | 'open' | 'limited' | 'waitlist'
+        q: '',
+        matchCount: 0,
+        regions: [
+          {
+            slug:'costa-del-sol',
+            name:'Costa del Sol',
+            img:'img/costa.png',
+            status:'open',
+            tagline:'Estepona to Sotogrande with Marbella at the core.',
+            cities:['Estepona','Marbella','Mijas','Benahavís','Sotogrande'],
+            hubs:['Marbella','Estepona'],
+            onboarding:'3–7 days',
+            coverage:'7 days / week',
+            services:['Cleaning','Check-ins','Restocking','Maintenance']
+          },
+          {
+            slug:'mallorca',
+            name:'Mallorca',
+            img:'/img/mallorca.png',
+            status:'limited',
+            tagline:'From Palma to the Tramuntana villages.',
+            cities:['Palma','Sóller','Pollença','Port d’Andratx','Deià'],
+            hubs:['Palma'],
+            onboarding:'5–10 days',
+            coverage:'7 days / week',
+            services:['Cleaning','Check-ins','Restocking','Maintenance']
+          },
+          {
+            slug:'ibiza',
+            name:'Ibiza',
+            img:'img/ibiza.png',
+            status:'open',
+            tagline:'Island-wide with a focus on central & south.',
+            cities:['Ibiza Town','Santa Eulària','Sant Josep','Santa Gertrudis','Sant Antoni'],
+            hubs:['Ibiza Town'],
+            onboarding:'3–7 days',
+            coverage:'7 days / week',
+            services:['Cleaning','Check-ins','Restocking','Maintenance']
+          },
+          // Example of waitlist-ready expansion (kept for future)
+          // { slug:'menorca', name:'Menorca', img:'img/menorca.png', status:'waitlist', tagline:'North & south coasts.', cities:['Maó','Ciutadella'], hubs:['Maó'], onboarding:'—', coverage:'—', services:['Cleaning','Check-ins'] }
+        ],
+
+        init(){
+          this.injectSchema();
+        },
+
+        filtered(){
+          let list = this.regions.slice();
+          if (this.status !== 'all') list = list.filter(r => r.status === this.status);
+
+          if (this.q.trim()){
+            const ql = this.q.trim().toLowerCase();
+            list = list.filter(r =>
+              r.name.toLowerCase().includes(ql) ||
+              r.cities.some(c => c.toLowerCase().includes(ql))
+            );
+          }
+
+          // Update match counter for UX
+          this.matchCount = list.reduce((acc, r) => acc + r.cities.filter(c => this.q && c.toLowerCase().includes(this.q.toLowerCase())).length, 0);
+          return list;
+        },
+
+        onSearch(){ /* debounce not needed here; Alpine is light */ },
+
+        ctaHref(r){
+          return r.status === 'waitlist' ? `/waitlist?region=${encodeURIComponent(r.slug)}` : `/signup?region=${encodeURIComponent(r.slug)}`;
+        },
+
+        cap(s){ return s.charAt(0).toUpperCase() + s.slice(1); },
+
+        highlightCity(city){
+          if (!this.q.trim()) return false;
+          return city.toLowerCase().includes(this.q.trim().toLowerCase());
+        },
+
+        // Minimal inline icons to keep bundle tiny
+        svcIcon(name){
+          const base = 'xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-3.5 w-3.5"';
+          const map = {
+            'Cleaning':'<path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09Z"/>',
+            'Check-ins':'<path stroke-linecap="round" stroke-linejoin="round" d="M8.25 21v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21m0 0h4.5V3.545M12.75 21h7.5V10.75M2.25 21h1.5"/>',
+            'Restocking':'<path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75"/>',
+            'Maintenance':'<path stroke-linecap="round" stroke-linejoin="round" d="M11.42 15.17 17.25 21A2.652 2.652 0 0 0 21 17.25l-5.877-5.877M4.867 19.125h.008v.008h-.008v-.008Z"/>'
+          };
+          return `<svg ${base} aria-hidden="true">${map[name]||''}</svg>`;
+        },
+
+        // SEO: areaServed JSON-LD
+        injectSchema(){
+          const places = this.regions.map(r => ({
+            "@type":"Place",
+            "name": r.name,
+            "address": { "@type":"PostalAddress", "addressRegion": r.name, "addressCountry":"ES" }
+          }));
+          const svc = {
+            "@context":"https://schema.org",
+            "@type":"Service",
+            "name":"Vela Property Care",
+            "areaServed": places
+          };
+          const el = this.$refs.schema;
+          if (el) el.textContent = JSON.stringify(svc);
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Smooth drifting highlight */
+    @keyframes sway { 0%{ transform: translateY(-8px) } 100%{ transform: translateY(8px) } }
+    .animate-sway{ animation: sway 16s ease-in-out infinite alternate; }
+
+    /* Hide mobile scrollbar for carousel */
+    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    .hide-scrollbar::-webkit-scrollbar { display: none; }
+
+    /* Media-backed card layers */
+    .region-card{ background: transparent; }
+    .media-img{
+      position:absolute; inset:0; width:100%; height:100%;
+      object-fit:cover; object-position:center;
+      filter: saturate(1.05) contrast(1.05);
+      transform: translateZ(0);
+    }
+    .media-scrim{
+      position:absolute; inset:0; pointer-events:none;
+      background:
+        linear-gradient(180deg, rgba(0,0,0,.42), rgba(0,0,0,.30) 45%, rgba(0,0,0,.28));
+      box-shadow: inset 0 0 0 9999px rgba(255,255,255,.02);
+      backdrop-filter: saturate(1.05);
+    }
+    .content{ position:relative; z-index:10; }
+
+    /* Chips + CTA */
+    .chip{
+      display:inline-block;
+      padding:.375rem .75rem; /* py-1.5 px-3 */
+      border-radius:9999px;
+      background:rgba(255,255,255,.18);
+      border:1px solid rgba(255,255,255,.28);
+      font-size:.875rem; line-height:1.25rem;
+      transition: background .2s ease, border-color .2s ease, box-shadow .2s ease;
+      backdrop-filter:saturate(1.1);
+    }
+    .chip:hover{ background:rgba(255,255,255,.22); border-color:rgba(255,255,255,.35); }
+
+    .cta{
+      display:inline-flex; width:100%; align-items:center; justify-content:center;
+      border-radius:.5rem; background:#fff; color:#118A68; font-weight:600;
+      padding:.625rem 1rem; /* py-2.5 px-4 */
+      box-shadow:0 1px 2px rgba(0,0,0,.05);
+      transition: opacity .2s ease, background .2s ease, color .2s ease;
+      margin-top:1rem;
+    }
+    .cta:hover{ opacity:.95; }
+
+    .summary{
+      display:inline-flex; align-items:center; gap:.5rem; cursor:pointer;
+      font-size:.875rem; line-height:1.25rem; color:rgba(255,255,255,.85);
+      transition: color .2s ease;
+      list-style:none;
+    }
+    .summary:hover{ color:#fff; }
+    .summary::-webkit-details-marker{ display:none; }
+
+    /* Card hover sheen + subtle animated border */
+    .ring-hover{ position:absolute; inset:0; border-radius:1rem; pointer-events:none; transition:opacity .3s; z-index:20; }
+    .region-card:hover .ring-hover{ outline:1px solid rgba(255,255,255,.25); outline-offset:-1px; }
+
+    .sheen{
+      position:absolute; inset:-1px; border-radius:1rem; pointer-events:none; mix-blend:screen; z-index:20;
+      background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,.14) 45%, transparent 60%);
+      transform: translateX(-60%); transition: transform .6s ease;
+    }
+    .region-card:hover .sheen{ transform: translateX(60%); }
+
+    /* Detail rows inside <details> */
+    .detail{ display:flex; flex-direction:column; gap:.25rem; }
+    .label{ font-weight:600; color:#fff; opacity:.9; }
+
+    /* Entrance animation (CSS-only) */
+    @keyframes fadeUp { from { opacity:0; transform: translateY(16px) scale(.98); } to { opacity:1; transform: translateY(0) scale(1); } }
+    .regions-grid > .region-card{ opacity:0; animation: fadeUp .7s ease both; }
+    .regions-grid > .region-card:nth-child(1){ animation-delay:.05s; }
+    .regions-grid > .region-card:nth-child(2){ animation-delay;.15s; } /* typo fixed below */
+    .regions-grid > .region-card:nth-child(3){ animation-delay:.25s; }
+
+    /* Fix the minor typo above to ensure consistent animation delay */
+    .regions-grid > .region-card:nth-child(2){ animation-delay:.15s; }
+
+    @media (prefers-reduced-motion: reduce){
+      .animate-sway, .sheen{ animation:none; transition:none; }
+      .regions-grid > .region-card{ opacity:1; animation:none; }
+    }
+  </style>
+</section>
+
+
+
+
+<!-- ============ CONTACT / CTA (Quiet luxury) ============ -->
+<section id="contact" class="relative isolate overflow-hidden">
+  <!-- soft stone gradient -->
+  <div class="absolute inset-0 -z-10 bg-gradient-to-b from-slate-50 via-white to-white"></div>
+
+  <div class="max-w-4xl mx-auto px-6 py-20">
+    <div class="relative rounded-3xl bg-white/80 backdrop-blur-xl ring-1 ring-slate-200 shadow-xl p-8 md:p-12 overflow-hidden">
+      <!-- subtle animated glow ring -->
+      <span aria-hidden="true" class="contact-glow"></span>
+
+      <div class="text-center">
+        <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900">
+          Ready for effortless ownership?
+        </h2>
+        <p class="mt-3 text-[1.05rem] text-slate-600">
+          Create your account or book a quick walkthrough with our team.
+        </p>
+
+        <!-- CTAs -->
+        <div class="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
+          <a href="/signup"
+             class="inline-block font-semibold px-8 py-3 rounded-lg bg-[#118A68] text-white shadow hover:opacity-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#118A68]">
+            Create account
+          </a>
+          <!-- Prefilled email for walkthrough booking -->
+          <a href="mailto:hello@vela.es?subject=Walkthrough%20request&body=Hi%20Vela%2C%0D%0AI'd%20like%20a%2015-min%20walkthrough.%0D%0AName%3A%20%0D%0AProperty%20location%3A%20%0D%0APhone%20(optional)%3A%20"
+             class="inline-block font-semibold px-8 py-3 rounded-lg border border-slate-300 text-slate-800 bg-white hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-300">
+            Book a walkthrough
+          </a>
+        </div>
+
+        <!-- trust line + quick actions -->
+        <div class="mt-6 flex flex-wrap items-center justify-center gap-4 text-sm text-slate-600">
+          <span class="inline-flex items-center gap-2">
+            <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M16.707 5.293a1 1 0 0 1 0 1.414l-7.5 7.5a1 1 0 0 1-1.414 0l-3-3a1 1 0 1 1 1.414-1.414L8.5 12.086l6.793-6.793z"/></svg>
+            No lock-in
+          </span>
+          <span aria-hidden="true" class="text-slate-300">•</span>
+          <span>Replies within 24h</span>
+          <span aria-hidden="true" class="text-slate-300">•</span>
+          <span>Stripe-secured billing</span>
+        </div>
+
+        <!-- email helpers -->
+        <div class="mt-4 text-xs text-slate-500">
+          Prefer email? <a href="mailto:hello@vela.es" class="underline decoration-slate-300 hover:decoration-slate-500">hello@vela.es</a>
+          <button id="copyVelaEmail" type="button" class="ml-1 inline-flex items-center gap-1 px-2 py-1 rounded border border-slate-200 text-slate-600 bg-white hover:bg-slate-50">
+            <svg class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M7 3a2 2 0 0 0-2 2v8h2V5h6V3H7zm3 4a2 2 0 0 0-2 2v8h8a2 2 0 0 0 2-2V7h-8zm6 8H10V9h6v6z"/></svg>
+            Copy
+          </button>
+        </div>
+
+        <!-- toast -->
+        <div id="contactToast" class="sr-only" role="status" aria-live="polite"></div>
+        <div id="contactToastVis" class="hidden mt-3 inline-block rounded-lg bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200 px-3 py-1.5 text-sm">Copied</div>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    /* animated glow ring behind the card */
+    .contact-glow{
+      position:absolute; inset:-2px; border-radius:1.5rem; pointer-events:none;
+      background:
+        radial-gradient(1200px 400px at 50% -20%, rgba(17,138,104,.10), transparent 60%),
+        conic-gradient(from 180deg at 50% 50%, rgba(17,138,104,.15), transparent 40%, rgba(17,138,104,.15));
+      filter: blur(10px);
+      animation: contactFloat 16s ease-in-out infinite alternate;
+      z-index:0;
+    }
+    @keyframes contactFloat{ 0%{ transform: translateY(-6px)} 100%{ transform: translateY(6px)} }
+
+    @media (prefers-reduced-motion: reduce){
+      .contact-glow{ animation:none }
+    }
+  </style>
+
+  <script>
+    // tiny helper: copy email + toast
+    (function(){
+      const btn = document.getElementById('copyVelaEmail');
+      if(!btn) return;
+      const email = 'hello@vela.es';
+      const vis = document.getElementById('contactToastVis');
+      const sr  = document.getElementById('contactToast');
+      btn.addEventListener('click', async () => {
+        try{
+          await navigator.clipboard.writeText(email);
+          sr.textContent = 'Email copied to clipboard';
+          vis.classList.remove('hidden');
+          setTimeout(()=> vis.classList.add('hidden'), 1800);
+        }catch(e){
+          sr.textContent = 'Copy failed';
+        }
+      });
+    })();
+  </script>
+</section>
+
+
+
+<!-- ============ FOOTER (Quiet luxury) ============ -->
+<footer class="relative bg-white border-t border-slate-200">
+  <div class="max-w-7xl mx-auto px-6 py-12">
+    <!-- Top row: brand + micro tagline + optional CTA -->
+    <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between pb-8 border-b border-slate-200/70">
+      <div class="flex items-center gap-3">
+        <a href="#home" class="brand-hover text-slate-900 font-extrabold tracking-tight text-xl">Vela</a>
+        <span class="hidden md:inline text-slate-500">We handle homes, you handle sunsets.</span>
+      </div>
+      <div class="flex items-center gap-2 text-xs text-slate-500">
+        <span class="inline-flex items-center gap-1">
+          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a5 5 0 00-5 5v3H6a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2v-8a2 2 0 00-2-2h-1V7a5 5 0 00-5-5zm-3 8V7a3 3 0 116 0v3H9z"/></svg>
+          Payments powered by Stripe
+        </span>
+        <span aria-hidden="true" class="mx-2 select-none text-slate-300">•</span>
+        <span>Vetted local teams</span>
+        <span aria-hidden="true" class="mx-2 select-none text-slate-300">•</span>
+        <span>Photo receipts every visit</span>
+      </div>
+    </div>
+
+    <!-- Middle: navigation -->
+    <div class="grid gap-8 py-8 md:grid-cols-4 text-sm">
+      <nav aria-label="Product" class="space-y-2">
+        <h4 class="font-semibold text-slate-900">Product</h4>
+        <ul class="space-y-1">
+          <li><a href="#product" class="text-slate-600 hover:text-[#118A68]">Overview</a></li>
+          <li><a href="#services" class="text-slate-600 hover:text-[#118A68]">Services</a></li>
+          <li><a href="#pricing" class="text-slate-600 hover:text-[#118A68]">Pricing</a></li>
+          <li><a href="#regions" class="text-slate-600 hover:text-[#118A68]">Regions</a></li>
+        </ul>
+      </nav>
+
+      <nav aria-label="Company" class="space-y-2">
+        <h4 class="font-semibold text-slate-900">Company</h4>
+        <ul class="space-y-1">
+          <li><a href="#testimonials" class="text-slate-600 hover:text-[#118A68]">Testimonials</a></li>
+          <li><a href="#contact" class="text-slate-600 hover:text-[#118A68]">Contact</a></li>
+        </ul>
+      </nav>
+
+      <div class="space-y-2">
+        <h4 class="font-semibold text-slate-900">Contact</h4>
+        <ul class="space-y-1 text-slate-600">
+          <li>
+            <a href="mailto:hello@vela.es" class="hover:text-[#118A68]">hello@vela.es</a>
+            <button id="copyFooterEmail" type="button" class="ml-1 inline-flex items-center gap-1 text-xs px-1.5 py-0.5 rounded border border-slate-200 text-slate-600 bg-white hover:bg-slate-50">
+              <svg class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor"><path d="M7 3a2 2 0 0 0-2 2v8h2V5h6V3H7zm3 4a2 2 0 0 0-2 2v8h8a2 2 0 0 0 2-2V7h-8zm6 8H10V9h6v6z"/></svg>
+              Copy
+            </button>
+          </li>
+          <li><a href="tel:+34600000000" class="hover:text-[#118A68]">+34 600 000 000</a></li>
+          <li>Estepona, Spain</li>
+        </ul>
+      </div>
+
+      <nav aria-label="Legal" class="space-y-2">
+        <h4 class="font-semibold text-slate-900">Legal</h4>
+        <ul class="space-y-1">
+          <li><a href="/privacy" class="text-slate-600 hover:text-[#118A68]">Privacy</a></li>
+          <li><a href="/terms" class="text-slate-600 hover:text-[#118A68]">Terms</a></li>
+        </ul>
+      </nav>
+    </div>
+
+    <!-- Bottom: meta -->
+    <div class="pt-6 border-t border-slate-200/70 text-xs text-slate-500 flex flex-col-reverse gap-4 md:flex-row md:items-center md:justify-between">
+      <p>© <span id="year"></span> Vela Group. All rights reserved.</p>
+
+      <div id="footerToast" class="hidden text-emerald-700 bg-emerald-50 ring-1 ring-emerald-200 px-2 py-1 rounded">Email copied</div>
+
+      <a href="#home" aria-label="Back to top" class="inline-flex items-center gap-1 hover:text-[#118A68]">
+        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 5l7 7-1.4 1.4L13 10.8V19h-2v-8.2l-4.6 2.6L5 12l7-7z"/></svg>
+        Back to top
+      </a>
+    </div>
+  </div>
+
+  <!-- Local styles for brand-hover underline/green glow -->
+  <style>
+    :root { --brand:#118A68; }
+    .brand-hover{
+      transition: color .18s ease, text-shadow .18s ease, background-size .18s ease;
+      background-image: linear-gradient(var(--brand), var(--brand));
+      background-repeat: no-repeat;
+      background-size: 0% 2px;
+      background-position: 0 100%;
+    }
+    .brand-hover:hover,
+    .brand-hover:focus-visible{
+      color: var(--brand);
+      text-shadow: 0 0 .55rem rgba(17,138,104,.35);
+      background-size: 100% 2px;
+      outline: none;
+    }
+    @media (prefers-reduced-motion: reduce){
+      .brand-hover{ transition: none; }
+    }
+  </style>
+</footer>
+
+<script>
+  // Year + copy-email micro-interaction (accessible)
+  (function(){
+    document.getElementById('year').textContent = new Date().getFullYear();
+    const copyBtn = document.getElementById('copyFooterEmail');
+    const toast = document.getElementById('footerToast');
+    if(copyBtn){
+      copyBtn.addEventListener('click', async () => {
+        try{
+          await navigator.clipboard.writeText('hello@vela.es');
+          toast.classList.remove('hidden');
+          setTimeout(()=> toast.classList.add('hidden'), 1600);
+        }catch(e){}
+      });
+    }
+  })();
+</script>
+<!-- ============ VELA COOKIE CONSENT (Reference Layout + Brand Style) ============ -->
+<div
+  x-data="{
+    show: false,
+    view: 'intro', // 'intro' | 'settings'
+    analytics: false,
+    marketing: false,
+    init() {
+      // Check if consent is already stored
+      if (!localStorage.getItem('vela_cookie_consent')) {
+        setTimeout(() => this.show = true, 500);
+      }
+    },
+    acceptNecessary() {
+      localStorage.setItem('vela_cookie_consent', JSON.stringify({ level: 'necessary', analytics: false, marketing: false }));
+      this.close();
+    },
+    acceptSelection() {
+       localStorage.setItem('vela_cookie_consent', JSON.stringify({ level: 'custom', analytics: this.analytics, marketing: this.marketing }));
+       this.close();
+    },
+    acceptAll() {
+      this.analytics = true;
+      this.marketing = true;
+      localStorage.setItem('vela_cookie_consent', JSON.stringify({ level: 'all', analytics: true, marketing: true }));
+      this.close();
+    },
+    close() {
+      this.show = false;
+    }
+  }"
+  x-init="init"
+  x-show="show"
+  x-cloak
+  class="relative z-[100]"
+  aria-labelledby="cookie-title"
+  role="dialog"
+  aria-modal="true"
+>
+  
+  <!-- BACKDROP (Blur & Block) -->
+  <div 
+    x-show="show"
+    x-transition:enter="transition ease-out duration-500"
+    x-transition:enter-start="opacity-0"
+    x-transition:enter-end="opacity-100"
+    x-transition:leave="transition ease-in duration-300"
+    x-transition:leave-start="opacity-100"
+    x-transition:leave-end="opacity-0"
+    class="fixed inset-0 bg-slate-900/40 backdrop-blur-md transition-opacity"
+  ></div>
+
+  <!-- MODAL CONTAINER -->
+  <div class="fixed inset-0 z-10 overflow-y-auto">
+    <div class="flex min-h-full items-center justify-center p-4">
+      
+      <!-- MAIN CARD -->
+      <div 
+        x-show="show"
+        x-transition:enter="transition ease-[cubic-bezier(0.34,1.56,0.64,1)] duration-500"
+        x-transition:enter-start="opacity-0 translate-y-10 scale-95"
+        x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+        x-transition:leave="transition ease-in duration-200"
+        x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+        x-transition:leave-end="opacity-0 translate-y-10 scale-95"
+        class="relative w-full max-w-[500px] bg-white rounded-[2.5rem] shadow-2xl overflow-hidden ring-1 ring-slate-100"
+      >
+        
+        <!-- VIEW 1: INTRO (Centered) -->
+        <div x-show="view === 'intro'" x-transition:enter="transition ease-out duration-300 delay-100" x-transition:enter-start="opacity-0 translate-x-10" x-transition:enter-end="opacity-100 translate-x-0" class="p-10 flex flex-col items-center text-center">
+          
+          <h2 class="text-2xl font-bold text-[#3B4552]">Do you allow us to use cookies?</h2>
+          
+          <p class="mt-4 text-[15px] leading-relaxed text-slate-500">
+            We use cookies to learn where you struggle when you're navigating our website and fix them for your future visit.
+          </p>
+
+          <div class="mt-8 flex items-center gap-4 w-full">
+            <button 
+              @click="view = 'settings'" 
+              class="flex-1 py-3.5 px-4 rounded-xl border border-slate-300 text-sm font-bold text-slate-700 hover:bg-slate-50 hover:border-slate-400 transition"
+            >
+              Customize
+            </button>
+            
+            <button 
+              @click="acceptAll" 
+              class="relative group flex-1 overflow-hidden py-3.5 px-4 rounded-xl text-sm font-bold text-white bg-[#118A68] shadow-lg shadow-emerald-700/20 hover:shadow-emerald-700/30 transition-all hover:-translate-y-0.5"
+            >
+              <!-- Sheen Effect -->
+              <div class="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-500 ease-in-out skew-x-12"></div>
+              <span class="relative">Allow all</span>
+            </button>
+          </div>
+
+          <button @click="acceptNecessary" class="mt-6 text-xs font-medium text-slate-400 hover:text-slate-600 transition underline-offset-4 hover:underline">
+            Decline all
+          </button>
+        </div>
+
+        <!-- VIEW 2: SETTINGS (Grid Layout) -->
+        <div x-show="view === 'settings'" x-cloak x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 -translate-x-10" x-transition:enter-end="opacity-100 translate-x-0" class="p-8 h-full flex flex-col">
+          
+          <!-- Header -->
+          <div class="flex items-center gap-4 mb-8">
+            <button @click="view = 'intro'" class="p-2 -ml-2 rounded-full hover:bg-slate-100 text-slate-500 hover:text-slate-800 transition">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            </button>
+            <h3 class="text-xl font-bold text-[#3B4552]">Customize your preferences</h3>
+          </div>
+
+          <!-- Toggles Grid -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-6">
+            
+            <!-- Necessary (Disabled/On) -->
+            <div class="flex items-center justify-between">
+              <span class="text-sm font-semibold text-slate-700">Necessary</span>
+              <div class="relative w-12 h-7 bg-emerald-200/50 rounded-full cursor-not-allowed">
+                <div class="absolute top-1 right-1 bg-[#118A68] w-5 h-5 rounded-full shadow-sm"></div>
+              </div>
+            </div>
+
+            <!-- Statistics -->
+            <div class="flex items-center justify-between cursor-pointer group" @click="analytics = !analytics">
+              <span class="text-sm font-semibold text-slate-700 group-hover:text-[#118A68] transition">Statistics</span>
+              <div class="relative w-12 h-7 rounded-full transition-colors duration-300" :class="analytics ? 'bg-[#118A68]' : 'bg-slate-200'">
+                <div class="absolute top-1 left-1 bg-white w-5 h-5 rounded-full shadow-sm transition-transform duration-300" :class="analytics ? 'translate-x-5' : 'translate-x-0'"></div>
+              </div>
+            </div>
+
+            <!-- Functionality (Visual dummy or tied to existing) -->
+            <div class="flex items-center justify-between opacity-50 cursor-not-allowed" title="Always active for Vela">
+              <span class="text-sm font-semibold text-slate-700">Functionality</span>
+              <div class="relative w-12 h-7 bg-slate-200 rounded-full">
+                <div class="absolute top-1 left-1 bg-white w-5 h-5 rounded-full shadow-sm"></div>
+              </div>
+            </div>
+
+            <!-- Marketing -->
+            <div class="flex items-center justify-between cursor-pointer group" @click="marketing = !marketing">
+              <span class="text-sm font-semibold text-slate-700 group-hover:text-[#118A68] transition">Marketing</span>
+              <div class="relative w-12 h-7 rounded-full transition-colors duration-300" :class="marketing ? 'bg-[#118A68]' : 'bg-slate-200'">
+                <div class="absolute top-1 left-1 bg-white w-5 h-5 rounded-full shadow-sm transition-transform duration-300" :class="marketing ? 'translate-x-5' : 'translate-x-0'"></div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Footer -->
+          <div class="mt-10 flex items-center justify-between pt-6 border-t border-slate-100">
+            <button class="text-xs font-semibold text-slate-400 hover:text-slate-600 transition">
+              View details
+            </button>
+            <button 
+              @click="acceptSelection" 
+              class="px-6 py-2.5 rounded-xl text-sm font-bold text-white bg-[#118A68] shadow-lg shadow-emerald-700/20 hover:shadow-emerald-700/30 hover:-translate-y-0.5 transition-all"
+            >
+              Save and submit
+            </button>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+</html>

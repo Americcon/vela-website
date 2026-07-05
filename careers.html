@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth antialiased">
+<head>
+  <!-- ========== HEAD (Global) ========== -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Careers — Vela</title>
+  <meta name="description" content="Build calm into homeownership. Join Vela to craft premium property and concierge services across the Mediterranean."/>
+  <link rel="canonical" href="https://vela.es/careers"/>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+  <!-- Global tokens & tiny utilities (sections below have their own scoped styles too) -->
+  <style>
+    :root{
+      --brand:#118A68;   /* Vela green */
+      --ink:#3B4552;     /* Dark gray */
+      --tint:#E6F4EF;    /* Soft mint */
+    }
+    .text-brand{color:var(--brand)}
+    .bg-brand{background:var(--brand)}
+    .ring-brand{--tw-ring-color:var(--brand)}
+    :focus-visible{outline:2px solid var(--brand); outline-offset:3px}
+
+    /* Brand underline just for the Vela word */
+    .brand-hover{
+      transition: color .18s ease, text-shadow .18s ease, background-size .18s ease;
+      background-image: linear-gradient(var(--brand), var(--brand)); background-repeat:no-repeat;
+      background-size:0% 2px; background-position:0 100%;
+    }
+    .brand-hover:hover,.brand-hover:focus-visible{
+      color:var(--brand); text-shadow:0 0 .55rem rgba(17,138,104,.35); background-size:100% 2px; outline:none;
+    }
+    [x-cloak]{display:none!important}
+  </style>
+</head>
+
+<body class="text-[15px] text-slate-700 selection:bg-[color:var(--tint)] selection:text-brand">
+
+<!-- ======= NAV HEADER (text-only over hero) ======= -->
+<header id="vela-nav" class="fixed top-0 inset-x-0 z-40">
+  <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+    <!-- Brand: Vela (hover green) + careers (white, non-bold) -->
+    <div class="flex items-baseline gap-2">
+      <a href="/" class="brand-hover text-white font-extrabold tracking-tight text-xl md:text-2xl">Vela</a>
+      <span class="text-white/90 font-normal tracking-tight text-lg md:text-xl">careers</span>
+    </div>
+
+    <!-- Nav: all white text (no green on hover) -->
+    <nav aria-label="Primary" class="hidden md:flex items-center gap-7 text-[0.95rem] text-white/90 font-semibold">
+      <a href="/#product" class="hover:text-white">Product</a>
+      <a href="/#pricing" class="hover:text-white">Pricing</a>
+      <a href="/#regions" class="hover:text-white">Regions</a>
+      <a href="#openings" class="hover:text-white">Jobs</a>
+    </nav>
+
+    <!-- CTAs: white text only, subtle ring -->
+    <div class="hidden md:flex items-center gap-3">
+      <a href="/signup" class="px-3 py-1.5 rounded text-white font-medium ring-1 ring-white/35 hover:bg-white/10">Log in</a>
+      <a href="#openings" class="px-4 py-2 rounded font-semibold text-white ring-1 ring-white/35 hover:bg-white/10">View openings</a>
+    </div>
+
+    <!-- Mobile CTA -->
+    <a href="#openings" class="md:hidden inline-flex px-3 py-1.5 rounded text-white font-semibold ring-1 ring-white/35">Openings</a>
+  </div>
+
+  <!-- Local style so only "Vela" hovers green; no background bar added -->
+  <style>
+    :root { --brand:#118A68; }
+    .brand-hover{
+      transition: color .18s ease, text-shadow .18s ease, background-size .18s ease;
+      background-image: linear-gradient(var(--brand), var(--brand));
+      background-repeat: no-repeat;
+      background-size: 0% 2px;
+      background-position: 0 100%;
+    }
+    .brand-hover:hover,
+    .brand-hover:focus-visible{
+      color: var(--brand);
+      text-shadow: 0 0 .55rem rgba(17,138,104,.35);
+      background-size: 100% 2px;
+      outline: none;
+    }
+    @media (prefers-reduced-motion: reduce){
+      .brand-hover{ transition: none; }
+    }
+  </style>
+</header>
+
+<!-- =========================================================
+= HERO (Drop-in, self-contained)                             =
+= - Quiet luxury hero w/ Ken Burns, reduced-motion safe      =
+========================================================= -->
+<section id="hero" class="relative isolate min-h-[88svh] overflow-hidden">
+  <!-- Background image + contrast overlay -->
+  <img src="img/crew2.png" alt="" class="hero-image absolute inset-0 h-full w-full object-cover pointer-events-none" fetchpriority="high" decoding="async"/>
+  <div class="absolute inset-0 bg-black/45 mix-blend-multiply"></div>
+
+  <!-- Copy -->
+  <div class="relative z-10 max-w-7xl mx-auto px-6 pt-32 pb-16 lg:pt-40">
+    <div class="max-w-3xl text-white">
+      <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight drop-shadow">
+        Build calm into homeownership.
+      </h1>
+      <p class="mt-4 text-base sm:text-lg md:text-xl drop-shadow">
+        We’re a hospitality-tech team caring for second homes across the Mediterranean—cleanings, restocking, guest support and more. Join us to do thoughtful work that owners feel every time they arrive.
+      </p>
+      <div class="mt-8 flex flex-col sm:flex-row gap-3">
+        <a href="#openings" class="inline-block rounded-lg bg-white px-7 py-3 font-semibold text-brand shadow hover:opacity-95">View open roles</a>
+        <a href="#culture" class="inline-block rounded-lg bg-white/10 px-7 py-3 font-semibold text-white ring-1 ring-white/30 hover:bg-white/20">Life at Vela</a>
+      </div>
+      <p class="mt-6 text-sm text-white/85">Remote-friendly. Local teams in Ibiza, Mallorca, and the Costa del Sol.</p>
+    </div>
+  </div>
+
+  <!-- Local styles for motion -->
+  <style>
+    .hero-image{animation:kenburns 22s ease-in-out alternate infinite}
+    @keyframes kenburns {0%{transform:scale(1) translateY(0)}100%{transform:scale(1.06) translateY(-3%)}}
+    @media (prefers-reduced-motion: reduce){ .hero-image{animation:none} }
+  </style>
+</section>
+
+<!-- =========================================================
+= CULTURE (Denser mobile, swipeable pillars, compact perks)  =
+========================================================= -->
+<section id="culture" class="relative isolate overflow-hidden bg-gradient-to-b from-white to-[#F4FBF9]">
+  <!-- soft brand accents -->
+  <div class="pointer-events-none absolute -top-32 -left-32 w-[26rem] h-[26rem] rounded-full bg-emerald-200/30 blur-3xl"></div>
+  <div class="pointer-events-none absolute -bottom-24 -right-24 w-[22rem] h-[22rem] rounded-full bg-emerald-300/25 blur-3xl"></div>
+
+  <div class="max-w-7xl mx-auto px-6 py-14 md:py-20">
+    <!-- Header -->
+    <div class="max-w-3xl mx-auto text-center">
+      <h2 class="font-extrabold tracking-tight leading-tight text-[clamp(1.6rem,6.2vw,2.5rem)] md:text-4xl text-[#3B4552]">
+        Life at Vela
+      </h2>
+      <p class="mt-2 text-[clamp(.95rem,3.6vw,1.05rem)] text-slate-600 leading-snug">
+        Hospitality heart. Product craft. Quiet excellence.
+      </p>
+    </div>
+
+    <!-- Pillars (mobile: horizontal snap carousel with peek; md+: 3-col grid) -->
+    <div
+      class="mt-8 md:mt-10
+             grid grid-flow-col auto-cols-[88%] sm:auto-cols-[70%] gap-4 overflow-x-auto snap-x snap-mandatory -mx-6 px-6 pb-2 hide-scrollbar
+             md:mx-0 md:px-0 md:pb-0 md:auto-cols-auto md:grid-flow-row md:grid-cols-3 md:gap-6 md:overflow-visible"
+    >
+      <!-- Pillar 1 -->
+      <article class="group snap-center rounded-2xl bg-white/80 backdrop-blur ring-1 ring-slate-200 shadow p-4 md:p-6 min-h-[9.5rem] transition-all duration-200 hover:shadow-md hover:-translate-y-[2px] hover:ring-[#118A68]/30">
+        <div class="flex items-center gap-3">
+          <div class="h-9 w-9 grid place-items-center rounded-lg bg-emerald-50 ring-1 ring-emerald-200 text-[#118A68]">
+            <!-- door icon -->
+            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none"><path d="M6 20h12V4H8a2 2 0 0 0-2 2v14z" stroke="currentColor" stroke-width="1.75"/><path d="M14 12h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          </div>
+          <h3 class="text-[1.05rem] md:text-lg font-semibold text-[#3B4552]">Hospitality first</h3>
+        </div>
+        <div class="mt-3 md:mt-4 flex flex-wrap gap-2">
+          <span class="chip chip-sm">Effortless arrivals</span>
+          <span class="chip chip-sm">Photo proof</span>
+          <span class="chip chip-sm">Receipts in app</span>
+        </div>
+      </article>
+
+      <!-- Pillar 2 -->
+      <article class="group snap-center rounded-2xl bg-white/80 backdrop-blur ring-1 ring-slate-200 shadow p-4 md:p-6 min-h-[9.5rem] transition-all duration-200 hover:shadow-md hover:-translate-y-[2px] hover:ring-[#118A68]/30">
+        <div class="flex items-center gap-3">
+          <div class="h-9 w-9 grid place-items-center rounded-lg bg-emerald-50 ring-1 ring-emerald-200 text-[#118A68]">
+            <!-- checklist icon -->
+            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none"><rect x="4" y="4" width="16" height="16" rx="2" stroke="currentColor" stroke-width="1.75"/><path d="M8 9h8M8 13h8M8 17h5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/><path d="M7 9l1 1 2-2" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg>
+          </div>
+          <h3 class="text-[1.05rem] md:text-lg font-semibold text-[#3B4552]">Simple systems</h3>
+        </div>
+        <div class="mt-3 md:mt-4 flex flex-wrap gap-2">
+          <span class="chip chip-sm">Clear checklists</span>
+          <span class="chip chip-sm">Clean timelines</span>
+          <span class="chip chip-sm">No busywork</span>
+        </div>
+      </article>
+
+      <!-- Pillar 3 -->
+      <article class="group snap-center rounded-2xl bg-white/80 backdrop-blur ring-1 ring-slate-200 shadow p-4 md:p-6 min-h-[9.5rem] transition-all duration-200 hover:shadow-md hover:-translate-y-[2px] hover:ring-[#118A68]/30">
+        <div class="flex items-center gap-3">
+          <div class="h-9 w-9 grid place-items-center rounded-lg bg-emerald-50 ring-1 ring-emerald-200 text-[#118A68]">
+            <!-- compass icon -->
+            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.75"/><path d="M15 9l-2 5-5 2 2-5 5-2z" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round"/></svg>
+          </div>
+          <h3 class="text-[1.05rem] md:text-lg font-semibold text-[#3B4552]">Trust & autonomy</h3>
+        </div>
+        <div class="mt-3 md:mt-4 flex flex-wrap gap-2">
+          <span class="chip chip-sm">Own outcomes</span>
+          <span class="chip chip-sm">Ask early</span>
+          <span class="chip chip-sm">Follow through</span>
+        </div>
+      </article>
+    </div>
+
+    <!-- Compact perks band (denser on mobile) -->
+    <div class="mt-8 md:mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <div class="perk p-3 md:p-4">
+        <span class="dot"></span>
+        <div>
+          <div class="perk-title">Fair pay</div>
+          <div class="perk-sub">Clear levels & growth</div>
+        </div>
+      </div>
+      <div class="perk p-3 md:p-4">
+        <span class="dot"></span>
+        <div>
+          <div class="perk-title">Flex hours</div>
+          <div class="perk-sub">Real time off</div>
+        </div>
+      </div>
+      <div class="perk p-3 md:p-4">
+        <span class="dot"></span>
+        <div>
+          <div class="perk-title">Learn</div>
+          <div class="perk-sub">Courses & language</div>
+        </div>
+      </div>
+      <div class="perk p-3 md:p-4">
+        <span class="dot"></span>
+        <div>
+          <div class="perk-title">Where we are</div>
+          <div class="perk-sub">Ibiza • Mallorca • Costa del Sol • Remote (EU/UK)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CTA -->
+    <div class="mt-10 md:mt-12 text-center">
+      <a href="#openings" class="inline-flex items-center gap-2 rounded-full bg-[#118A68] text-white px-5 py-2.5 font-semibold shadow hover:shadow-lg hover:translate-y-[-1px] transition">
+        See open roles
+        <svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor"><path d="M10.293 15.707a1 1 0 010-1.414L12.586 12H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <!-- Local helpers -->
+  <style>
+    /* hide scrollbar for the pillar carousel */
+    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    .hide-scrollbar::-webkit-scrollbar { display: none; }
+
+    .chip{
+      display:inline-flex;align-items:center;gap:.375rem;
+      padding:.375rem .75rem;border-radius:9999px;
+      background:rgba(255,255,255,.9);border:1px solid rgba(17,138,104,.18);
+      font-size:.875rem;line-height:1.25rem
+    }
+    .chip-sm{ padding:.25rem .6rem; font-size:.8125rem; line-height:1.1rem; }
+
+    .perk{
+      display:flex;align-items:start;gap:.625rem;background:#fff;border:1px solid rgba(15,23,42,.06);
+      border-radius:1rem;box-shadow:0 1px 2px rgba(0,0,0,.04)
+    }
+    .perk-title{font-weight:600;color:#3B4552}
+    .perk-sub{font-size:.8125rem;color:#64748B}
+    .dot{margin-top:.55rem;height:.375rem;width:.375rem;border-radius:9999px;background:#118A68;flex:none}
+
+    @media (prefers-reduced-motion: reduce){
+      .hover\:translate-y-\[\-1px\]{ transform:none !important; }
+    }
+  </style>
+</section>
+
+
+
+<!-- =========================================================
+= OPEN ROLES (Drop-in, self-contained)                       =
+= - Filters + search + modal (all scoped to this section)    =
+========================================================= -->
+<section id="openings" x-data="velaOpenings()" x-init="init()" class="relative isolate">
+  <!-- brand-tinted backdrop with gentle drift -->
+  <div class="absolute inset-0 -z-10 bg-[color:var(--brand)]">
+    <div class="absolute inset-0 opacity-[.18] pointer-events-none"
+         style="background:
+           radial-gradient(8px 8px at 40% 30%, rgba(255,255,255,.5) 1px, transparent 2px),
+           radial-gradient(8px 8px at 60% 70%, rgba(255,255,255,.35) 1px, transparent 2px);
+           background-size: 200px 200px, 220px 220px;"></div>
+    <div class="absolute inset-0 bg-[radial-gradient(1000px_400px_at_50%_-10%,rgba(255,255,255,.18),transparent)] animate-sway"></div>
+  </div>
+
+  <div class="max-w-7xl mx-auto px-6 py-20 text-white">
+    <div class="max-w-3xl text-center mx-auto">
+      <h2 class="text-3xl md:text-4xl font-extrabold">Open roles</h2>
+      <p class="mt-2 text-white/85">Find your fit. Apply in minutes—no long forms.</p>
+    </div>
+
+    <!-- controls -->
+    <div class="mt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+      <div class="flex flex-wrap items-center gap-2">
+        <button @click="setFilter('team','All')" class="chip" :data-active="filters.team==='All'">All teams</button>
+        <button @click="setFilter('team','Operations')" class="chip" :data-active="filters.team==='Operations'">Operations</button>
+        <button @click="setFilter('team','Cleaning')" class="chip" :data-active="filters.team==='Cleaning'">Cleaning</button>
+        <button @click="setFilter('team','Engineering')" class="chip" :data-active="filters.team==='Engineering'">Engineering</button>
+      </div>
+      <div class="relative">
+        <input type="search" x-model="query"
+               class="w-72 max-w-full rounded-lg bg-white/90 text-slate-700 placeholder:text-slate-400 ring-1 ring-white/30 px-3 py-2 focus:ring-2 focus:ring-white"
+               placeholder="Search roles or locations…"
+               aria-label="Search roles"/>
+        <span class="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400">⌘K</span>
+      </div>
+    </div>
+
+    <!-- roles grid -->
+    <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <template x-for="job in filteredJobs()" :key="job.id">
+        <article class="rounded-2xl bg-white/95 text-[color:var(--ink)] ring-1 ring-white/30 shadow-xl p-6 flex flex-col relative overflow-hidden">
+          <div class="absolute top-3 right-3 text-[11px] font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-brand ring-1 ring-emerald-200/70">
+            <span x-text="job.team"></span>
+          </div>
+
+          <h3 class="text-lg font-semibold pr-16" x-text="job.title"></h3>
+          <p class="mt-1 text-xs uppercase tracking-wide text-slate-500" x-text="job.meta"></p>
+          <p class="mt-3 text-sm text-slate-700 line-clamp-4" x-text="job.blurb"></p>
+
+          <div class="mt-4 flex flex-wrap gap-2">
+            <span class="chip bg-white/80" x-text="job.location"></span>
+            <span class="chip bg-white/80" x-text="job.type"></span>
+          </div>
+
+          <div class="mt-6 flex gap-2">
+            <button @click="open(job)" class="inline-flex items-center justify-center rounded-lg px-3 py-2 font-semibold text-white bg-brand hover:opacity-95">
+              See more
+            </button>
+            <a :href="applyHref(job)" class="inline-flex items-center justify-center rounded-lg px-3 py-2 font-semibold bg-white ring-1 ring-slate-200 text-slate-800 hover:bg-slate-50">
+              Apply
+            </a>
+          </div>
+        </article>
+      </template>
+    </div>
+
+    <!-- empty state -->
+    <div x-show="filteredJobs().length===0" class="mt-10 text-center text-white/90">
+      No roles match right now. <a href="#introduce" class="underline decoration-white/60 hover:decoration-white">Introduce yourself</a>.
+    </div>
+  </div>
+
+  <!-- Local styles -->
+  <style>
+    .chip{display:inline-flex;align-items:center;gap:.375rem;padding:.375rem .75rem;border-radius:9999px;
+      background:rgba(255,255,255,.70);border:1px solid rgba(17,138,104,.18);font-size:.875rem;line-height:1.25rem}
+    .chip[data-active="true"]{background:#fff;border-color:rgba(17,138,104,.35);box-shadow:0 1px 2px rgba(0,0,0,.06)}
+    @keyframes sway { 0%{ transform: translateY(-8px) } 100%{ transform: translateY(8px) } }
+    .animate-sway{ animation: sway 16s ease-in-out infinite alternate; }
+    @media (prefers-reduced-motion: reduce){ .animate-sway{ animation:none } }
+  </style>
+
+  <!-- Local script (roles, filters, modal) -->
+  <script>
+    function velaOpenings(){
+      return {
+        query: '', filters: { team:'All' },
+        modal: { open:false, job:null },
+        roles: [
+          {
+            id:'coord-mallorca',
+            title:'Regional Service Coordinator',
+            meta:'Palma — Mallorca · Full-time',
+            team:'Operations', location:'Mallorca', type:'Full-time',
+            blurb:'Own day-to-day operations—cleanings, maintenance, partner perks, and mega client smiles.',
+            desc:'Be the heartbeat of Vela operations—liaising with homeowners, scheduling services, and ensuring every property shines.',
+            duties:[
+              'Coordinate cleanings, restocks and small maintenance visits',
+              'Keep owner timelines updated with photo proof',
+              'Build local partner relationships for perks & bookings'
+            ],
+            reqs:[
+              '2+ years in hospitality or property management',
+              'Fluent English & Spanish (Catalan a plus)',
+              'Driver’s license & island mobility'
+            ],
+            emailSubject:'Regional%20Service%20Coordinator%20Application'
+          },
+          {
+            id:'cleaner-soto',
+            title:'Cleaner (Residential & Airbnb)',
+            meta:'Sotogrande · Part-time / Freelance',
+            team:'Cleaning', location:'Sotogrande', type:'Part-time / Freelance',
+            blurb:'Deliver spotless stays and five-star impressions. Flexible hours, premium supplies, and a crew that values craft.',
+            desc:'Keep our properties guest-ready and magazine-worthy, ensuring every arrival feels like Mediterranean perfection.',
+            duties:[
+              'Turnovers & linens to hotel standards',
+              'Spot checks and photo receipts after each clean',
+              'Coordinate key pickup and access codes when needed'
+            ],
+            reqs:[
+              'High-standard residential cleaning experience',
+              'Own transport & kit is a bonus',
+              'Weekend availability'
+            ],
+            emailSubject:'Cleaner%20Application'
+          },
+          {
+            id:'junior-dev',
+            title:'Junior Software Developer',
+            meta:'Remote · Full-time',
+            team:'Engineering', location:'Remote', type:'Full-time',
+            blurb:'Help build the engines behind our platform—from Firebase hooks to slick dashboards. Ship features and level up fast.',
+            desc:'Join our dev squad crafting elegant, scalable tools that keep Vela running on autopilot.',
+            duties:[
+              'Implement UI in HTML + Tailwind + Alpine/React',
+              'Integrate Firebase Auth/Firestore and REST endpoints',
+              'Ship, learn, and iterate with code reviews'
+            ],
+            reqs:[
+              'Solid JavaScript and a modern framework (React/Alpine)',
+              'Comfort with Firebase & Git workflows',
+              'Curiosity and bias for action'
+            ],
+            emailSubject:'Junior%20Software%20Developer%20Application'
+          }
+        ],
+        init(){
+          // ⌘K / Ctrl+K to focus search
+          window.addEventListener('keydown', e => {
+            if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase()==='k'){
+              e.preventDefault();
+              this.$root.querySelector('input[type="search"]')?.focus();
+            }
+          });
+        },
+        setFilter(k,v){ this.filters[k]=v; },
+        filteredJobs(){
+          const q = this.query.trim().toLowerCase();
+          return this.roles.filter(r => {
+            const teamOk = this.filters.team==='All' || r.team===this.filters.team;
+            const searchOk = !q || [r.title,r.meta,r.team,r.location,r.type,r.blurb].join(' ').toLowerCase().includes(q);
+            return teamOk && searchOk;
+          });
+        },
+        open(job){ this.modal.open=true; this.modal.job=job; document.body.classList.add('overflow-hidden'); },
+        close(){ this.modal.open=false; this.modal.job=null; document.body.classList.remove('overflow-hidden'); },
+        applyHref(job){ const j = job || this.modal.job; if(!j) return '#'; return `mailto:hr@velagroup.es?subject=${j.emailSubject}`; }
+      }
+    }
+  </script>
+
+  <!-- Modal (teleported to body but scoped to this section's state) -->
+  <template x-teleport="body">
+    <div x-show="modal.open" x-transition.opacity x-cloak class="fixed inset-0 bg-black/55 grid place-items-center z-50" @keydown.escape.window="close()">
+      <div class="relative bg-white rounded-2xl p-5 w-full max-w-xl shadow-2xl ring-1 ring-slate-200" @click.outside="close()">
+        <button @click="close()" class="absolute top-3 right-3 p-2 rounded hover:bg-black/5" aria-label="Close">✕</button>
+
+        <div class="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <h4 class="text-xl font-bold text-brand" x-text="modal.job?.title || ''"></h4>
+            <p class="text-xs uppercase tracking-wide text-slate-500 mt-1" x-text="modal.job?.meta || ''"></p>
+          </div>
+          <div class="inline-flex items-center gap-2">
+            <span class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-brand ring-1 ring-emerald-200/70" x-text="modal.job?.team || ''"></span>
+            <span class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-slate-50 text-slate-700 ring-1 ring-slate-200/70" x-text="modal.job?.type || ''"></span>
+          </div>
+        </div>
+
+        <p class="mt-4 text-sm text-slate-700" x-text="modal.job?.desc || ''"></p>
+
+        <div class="mt-5 grid gap-5 md:grid-cols-2">
+          <div>
+            <h5 class="text-sm font-semibold text-[color:var(--ink)]">What you’ll do</h5>
+            <ul class="mt-2 text-sm text-slate-700 space-y-2">
+              <template x-for="b in modal.job?.duties || []" :key="b"><li class="flex gap-2"><span class="mt-2 h-1.5 w-1.5 rounded-full bg-brand"></span><span x-text="b"></span></li></template>
+            </ul>
+          </div>
+          <div>
+            <h5 class="text-sm font-semibold text-[color:var(--ink)]">What you’ll bring</h5>
+            <ul class="mt-2 text-sm text-slate-700 space-y-2">
+              <template x-for="b in modal.job?.reqs || []" :key="b"><li class="flex gap-2"><span class="mt-2 h-1.5 w-1.5 rounded-full bg-brand"></span><span x-text="b"></span></li></template>
+            </ul>
+          </div>
+        </div>
+
+        <div class="mt-6 flex flex-col sm:flex-row gap-2">
+          <a :href="applyHref(modal.job)" class="inline-flex items-center justify-center rounded-lg px-4 py-2.5 font-semibold text-white bg-brand hover:opacity-95">Apply</a>
+          <button @click="close()" class="inline-flex items-center justify-center rounded-lg px-4 py-2.5 font-semibold bg-white ring-1 ring-slate-200 text-slate-800 hover:bg-slate-50">Close</button>
+        </div>
+
+        <p class="mt-4 text-[11px] text-slate-500">We’re an equal-opportunity team. If you’re excited about the role but don’t meet 100% of the criteria, apply.</p>
+      </div>
+    </div>
+  </template>
+</section>
+
+<!-- =========================================================
+= FOUNDER QUOTE — GLASS VARIANT (Drop-in)                    =
+= - Frosted glass card over image                            =
+= - White typography; subtle rings; minimal motion           =
+========================================================= -->
+<section id="founder" class="relative isolate overflow-hidden">
+  <!-- Background photo + dark veil (use any brand photo here) -->
+  <img src="img/velagradient.png" alt="" class="absolute inset-0 h-full w-full object-cover" loading="lazy" decoding="async">
+  <div class="absolute inset-0 bg-black/50"></div>
+
+  <div class="relative z-10 max-w-5xl mx-auto px-6 py-16">
+    <figure class="glass rounded-3xl p-6 md:p-10 text-white">
+      <div class="grid items-center gap-8 md:grid-cols-[auto,1fr]">
+        <!-- Avatar + name/title -->
+        <div class="text-center md:text-left">
+          <div class="relative inline-block">
+            <img src="img/founder.jpg" alt="Dylan Thomas, Founder & CEO of Vela"
+                 class="w-28 h-28 md:w-32 md:h-32 rounded-full object-cover ring-4 ring-white/80 shadow">
+            <span aria-hidden="true" class="absolute -bottom-1 -right-1 h-3 w-3 rounded-full bg-emerald-400 ring-4 ring-white/80"></span>
+          </div>
+          <figcaption class="mt-3">
+            <div class="font-semibold">Dylan Thomas</div>
+            <div class="text-sm text-white/80">Founder &amp; CEO</div>
+            <div class="mt-1 text-xs text-white/70">Ibiza, ES • Remote-first</div>
+          </figcaption>
+        </div>
+
+        <!-- Quote -->
+        <blockquote class="relative">
+          <svg class="absolute -top-3 -left-2 h-7 w-7 text-white/30" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M7 7h3L8 17H4l3-10zm10 0h3l-3 10h-4l4-10z"/>
+          </svg>
+          <p class="text-xl md:text-2xl leading-relaxed">
+            ““I built Vela to be the place I wanted to work: freedom, responsibility, no micromanagement.””
+          </p>
+
+          <!-- Brand chips -->
+          <div class="mt-4 flex flex-wrap gap-2">
+            <span class="chip">Owners first</span>
+            <span class="chip">Simple systems</span>
+            <span class="chip">Photo proof</span>
+          </div>
+        </blockquote>
+      </div>
+    </figure>
+
+    <!-- Micro-CTAs -->
+    <div class="mt-6 flex flex-wrap items-center justify-center gap-4 text-sm">
+      <a href="#openings" class="inline-flex items-center gap-2 rounded-full bg-white text-[#118A68] px-4 py-2 font-semibold shadow hover:opacity-95">
+        Join the team
+        <svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor"><path d="M10.293 15.707a1 1 0 010-1.414L12.586 12H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"/></svg>
+      </a>
+      <div class="inline-flex items-center gap-3">
+        <a href="mailto:hello@vela.es" class="rounded-full px-3 py-1.5 font-semibold bg-white/0 ring-1 ring-white/40 text-white/90 hover:bg-white/10">Message me</a>
+        <button id="copyFounderEmail" type="button" class="inline-flex items-center gap-1.5 px-2 py-1 rounded-full ring-1 ring-white/40 text-white/90 hover:bg-white/10">
+          <svg class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M7 3a2 2 0 0 0-2 2v8h2V5h6V3H7zm3 4a2 2 0 0 0-2 2v8h8a2 2 0 0 0 2-2V7h-8zm6 8H10V9h6v6z"/></svg>
+          Copy email
+        </button>
+      </div>
+      <div id="founderToastSr" class="sr-only" role="status" aria-live="polite"></div>
+      <div id="founderToast" class="hidden rounded-lg bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200 px-2 py-1">Copied</div>
+    </div>
+  </div>
+
+  <!-- Glass helpers -->
+  <style>
+    .glass{
+      position:relative;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.20), rgba(255,255,255,.08));
+      border:1px solid rgba(255,255,255,.35);
+      box-shadow:
+        0 20px 45px -22px rgba(0,0,0,.6),
+        inset 0 1px 0 rgba(255,255,255,.22);
+      -webkit-backdrop-filter: blur(18px) saturate(120%);
+      backdrop-filter: blur(18px) saturate(120%);
+    }
+    .chip{
+      display:inline-flex;align-items:center;gap:.375rem;
+      padding:.35rem .7rem;border-radius:9999px;
+      background:rgba(255,255,255,.10);
+      border:1px solid rgba(255,255,255,.25);
+      color:#fff;font-size:.8125rem;line-height:1.1rem;
+    }
+    @supports not ((-webkit-backdrop-filter: none) or (backdrop-filter: none)){
+      .glass{ background: rgba(255,255,255,.85); color:#0f172a; border-color: rgba(15,23,42,.15); }
+      .chip{ background: rgba(15,23,42,.05); color:#0f172a; border-color: rgba(15,23,42,.15); }
+    }
+  </style>
+
+  <!-- tiny copy script -->
+  <script>
+    (function(){
+      const btn = document.getElementById('copyFounderEmail');
+      const sr  = document.getElementById('founderToastSr');
+      const vis = document.getElementById('founderToast');
+      if(!btn) return;
+      btn.addEventListener('click', async () => {
+        try{
+          await navigator.clipboard.writeText('hello@vela.es');
+          sr.textContent = 'Email copied to clipboard';
+          vis.classList.remove('hidden');
+          setTimeout(()=> vis.classList.add('hidden'), 1600);
+        }catch(e){
+          sr.textContent = 'Copy failed';
+        }
+      });
+    })();
+  </script>
+</section>
+
+<!-- =========================================================
+= CTA — Introduce Yourself (Drop-in, self-contained)         =
+========================================================= -->
+<section id="introduce" class="relative isolate overflow-hidden">
+  <div class="absolute inset-0 -z-10 bg-gradient-to-b from-slate-50 via-white to-white"></div>
+
+  <div class="max-w-4xl mx-auto px-6 py-16">
+    <div class="relative rounded-3xl bg-white/80 backdrop-blur-xl ring-1 ring-slate-200 shadow-xl p-8 md:p-12 overflow-hidden">
+      <span aria-hidden="true" class="contact-glow"></span>
+
+      <div class="text-center">
+        <h3 class="text-2xl md:text-3xl font-extrabold text-slate-900">Don’t see your role?</h3>
+        <p class="mt-2 text-[1.05rem] text-slate-600">We’re always meeting thoughtful people. Send your CV and a quick note.</p>
+
+        <div class="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
+          <a href="mailto:hr@velagroup.es?subject=General%20application&body=Hi%20Vela%2C%0D%0AHere%27s%20my%20CV%20and%20a%20short%20note.%0D%0A"
+             class="inline-block font-semibold px-7 py-3 rounded-lg bg-brand text-white shadow hover:opacity-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--brand)]">
+            Introduce yourself
+          </a>
+          <a href="mailto:hr@velagroup.es"
+             class="inline-block font-semibold px-7 py-3 rounded-lg border border-slate-300 text-slate-800 bg-white hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-300">
+            hr@velagroup.es
+          </a>
+        </div>
+
+        <p class="mt-4 text-xs text-slate-500">We reply within 24h on weekdays.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Local glow motion -->
+  <style>
+    .contact-glow{
+      position:absolute; inset:-2px; border-radius:1.5rem; pointer-events:none;
+      background:
+        radial-gradient(1200px 400px at 50% -20%, rgba(17,138,104,.10), transparent 60%),
+        conic-gradient(from 180deg at 50% 50%, rgba(17,138,104,.15), transparent 40%, rgba(17,138,104,.15));
+      filter: blur(10px);
+      animation: contactFloat 16s ease-in-out infinite alternate;
+      z-index:0;
+    }
+    @keyframes contactFloat{ 0%{ transform: translateY(-6px)} 100%{ transform: translateY(6px)} }
+    @media (prefers-reduced-motion: reduce){ .contact-glow{ animation:none } }
+  </style>
+</section>
+
+<!-- =========================================================
+= FOOTER (Drop-in, self-contained)                            =
+========================================================= -->
+<footer id="vela-footer" class="relative bg-white border-t border-slate-200">
+  <div class="max-w-7xl mx-auto px-6 py-12">
+    <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between pb-8 border-b border-slate-200/70">
+      <div class="flex items-center gap-3">
+        <a href="/" class="brand-hover text-slate-900 font-extrabold tracking-tight text-xl">Vela</a>
+        <span class="hidden md:inline text-slate-500">We handle homes, you handle sunsets.</span>
+      </div>
+      <div class="flex items-center gap-2 text-xs text-slate-500">
+        <span class="inline-flex items-center gap-1">
+          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a5 5 0 00-5 5v3H6a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2v-8a2 2 0 00-2-2h-1V7a5 5 0 00-5-5zm-3 8V7a3 3 0 116 0v3H9z"/></svg>
+          Payments powered by Stripe
+        </span>
+        <span aria-hidden="true" class="mx-2 select-none text-slate-300">•</span>
+        <span>Vetted local teams</span>
+        <span aria-hidden="true" class="mx-2 select-none text-slate-300">•</span>
+        <span>Photo receipts every visit</span>
+      </div>
+    </div>
+
+    <div class="grid gap-8 py-8 md:grid-cols-4 text-sm">
+      <nav aria-label="Product" class="space-y-2">
+        <h4 class="font-semibold text-slate-900">Product</h4>
+        <ul class="space-y-1">
+          <li><a href="/#product" class="text-slate-600 hover:text-brand">Overview</a></li>
+          <li><a href="/#pricing" class="text-slate-600 hover:text-brand">Pricing</a></li>
+          <li><a href="/#regions" class="text-slate-600 hover:text-brand">Regions</a></li>
+        </ul>
+      </nav>
+
+      <nav aria-label="Company" class="space-y-2">
+        <h4 class="font-semibold text-slate-900">Company</h4>
+        <ul class="space-y-1">
+          <li><a href="#culture" class="text-slate-600 hover:text-brand">Life at Vela</a></li>
+          <li><a href="#openings" class="text-slate-600 hover:text-brand">Jobs</a></li>
+        </ul>
+      </nav>
+
+      <div class="space-y-2">
+        <h4 class="font-semibold text-slate-900">Contact</h4>
+        <ul class="space-y-1 text-slate-600">
+          <li><a href="mailto:hello@vela.es" class="hover:text-brand">hello@vela.es</a></li>
+          <li><a href="mailto:hr@velagroup.es" class="hover:text-brand">hr@velagroup.es</a></li>
+          <li><a href="tel:+34600000000" class="hover:text-brand">+34 600 000 000</a></li>
+          <li>Estepona, Spain</li>
+        </ul>
+      </div>
+
+      <nav aria-label="Legal" class="space-y-2">
+        <h4 class="font-semibold text-slate-900">Legal</h4>
+        <ul class="space-y-1">
+          <li><a href="/privacy" class="text-slate-600 hover:text-brand">Privacy</a></li>
+          <li><a href="/terms" class="text-slate-600 hover:text-brand">Terms</a></li>
+        </ul>
+      </nav>
+    </div>
+
+    <div class="pt-6 border-t border-slate-200/70 text-xs text-slate-500 flex flex-col-reverse gap-4 md:flex-row md:items-center md:justify-between">
+      <p>© <span id="year"></span> Vela Group. All rights reserved.</p>
+      <a href="#hero" aria-label="Back to top" class="inline-flex items-center gap-1 hover:text-brand">
+        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 5l7 7-1.4 1.4L13 10.8V19h-2v-8.2l-4.6 2.6L5 12l7-7z"/></svg>
+        Back to top
+      </a>
+    </div>
+  </div>
+
+  <script>
+    // footer year
+    (function(){
+      const y = document.getElementById('year'); if(y) y.textContent = new Date().getFullYear();
+    })();
+  </script>
+</footer>
+
+</body>
+</html>

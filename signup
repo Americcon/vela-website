@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>Vela</title>
+
+<!-- Tailwind & Icons -->
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+<style>
+:root{
+  --vela:#118A68; --ink:#3B4552; --success:#16a34a;
+  --card-min-h: 560px;
+}
+@media (max-width: 480px){ :root{ --card-min-h: 500px; } }
+
+html, body { height:100%; }
+body { overflow-y: scroll; }
+
+/* ---- Safe-area helpers (iOS notches) ---- */
+.pt-safe { padding-top: max(env(safe-area-inset-top), 0px); }
+.pb-safe { padding-bottom: max(env(safe-area-inset-bottom), 12vh, 72px); }
+
+/* --- Canvas --- */
+.page{ min-height:100svh; position:relative; overflow:hidden; color:#0f172a; }
+.hero-img{ position:fixed; inset:0; }
+.hero-img>img{ width:100%; height:100%; object-fit:cover; filter:saturate(1.02) contrast(1.02); }
+.hero-overlay{
+  position:fixed; inset:0;
+  background:
+    radial-gradient(80% 60% at 20% 10%, rgba(4,10,9,.52) 0%, transparent 60%),
+    linear-gradient(to bottom, rgba(11,31,25,.62), rgba(11,31,25,.28), rgba(11,31,25,.16));
+}
+
+/* --- Brand --- */
+.brand{
+  font-weight:900; letter-spacing:-0.01em;
+  font-size: clamp(1.35rem, 1.05rem + 1.1vw, 1.85rem);
+  color:rgba(255,255,255,.96); transition:color .2s ease; text-decoration:none;
+}
+.brand:hover{ color:var(--vela); }
+
+/* --- Auth tabs with precise sliding pill (no gap) --- */
+.segment{
+  --pad: .38rem;
+  --seg-index: 0;         /* 0 = signin, 1 = signup */
+  position:relative;
+  display:grid; grid-template-columns:1fr 1fr;
+  padding:var(--pad);
+  border-radius:9999px;
+  background:rgba(255,255,255,.12);
+  backdrop-filter:blur(10px) saturate(1.05); -webkit-backdrop-filter:blur(10px) saturate(1.05);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.35), 0 1px 12px rgba(2,8,23,.2);
+}
+.segment .seg-highlight{
+  position:absolute; pointer-events:none; z-index:0;
+  top:var(--pad); left:var(--pad); height:calc(100% - var(--pad)*2);
+  width:calc((100% - var(--pad)*2) / 2);
+  border-radius:9999px; background:#fff;
+  box-shadow:0 1px 8px rgba(2,8,23,.06), inset 0 0 0 1px rgba(226,232,240,1);
+  transform:translateX(calc(var(--seg-index) * 100%));
+  transition:transform .28s cubic-bezier(.4,0,.2,1);
+  will-change:transform;
+}
+.segment[data-active="signup"]{ --seg-index: 1; }
+.segment button{
+  position:relative; z-index:1;
+  border-radius:9999px; padding:.6rem .95rem; font-weight:700; font-size:.9rem; color:#e2e8f0;
+  transition:color .2s ease;
+}
+.segment button[aria-selected="true"]{ color:var(--vela); }
+
+/* --- Glassy card --- */
+.glasswrap{
+  border-radius:1.35rem; padding:1px;
+  background:linear-gradient(180deg, rgba(255,255,255,.75), rgba(17,138,104,.28));
+  box-shadow:0 18px 52px rgba(3,7,18,.28);
+}
+.glass{
+  position:relative;
+  background:linear-gradient(to bottom right, rgba(255,255,255,.78), rgba(255,255,255,.56));
+  backdrop-filter:blur(22px) saturate(1.08); -webkit-backdrop-filter:blur(22px) saturate(1.08);
+  border-radius:1.25rem; border:1px solid rgba(255,255,255,.55);
+}
+.glass::before{
+  content:""; position:absolute; inset:0; border-radius:inherit; pointer-events:none;
+  background:radial-gradient(120% 60% at 20% 0%, rgba(255,255,255,.55), transparent 60%),
+             linear-gradient(to bottom, rgba(255,255,255,.18), transparent 35%);
+  mix-blend-mode:screen; opacity:.8;
+}
+.auth-card .glass{ min-height: var(--card-min-h); display:flex; flex-direction:column; }
+
+/* --- Scaling wrappers (desktop) --- */
+.scale-wrap, .scale-wrap-pill { will-change: transform; transition: transform .25s cubic-bezier(.4,0,.2,1); }
+.scale-wrap { transform-origin: top center; }
+.scale-wrap-pill { transform-origin: center; }
+@media (max-height: 900px) { .scale-wrap, .scale-wrap-pill { transform: scale(0.95); } }
+@media (max-height: 820px) { .scale-wrap, .scale-wrap-pill { transform: scale(0.9); } }
+@media (max-height: 760px) { .scale-wrap, .scale-wrap-pill { transform: scale(0.85); } }
+@media (max-height: 680px) { .scale-wrap, .scale-wrap-pill { transform: scale(0.8); } }
+
+/* --- Widths (desktop defaults) --- */
+.scale-target{ width: clamp(340px, 34vw, 520px); margin-inline:auto; }
+.scale-target.segment{ width: clamp(320px, 36vw, 520px); } /* pill has slightly more freedom */
+.auth-card{ width:100%; }
+
+/* --- Mobile-first sizing overrides --- */
+@media (max-width: 480px){
+  /* No artificial scaling on small screens */
+  .scale-wrap, .scale-wrap-pill { transform: none !important; }
+
+  /* Real mobile width for both pill and card */
+  .scale-target, .scale-target.segment { width: min(92vw, 420px); }
+
+  /* Tighter card radius & padding looks better on mobile */
+  .glasswrap{ border-radius:1rem; }
+  .glass{ border-radius:0.9rem; }
+  
+  /* Inputs: 16px to avoid iOS zoom; generous vertical spacing */
+  .field{ font-size:16px; padding-top:12px; padding-bottom:12px; }
+  .btn{ height:52px; }
+
+  /* Tabs: smaller padding so the pill fits nicely */
+  .segment{ --pad:.28rem; }
+  .segment button{ padding:.55rem .75rem; font-size:.9rem; }
+}
+
+/* Inputs */
+.field{ transition:box-shadow .2s ease; box-shadow:inset 0 0 0 1px rgb(226 232 240); background:rgba(255,255,255,.92); }
+.field:focus{ outline:none; box-shadow:0 0 0 3px rgb(17 138 104 / .25), inset 0 0 0 1px rgb(226 232 240); }
+.field.invalid{ box-shadow:0 0 0 3px rgb(220 38 38 / .25), inset 0 0 0 1px rgb(220 38 38); }
+.field.valid{ box-shadow:0 0 0 3px rgb(22 163 74 / .25), inset 0 0 0 1px rgb(22 163 74); }
+
+/* Buttons */
+.btn{ display:inline-flex; align-items:center; justify-content:center; width:100%; border-radius:9999px; font-weight:600; height:48px; }
+
+/* Fade */
+.fade{ opacity:1; transition:opacity .33s cubic-bezier(.4,0,.2,1); }
+.fade-out{ opacity:0 !important; pointer-events:none; }
+.hidden{ display:none !important; }
+
+/* Loader */
+.loader{ display:inline-block; width:2.2em; text-align:center; vertical-align:middle;}
+.loader span{ display:inline-block; width:.4em; height:.4em; margin:0 .08em; border-radius:50%; background:white; opacity:.7; animation:loader-dot 1s infinite;}
+.loader span:nth-child(2){animation-delay:.2s} .loader span:nth-child(3){animation-delay:.4s}
+@keyframes loader-dot{0%,80%,100%{opacity:.3; transform:translateY(0)} 40%{opacity:1; transform:translateY(-.3em)}}
+
+/* PW reqs */
+#pw-reqs ul{ list-style:none; padding-left:.25rem }
+#pw-reqs li{ display:flex; align-items:center; gap:.5rem; font-size:.8rem; color:#64748b; transition:color .3s }
+#pw-reqs li.met{ color:var(--success) } #pw-reqs li i{ width:1rem; text-align:center }
+
+/* Reduce motion */
+@media (prefers-reduced-motion: reduce){ *{ animation:none !important; transition-duration:.001ms !important; } }
+</style>
+
+<!-- Firebase compat -->
+<script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
+</head>
+
+<body class="page pt-safe">
+  <!-- Background (fixed) -->
+  <div class="hero-img" aria-hidden="true">
+    <img src="/img/signup.png" alt="" loading="eager" fetchpriority="high" decoding="async" />
+    <div class="hero-overlay"></div>
+  </div>
+
+  <!-- Top bar -->
+  <header class="relative z-10 max-w-7xl mx-auto px-4 md:px-6 pt-6 flex items-center">
+    <div class="flex-1">
+      <a href="/" class="brand select-none">Vela</a>
+    </div>
+    
+    <div class="scale-wrap-pill">
+      <div class="scale-target segment" role="tablist" aria-label="Authentication tabs" data-active="signin">
+        <div class="seg-highlight" aria-hidden="true"></div>
+        <button id="tab-signin" role="tab" aria-controls="auth-panel" aria-selected="true">Sign in</button>
+        <button id="tab-signup" role="tab" aria-controls="auth-panel" aria-selected="false">Create account</button>
+      </div>
+    </div>
+
+    <div class="flex-1 text-right">
+      <a href="/" class="text-white/80 hover:text-white text-sm whitespace-nowrap hidden sm:inline">Back to home</a>
+    </div>
+  </header>
+
+  <!-- Centered auth -->
+  <main class="relative z-10 min-h-[100svh] px-3 md:px-4 pt-6 md:pt-12 pb-safe grid justify-items-center content-start">
+    <div class="scale-wrap">
+      <div class="scale-target">
+        <section class="glasswrap auth-card">
+          <div id="form-ctn" class="glass p-4 md:p-6 rounded-[1.2rem]">
+            <div class="text-center">
+              <h1 id="form-title" class="text-[20px] md:text-[24px] font-extrabold text-slate-900 tracking-tight">Sign in</h1>
+              <!-- tagline intentionally removed -->
+            </div>
+            <!-- Form -->
+            <form id="vela-form" autocomplete="on" class="mt-4 space-y-3.5" aria-labelledby="form-title">
+              <div>
+                <label for="email" class="block text-[12px] md:text-[11px] font-semibold uppercase tracking-wide mb-1 text-slate-600">Email</label>
+                <input id="email" type="email" placeholder="you@mail.com" class="field w-full rounded-xl px-4 py-2.5" autocomplete="email" />
+                <p id="emailErr" class="text-xs text-red-600 h-4 pl-1 pt-1" role="alert"></p>
+              </div>
+
+              <div id="password-container" class="fade">
+                <label for="password" class="block text-[12px] md:text-[11px] font-semibold uppercase tracking-wide mb-1 text-slate-600">Password</label>
+                <div class="relative">
+                  <input id="password" type="password" placeholder="Your password" class="field w-full rounded-xl px-4 py-2.5" autocomplete="current-password" />
+                  <button id="pw-toggle" type="button" aria-label="Show password" class="absolute inset-y-0 right-0 flex items-center px-4 text-slate-500 hover:text-[var(--vela)]">
+                    <i id="pw-toggle-icon" class="fa-solid fa-eye"></i>
+                  </button>
+                </div>
+                <p id="pwErr" class="text-xs text-red-600 h-4 pl-1 pt-1" role="alert"></p>
+                <div id="forgot-pw-container" class="fade mt-1">
+                  <a href="#" id="forgot-pw-link" class="font-semibold text-xs text-[color:var(--vela)] hover:underline">Forgot Password?</a>
+                </div>
+              </div>
+
+              <!-- Requirements (signup only) -->
+              <div id="pw-reqs" class="fade hidden space-y-1 pt-1 mt-2">
+                <ul>
+                  <li id="req-length"><i class="fa-solid fa-circle-xmark"></i>At least 8 characters</li>
+                  <li id="req-uppercase"><i class="fa-solid fa-circle-xmark"></i>An uppercase letter</li>
+                  <li id="req-number"><i class="fa-solid fa-circle-xmark"></i>A number</li>
+                  <li id="req-special"><i class="fa-solid fa-circle-xmark"></i>A special character (!@#$%)</li>
+                </ul>
+              </div>
+
+              <!-- Primary CTA -->
+              <button id="submitBtn" type="submit" disabled
+                class="btn bg-gray-400 text-white disabled:opacity-60 cursor-not-allowed hover:-translate-y-0.5 hover:shadow-lg relative select-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[color:var(--vela)]">
+                <span id="submitBtnText">Continue</span>
+                <span id="submitBtnLoader" class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 hidden">
+                  <span class="loader"><span></span><span></span><span></span></span>
+                </span>
+              </button>
+
+              <!-- Trust microcopy -->
+              <p class="text-[11px] text-slate-500 text-center">Cancel anytime. No lock-in. Stripe-secured billing.</p>
+
+              <!-- Social -->
+              <div id="social-container" class="fade">
+                <div class="flex items-center gap-2 my-2">
+                  <hr class="flex-1 border-slate-200"><span class="text-xs text-slate-400 font-medium">OR</span><hr class="flex-1 border-slate-200">
+                </div>
+                <div class="space-y-2.5">
+                  <button id="googleBtn" type="button"
+                    class="btn border border-slate-300 bg-white flex items-center justify-center gap-3 hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[color:var(--vela)]">
+                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-5 h-5" alt="Google logo"><span class="font-semibold text-slate-700">Continue with Google</span>
+                  </button>
+                  <button id="appleBtn" type="button"
+                    class="btn border border-slate-300 bg-black text-white flex items-center justify-center gap-3 hover:bg-gray-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[color:var(--vela)]">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/3/31/Apple_logo_white.svg" class="w-5 h-5" alt="Apple logo"><span class="font-semibold">Continue with Apple</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Status -->
+              <p id="authMsg" class="text-xs text-center h-5 pt-1" role="status" aria-live="polite"></p>
+
+              <!-- Bottom toggle -->
+              <div class="text-center">
+                <p id="toggle-container" class="text-sm text-slate-600">
+                  <span id="toggle-text">New to Vela?</span>
+                  <a href="#" id="toggle-link" class="font-semibold text-[color:var(--vela)]">Create an account</a>
+                </p>
+              </div>
+            </form>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <!-- Trust line (below) -->
+    <p class="text-white/85 text-sm text-center max-w-xl mt-3">
+      Trusted by second-home owners across Ibiza &amp; the Costa del Sol.
+    </p>
+  </main>
+
+<script>
+// Firebase init
+firebase.initializeApp({apiKey:"AIzaSyBjx7wrzkKiBwTSiWhVqJPf--Z_rjAEjHc",authDomain:"vela-297c7.firebaseapp.com",projectId:"vela-297c7",storageBucket:"vela-297c7.appspot.com",messagingSenderId:"786947897471",appId:"1:786947897471:web:83b98de66feb5ee021674a"});
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+// Elements
+const $ = id => document.getElementById(id);
+const email = $('email'), pw = $('password'), btn = $('submitBtn');
+const submitBtnText = $('submitBtnText');
+const submitBtnLoader = $('submitBtnLoader');
+const authMsg = $('authMsg');
+const pwContainer = $('password-container'), pwReqs = $('pw-reqs');
+const socialContainer = $('social-container');
+const toggleLink = $('toggle-link'), toggleText = $('toggle-text');
+const forgotPwLink = $('forgot-pw-link'), forgotPwContainer = $('forgot-pw-container');
+const googleBtn = $('googleBtn'), appleBtn = $('appleBtn');
+const tabSignin = $('tab-signin'), tabSignup = $('tab-signup');
+const segment = document.querySelector('.segment');
+
+let processing = false;
+let formState = 'signIn';
+
+/* Fades */
+function fadeField(el, show){
+  if(!el) return;
+  if(show){ el.classList.remove('hidden','fade-out'); el.classList.add('fade'); }
+  else{ el.classList.add('fade-out'); setTimeout(()=>{ el.classList.add('hidden'); el.classList.remove('fade','fade-out'); }, 200); }
+}
+
+/* Tabs visual + animated pill state */
+function setTabs(selected){
+  const isIn = selected === 'signIn';
+  tabSignin.setAttribute('aria-selected', isIn ? 'true':'false');
+  tabSignup.setAttribute('aria-selected', !isIn ? 'true':'false');
+  if(segment){ segment.setAttribute('data-active', isIn ? 'signin' : 'signup'); }
+}
+
+/* State management */
+function setFormState(newState){
+  formState = newState;
+
+  if(!(formState === 'signIn' && email.value)) email.value = '';
+  pw.value = '';
+  [email,pw].forEach(el => el.classList.remove('valid','invalid'));
+  authMsg.textContent = ''; authMsg.style.color = 'rgb(220 38 38)';
+
+  const isSignIn = formState === 'signIn';
+  const isSignUp = formState === 'signUp';
+  const isForgotPw = formState === 'forgotPassword';
+
+  fadeField(pwContainer, !isForgotPw);
+  fadeField(pwReqs, isSignUp && !!pw.value);
+  fadeField(socialContainer, !isForgotPw);
+  fadeField(forgotPwContainer, isSignIn);
+
+  setTabs(isSignUp ? 'signUp' : 'signIn');
+
+  pw.setAttribute('autocomplete', isSignUp ? 'new-password' : 'current-password');
+
+  if(isSignIn){
+    document.title='Vela — Login';
+    $('form-title').textContent='Sign in';
+    submitBtnText.textContent='Continue';
+    toggleText.textContent='New to Vela?';
+    toggleLink.textContent='Create an account';
+    btn.setAttribute('aria-label','Continue');
+  }else if(isSignUp){
+    document.title='Vela — Sign up';
+    $('form-title').textContent='Create account';
+    submitBtnText.textContent='Create Account';
+    toggleText.textContent='Have an account?';
+    toggleLink.textContent='Sign in';
+    btn.setAttribute('aria-label','Create Account');
+  }else if(isForgotPw){
+    document.title='Vela — Reset Password';
+    $('form-title').textContent='Reset your password';
+    submitBtnText.textContent='Send Reset Link';
+    toggleText.textContent='Remembered your password?';
+    toggleLink.textContent='Sign in';
+    btn.setAttribute('aria-label','Send Reset Link');
+  }
+
+  validate();
+  setTimeout(()=>{ (isForgotPw ? email : pw).focus(); }, 50);
+}
+
+/* Events */
+tabSignin.addEventListener('click', ()=> setFormState('signIn'));
+tabSignup.addEventListener('click', ()=> setFormState('signUp'));
+toggleLink.addEventListener('click', (e)=>{
+  e.preventDefault();
+  setFormState(formState === 'signIn' || formState === 'forgotPassword' ? 'signUp' : 'signIn');
+});
+forgotPwLink.addEventListener('click', (e)=>{
+  e.preventDefault();
+  setFormState('forgotPassword');
+});
+
+/* Validation */
+const validations = {
+  email: v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v),
+  length: v => v.length >= 8,
+  uppercase: v => /[A-Z]/.test(v),
+  number: v => /[0-9]/.test(v),
+  special: v => /[!@#$%^&*()]/.test(v)
+};
+function validate(){
+  const eVal = email.value.trim();
+  const pVal = pw.value;
+  const isEmailValid = validations.email(eVal);
+  let isFormValid = false;
+
+  email.classList.toggle('valid', eVal && isEmailValid);
+  email.classList.toggle('invalid', eVal && !isEmailValid);
+  $('emailErr').textContent = (eVal && !isEmailValid) ? "Enter a valid email" : "";
+
+  if(formState === 'signIn'){
+    const isPwValid = pVal.length > 0;
+    isFormValid = isEmailValid && isPwValid;
+  }else if(formState === 'signUp'){
+    const pwChecks = {
+      length: validations.length(pVal),
+      uppercase: validations.uppercase(pVal),
+      number: validations.number(pVal),
+      special: validations.special(pVal)
+    };
+    const isPwComplexEnough = Object.values(pwChecks).every(Boolean);
+    pw.classList.toggle('valid', pVal && isPwComplexEnough);
+    pw.classList.toggle('invalid', pVal && !isPwComplexEnough);
+    $('pwErr').textContent = (pVal && !isPwComplexEnough) ? "Password does not meet requirements" : "";
+    fadeField(pwReqs, !!pVal);
+    Object.entries(pwChecks).forEach(([key,met])=>{
+      const el = $('req-'+key);
+      el.classList.toggle('met', met);
+      el.querySelector('i').classList.toggle('fa-circle-xmark', !met);
+      el.querySelector('i').classList.toggle('fa-circle-check', met);
+    });
+    isFormValid = isEmailValid && isPwComplexEnough;
+  }else if(formState === 'forgotPassword'){
+    isFormValid = isEmailValid;
+  }
+
+  btn.disabled = !isFormValid || processing;
+  btn.classList.toggle('bg-gray-400', !isFormValid || processing);
+  btn.classList.toggle('bg-[var(--vela)]', isFormValid && !processing);
+}
+email.oninput = validate; pw.oninput = validate;
+
+/* Password toggle */
+$('pw-toggle').onclick = ()=>{
+  const isPassword = pw.type === 'password';
+  pw.type = isPassword ? 'text':'password';
+  $('pw-toggle-icon').classList.toggle('fa-eye', !isPassword);
+  $('pw-toggle-icon').classList.toggle('fa-eye-slash', isPassword);
+};
+
+/* Submit */
+async function handleSubmit(e){
+  e && e.preventDefault && e.preventDefault();
+  if(btn.disabled || processing) return;
+  setProcessing(true);
+  authMsg.textContent=''; authMsg.style.color='rgb(220 38 38)';
+  try{
+    switch(formState){
+      case 'signIn': await signInUser(); break;
+      case 'signUp': await signUpUser(); break;
+      case 'forgotPassword': await sendResetEmail(); break;
+    }
+  }finally{ setProcessing(false); }
+}
+document.getElementById('vela-form').onsubmit = handleSubmit;
+
+function setProcessing(state){
+  processing = !!state;
+  submitBtnText.classList.toggle('hidden', processing);
+  submitBtnLoader.classList.toggle('hidden', !processing);
+  [email,pw,btn,googleBtn,appleBtn,toggleLink,forgotPwLink,tabSignin,tabSignup].forEach(el => { if(el) el.disabled = processing; });
+}
+
+/* Auth flows (unchanged) */
+async function signInUser(){
+  try{
+    const cred = await auth.signInWithEmailAndPassword(email.value.trim(), pw.value);
+    await routeUser(cred.user.uid);
+  }catch(error){
+    authMsg.textContent = 'Invalid email or password. Please try again.';
+  }
+}
+async function signUpUser(){
+  try{
+    const cred = await auth.createUserWithEmailAndPassword(email.value.trim(), pw.value);
+    await routeUser(cred.user.uid);
+  }catch(error){
+    authMsg.textContent = (error.code === 'auth/email-already-in-use')
+      ? 'An account with this email already exists.'
+      : 'Could not create account. Please try again.';
+  }
+}
+async function sendResetEmail(){
+  try{
+    await auth.sendPasswordResetEmail(email.value.trim());
+    authMsg.style.color='var(--success)';
+    authMsg.textContent='Success! Check your email for a reset link.';
+  }catch(error){
+    authMsg.textContent='Could not send reset link. Please check the email address.';
+  }
+}
+async function routeUser(uid){
+  try{
+    const snap = await db.collection('customers').doc(uid).get();
+    location.href = (snap.exists && snap.data().profilecomplete) ? '/dashboard/' : '/complete-profile';
+  }catch{
+    location.href = '/complete-profile';
+  }
+}
+
+/* Social providers */
+googleBtn.onclick = ()=>{
+  if(processing) return; setProcessing(true);
+  auth.signInWithPopup(new firebase.auth.GoogleAuthProvider())
+    .then(c=>routeUser(c.user.uid))
+    .catch(e=>{ authMsg.textContent = e.message })
+    .finally(()=> setProcessing(false));
+};
+appleBtn.onclick = ()=>{
+  if(processing) return; setProcessing(true);
+  auth.signInWithPopup(new firebase.auth.OAuthProvider('apple.com'))
+    .then(c=>routeUser(c.user.uid))
+    .catch(e=>{ authMsg.textContent = e.message })
+    .finally(()=> setProcessing(false));
+};
+
+/* Init */
+setFormState('signIn');
+</script>
+</body>
+</html>

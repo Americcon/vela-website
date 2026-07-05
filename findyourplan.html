@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Vela • Plan Wizard (Modal Only)</title>
+
+  <!-- Tailwind + Alpine (remove if already loaded) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+  <style>
+    /* Scope everything to the component */
+    [x-cloak]{display:none!important}
+    :root{ --vela:#118A68; --ink:#3B4552; }
+    html,body{height:100%;margin:0}
+
+    /* === Overlay ===
+       Change: make the overlay transparent (no dim/blur), still full-screen to trap focus/clicks. */
+    #vela-wizard.overlay{
+      position:fixed; inset:0; z-index:50;
+      display:grid; place-items:center; padding:1rem;
+      background:transparent;             /* was rgba(2,8,23,.55) */
+      backdrop-filter:none;               /* was blur(4px) */
+    }
+
+    /* === Card ===
+       Change: remove all gradients/glass; use solid white with subtle border + shadow. */
+    #vela-wizard .glasswrap{
+      border-radius:20px;
+      padding:0;                          /* no gradient border edge */
+      background:transparent;             /* was gradient */
+      box-shadow:none;
+    }
+    #vela-wizard .glass{
+      position:relative;
+      border-radius:18px;
+      border:1px solid rgba(226,232,240,1);  /* subtle slate-200 border */
+      background:#fff;                       /* solid white */
+      box-shadow:0 22px 60px rgba(3,7,18,.20);
+      backdrop-filter:none; -webkit-backdrop-filter:none;
+    }
+    #vela-wizard .glass::before{ content:none; } /* remove decorative glare layers */
+    #vela-wizard .card-pad{ padding: clamp(18px, 2.5vw, 28px); }
+    #vela-wizard .card-w{ width:clamp(340px, 92vw, 760px); }
+
+    /* === Chips (no step text) === */
+    #vela-wizard .segment{
+      display:flex; gap:.5rem; padding:.44rem .6rem; border-radius:9999px;
+      background:rgba(15,23,42,.05);
+      box-shadow:inset 0 0 0 1px rgba(226,232,240,1);
+      align-items:center; justify-content:center;
+      backdrop-filter:none; -webkit-backdrop-filter:none;
+    }
+    #vela-wizard .dot{
+      height:8px; width:14px; border-radius:9999px;
+      background:rgba(17,138,104,.18);
+      box-shadow:inset 0 0 0 1px rgba(17,138,104,.45);
+      transition:width .2s, background .2s, box-shadow .2s;
+    }
+    #vela-wizard .dot.active{
+      width:30px; background:var(--vela);
+      box-shadow:0 4px 10px rgba(17,138,104,.25), inset 0 0 0 1px rgba(255,255,255,.35);
+    }
+
+    /* === Centered progress === */
+    #vela-wizard .progress{
+      height:3px;background:rgba(2,8,23,.08);border-radius:999px;overflow:hidden;
+      width:clamp(160px, 40%, 260px); margin:0 auto;
+    }
+    #vela-wizard .progress > i{display:block;height:100%;background:var(--vela);transform-origin:left;transition:transform .22s ease}
+
+    /* === Choices === */
+    #vela-wizard .choice{
+      display:flex;justify-content:space-between;align-items:center;gap:.9rem;
+      padding:14px 16px; border-radius:16px;
+      border:1px solid rgba(226,232,240,1); background:#fff;
+      transition:transform .12s ease, box-shadow .12s ease, border-color .12s ease, background .12s ease, color .12s ease;
+    }
+    #vela-wizard .choice:hover{ transform:translateY(-1px); box-shadow:0 10px 26px rgba(2,8,23,.08); }
+    #vela-wizard .choice.selected{
+      background:var(--vela); border-color:var(--vela); color:#fff;
+      box-shadow:0 12px 28px rgba(17,138,104,.25);
+    }
+    #vela-wizard .choice .title{ font-weight:800; font-size:.98rem; letter-spacing:.01em; color:#0f172a }
+    #vela-wizard .choice .note{ font-size:.82rem; color:#64748b }
+    #vela-wizard .choice.selected .title{ color:#fff; }
+    #vela-wizard .choice.selected .note{ color:#fff; opacity:.9; }
+    #vela-wizard .tick{ width:20px; height:20px; border-radius:9999px; border:2px solid #D1D5DB; display:flex; align-items:center; justify-content:center; background:#fff; flex:0 0 auto }
+    #vela-wizard .choice.selected .tick{ border-color:#fff; }
+    #vela-wizard .choice.selected .tick svg{ color:#fff; }
+
+    /* === Buttons === */
+    #vela-wizard .btn{ display:inline-flex; align-items:center; justify-content:center; height:46px; padding:0 18px; border-radius:9999px; font-weight:700; }
+    #vela-wizard .btn-primary{ background:var(--vela); color:#fff; }
+    #vela-wizard .btn-primary[disabled]{ opacity:.5; cursor:not-allowed; }
+    #vela-wizard .btn-ghost{ background:#fff; border:1px solid rgba(226,232,240,1); color:#0f172a; }
+    #vela-wizard .btn-link{ color:var(--vela); font-weight:700; }
+
+    /* Motion */
+    #vela-wizard .fade-in{animation:fade .18s ease both}
+    @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+    @media (prefers-reduced-motion:reduce){#vela-wizard *{animation-duration:.001ms!important;transition:none!important}}
+  </style>
+</head>
+<body>
+
+  <!-- ===== Modal Only (auto-opens) ===== -->
+  <div id="vela-wizard" class="overlay" x-data="wizard()" x-init="boot()" x-cloak
+       x-show="open" x-transition.opacity.duration.150ms @keydown.escape.window="close()">
+
+    <section class="glasswrap card-w" x-trap.noscroll="open">
+      <div class="glass card-pad">
+        <!-- Close -->
+        <div class="flex items-center">
+          <button @click="close()" class="ml-auto btn-ghost px-3" aria-label="Close">✕</button>
+        </div>
+
+        <!-- Chips + header + centered progress -->
+        <div class="flex flex-col items-center -mt-2 mb-4">
+          <div class="segment">
+            <div class="flex items-center gap-1.5">
+              <template x-for="i in stepsArray" :key="'dot-'+i">
+                <span class="dot" :class="i===idx ? 'active':''"></span>
+              </template>
+            </div>
+          </div>
+          <h1 class="mt-3 text-[var(--vela)] text-[18px] md:text-[20px] font-extrabold tracking-tight">Let’s find your plan</h1>
+          <div class="progress mt-3" role="progressbar" aria-label="Progress">
+            <i :style="`transform:scaleX(${progress});`"></i>
+          </div>
+        </div>
+
+        <!-- Body -->
+        <div class="fade-in">
+          <!-- Questions -->
+          <template x-if="phase==='q'">
+            <div>
+              <header class="mb-3 text-center md:text-left">
+                <h2 class="text-[22px] font-extrabold text-slate-900 tracking-tight" x-text="currentQ.question"></h2>
+                <p class="text-slate-600 text-sm" x-text="currentQ.help || ''"></p>
+              </header>
+
+              <div class="space-y-2" role="radiogroup" :aria-label="currentQ.question">
+                <template x-for="opt in currentQ.options" :key="currentQ.id + '-' + opt.value">
+                  <button type="button" class="choice w-full text-left"
+                          :class="answers[currentQ.id] === opt.value ? 'selected' : ''"
+                          @click="select(opt.value)"
+                          role="radio"
+                          :aria-checked="answers[currentQ.id] === opt.value"
+                          :tabindex="answers[currentQ.id] === opt.value ? 0 : -1"
+                          @keydown.enter.space="select(opt.value)">
+                    <div>
+                      <div class="title" x-text="opt.label"></div>
+                      <div class="note" x-text="opt.note || ''"></div>
+                    </div>
+                    <span class="tick" aria-hidden="true">
+                      <svg x-show="answers[currentQ.id] === opt.value" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 111.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                      </svg>
+                    </span>
+                  </button>
+                </template>
+              </div>
+
+              <div class="mt-5 flex items-center justify-between">
+                <button type="button" class="btn-link" x-show="canBack" @click="back()">Back</button>
+                <div class="flex items-center gap-2 ml-auto">
+                  <button type="button" class="btn btn-primary" :disabled="!isAnswered" x-show="!atLast" @click="next()">Continue</button>
+                  <button type="button" class="btn btn-primary" :disabled="!isAnswered" x-show="atLast" @click="finish()">See my plan</button>
+                </div>
+              </div>
+
+              <p class="mt-3 text-[11px] text-slate-500 text-center">
+                Cancel anytime. No lock-in. Switch plans as your needs change.
+              </p>
+            </div>
+          </template>
+
+          <!-- Result -->
+          <template x-if="phase==='result'">
+            <div>
+              <header class="text-center mb-3">
+                <h2 class="text-2xl font-extrabold text-[var(--vela)]">
+                  We recommend <span class="underline decoration-white/40 underline-offset-4" x-text="plan"></span>.
+                </h2>
+                <p class="text-slate-600 text-sm">Why this fits:</p>
+              </header>
+
+              <div class="rounded-2xl border border-white/60 bg-white p-5">
+                <ul class="grid gap-2">
+                  <template x-for="(r,i) in reasons" :key="i">
+                    <li class="flex gap-2 text-sm text-slate-800">
+                      <svg class="w-4 h-4 mt-0.5 text-[var(--vela)]" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 111.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                      </svg>
+                      <span x-text="r"></span>
+                    </li>
+                  </template>
+                </ul>
+              </div>
+
+              <div class="mt-5 flex flex-col sm:flex-row gap-3 justify-end">
+                <a href="/checkout" class="btn btn-primary hover:-translate-y-0.5 hover:shadow-md transition">Continue to checkout</a>
+                <button type="button" class="btn btn-ghost" @click="restart()">Edit my answers</button>
+                <button type="button" class="btn btn-ghost" @click="close()">Close</button>
+              </div>
+            </div>
+          </template>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    document.addEventListener('alpine:init', () => {
+      Alpine.data('wizard', () => ({
+        open:false, phase:'q', idx:0, answers:{}, plan:'', reasons:[],
+
+        boot(){
+          // Auto-open on load; also expose a tiny API
+          this.reset(); this.open = true;
+          window.VelaPlanWizard = { open:()=>{this.reset(); this.open=true}, close:()=>this.close() };
+          this.$watch('open', v => document.body.style.overflow = v ? 'hidden' : '');
+        },
+
+        steps:[
+          { id:'usage', question:'How do you use your place?', help:'Pick what’s closest.',
+            options:[
+              { value:'host_regular',   label:'I rent it out frequently', note:'Most weeks in season' },
+              { value:'host_sometimes', label:'I rent it out sparingly',  note:'A few times a year' },
+              { value:'private_only',   label:'I do not rent it out',     note:'No rentals' },
+            ]},
+          { id:'rental_nights', question:'About how many rental nights a year?', help:'A ballpark is perfect.', when:(A)=> A.usage !== 'private_only',
+            options:[
+              { value:'90+', label:'90+ nights' }, { value:'30-89', label:'30–89 nights' },
+              { value:'1-29', label:'1–29 nights' }, { value:'0', label:'0 nights' },
+            ]},
+          { id:'visit_freq', question:'How often are you there yourself?', help:'Helps plan keyholding & check-ins.',
+            options:[
+              { value:'monthly+', label:'Monthly or more' },
+              { value:'quarterly',label:'Every few months' },
+              { value:'yearly',   label:'About once a year' },
+            ]},
+          { id:'involvement', question:'How hands-on do you want to be?', help:'Maintenance, approvals and coordination.',
+            options:[
+              { value:'none',  label:'Please handle everything', note:'We manage end-to-end' },
+              { value:'light', label:'Light involvement',        note:'You approve, we coordinate' },
+              { value:'self',  label:'I’ll manage most of it',   note:'Just the essentials' },
+            ]},
+          { id:'property_size', question:'How big is the property?', help:'Size and setup influence effort.',
+            options:[
+              { value:'studio-1', label:'Studio–1 bedroom' },
+              { value:'2-3',      label:'2–3 bedrooms' },
+              { value:'4+',       label:'4+ bedrooms / villa' },
+            ]},
+          { id:'amenities', question:'Anything here apply?', help:'Pick what matters most.',
+            options:[
+              { value:'pool_garden',      label:'Pool or garden to look after' },
+              { value:'elevated_cleaning',label:'Higher cleaning standard' },
+              { value:'none',             label:'None of these' },
+            ]},
+          { id:'budget', question:'What’s your comfort on price?', help:'Only used to break ties.',
+            options:[
+              { value:'value',    label:'Value-focused' },
+              { value:'balanced', label:'Balanced' },
+              { value:'premium',  label:'Premium-oriented' },
+            ]},
+        ],
+
+        // computed
+        get visible(){ return this.steps.filter(s => !s.when || s.when(this.answers)); },
+        get total(){ return Math.max(this.visible.length,1); },
+        get currentQ(){ return this.visible[this.idx] || this.visible[0]; },
+        get atLast(){ return this.idx >= this.total-1; },
+        get canBack(){ return this.idx>0; },
+        get isAnswered(){ return !!this.answers[this.currentQ?.id]; },
+        get stepsArray(){ return Array.from({length:this.total}, (_,i)=>i); },
+        get progress(){ return Math.min(this.idx / this.total, 1); },
+
+        // actions
+        select(val){
+          const id = this.currentQ.id;
+          this.answers[id] = val;
+          if(id==='usage'){
+            if(val==='private_only') this.answers['rental_nights']='0';
+            else if(this.answers['rental_nights']==='0' || this.answers['rental_nights']==null) this.answers['rental_nights']=null;
+          }
+        },
+        next(){ if(this.isAnswered) this.idx = Math.min(this.idx+1, this.total-1); },
+        back(){ if(this.canBack) this.idx = Math.max(0, this.idx-1); },
+        finish(){
+          if(!this.isAnswered) return;
+          this.plan = this.scorePlan();
+          this.reasons = this.makeReasons();
+          this.phase = 'result';
+        },
+        restart(){ this.phase='q'; this.idx=0; },
+
+        // scoring (same as before)
+        scorePlan(){
+          const A=this.answers, S={ Essential:0, Basic:0, Plus:0, Premium:0 };
+          if(A.usage==='host_regular'){ S.Plus+=3; S.Premium+=5; S.Basic+=1; }
+          if(A.usage==='host_sometimes'){ S.Plus+=2; S.Basic+=2; S.Premium+=2; }
+          if(A.usage==='private_only'){ S.Essential+=3; S.Basic+=2; }
+
+          if(A.rental_nights==='90+')  { S.Premium+=4; S.Plus+=3; }
+          if(A.rental_nights==='30-89'){ S.Plus+=3; S.Premium+=2; }
+          if(A.rental_nights==='1-29'){ S.Basic+=2; S.Plus+=1; }
+          if(A.rental_nights==='0')    { S.Essential+=1; }
+
+          if(A.visit_freq==='monthly+'){ S.Essential+=2; S.Basic+=1; }
+          if(A.visit_freq==='quarterly'){ S.Basic+=2; S.Plus+=1; }
+          if(A.visit_freq==='yearly')   { S.Premium+=3; S.Plus+=2; }
+
+          if(A.involvement==='none'){ S.Premium+=4; S.Plus+=3; }
+          if(A.involvement==='light'){ S.Plus+=3; S.Basic+=2; }
+          if(A.involvement==='self'){ S.Essential+=4; }
+
+          if(A.property_size==='2-3'){ S.Plus+=1; S.Basic+=1; }
+          if(A.property_size==='4+'){  S.Premium+=3; S.Plus+=2; }
+          if(A.amenities==='pool_garden'){ S.Premium+=2; S.Plus+=1; }
+          if(A.amenities==='elevated_cleaning'){ S.Basic+=2; S.Plus+=1; }
+
+          const order=['Essential','Basic','Plus','Premium'];
+          const sorted=order.map(n=>({n,s:S[n]})).sort((a,b)=>b.s-a.s);
+          const [t,s]=[sorted[0],sorted[1]];
+          if(s && Math.abs(t.s - s.s) <= 1){
+            if(A.budget==='value'){ S.Essential+=0.6; S.Basic+=0.3; }
+            if(A.budget==='balanced'){ S.Basic+=0.6; S.Plus+=0.3; }
+            if(A.budget==='premium'){ S.Premium+=0.6; S.Plus+=0.3; }
+          }
+          return order.map(n=>({n,s:S[n]})).sort((a,b)=>b.s-a.s)[0].n;
+        },
+        makeReasons(){
+          const A=this.answers, r=[];
+          if(A.usage==='host_regular') r.push('You host often — proactive coordination helps.');
+          if(A.usage==='private_only') r.push('It’s mainly for you — essentials first.');
+          if(A.involvement==='none')   r.push('You prefer a fully managed experience.');
+          if(A.visit_freq==='yearly')  r.push('You visit rarely — ongoing oversight helps.');
+          if(A.property_size==='4+')   r.push('Larger homes benefit from broader coverage.');
+          if(A.amenities==='pool_garden') r.push('Pool/garden care adds coordination.');
+          if(!r.length) r.push('Your answers line up with this level of support.');
+          const copy={
+            Essential:'Simple, reliable care—keyholding, check-ins and the basics done right.',
+            Basic:'Everything in Essential plus cleaning—arrive to a fresh, ready home.',
+            Plus:'Maintenance handled and coordination off your plate—just enjoy the place.',
+            Premium:'Full-service peace of mind—projects, upgrades and concierge on tap.'
+          };
+          r.push(copy[this.plan]); return r.slice(0,4);
+        },
+
+        close(){ this.open=false; },
+        reset(){ this.phase='q'; this.idx=0; this.answers={}; this.plan=''; this.reasons=[]; }
+      }));
+    });
+  </script>
+</body>
+</html>

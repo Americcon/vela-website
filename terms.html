@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth antialiased">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Vela — Terms of Service</title>
+
+  <!-- Tailwind + Typography plugin -->
+  <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+
+  <style>
+    :root{
+      --brand:#118A68;      /* Vela green */
+      --ink:#3B4552;        /* Dark gray */
+      --tint:#E6F4EF;       /* Soft mint tint */
+    }
+
+    /* Typography tweaks on brand */
+    .prose{ color:#475569; }
+    .prose :where(h1,h2,h3,h4){ color:var(--ink); scroll-margin-top:7.5rem; }
+    .prose :where(a){ color:var(--brand); text-decoration: none; font-weight:600; }
+    .prose :where(a:hover){ text-decoration: underline; text-underline-offset:3px; }
+    .prose :where(code){ background:#f8fafc; padding:.15rem .35rem; border-radius:.375rem; }
+    .prose hr{ margin:3rem 0; border-color: rgba(17,138,104,.15) }
+
+    /* Quiet luxury hero */
+    .hero-wrap{
+      background:
+        radial-gradient(1200px 500px at 50% -10%, rgba(17,138,104,.14), transparent 60%),
+        linear-gradient(180deg, #f8fafc, #ffffff 50%, #F4FBF9 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-glow{
+      position:absolute; inset:-2px; border-radius:1.25rem; pointer-events:none;
+      background:
+        radial-gradient(1000px 400px at 50% -20%, rgba(17,138,104,.12), transparent 60%),
+        conic-gradient(from 180deg at 50% 50%, rgba(17,138,104,.15), transparent 40%, rgba(17,138,104,.15));
+      filter: blur(10px);
+      animation: heroFloat 16s ease-in-out infinite alternate;
+    }
+    @keyframes heroFloat{ 0%{ transform: translateY(-6px)} 100%{ transform: translateY(6px)} }
+
+    /* Brand wordmark hover (same as homepage) */
+    .brand-hover{
+      transition: color .18s ease, text-shadow .18s ease, background-size .18s ease;
+      background-image: linear-gradient(var(--brand), var(--brand));
+      background-repeat: no-repeat;
+      background-size: 0% 2px;
+      background-position: 0 100%;
+    }
+    .brand-hover:hover, .brand-hover:focus-visible{
+      color: var(--brand);
+      text-shadow: 0 0 .55rem rgba(17,138,104,.35);
+      background-size: 100% 2px;
+      outline: none;
+    }
+
+    /* Sidebar TOC active state */
+    .toc a[aria-current="true"]{
+      color:var(--brand); background: rgba(17,138,104,.08); border-color: rgba(17,138,104,.25);
+    }
+
+    /* Chips and small UI details */
+    .chip{
+      display:inline-flex; align-items:center; gap:.375rem;
+      padding:.25rem .5rem; border-radius:9999px;
+      border:1px solid rgba(17,138,104,.25);
+      background: rgba(17,138,104,.06);
+      color:var(--ink); font-size:.75rem; font-weight:600;
+    }
+
+    /* Back-to-top fab */
+    .fab{
+      position:fixed; right:1rem; bottom:1rem; z-index:50;
+      display:grid; place-items:center; width:2.5rem; height:2.5rem;
+      border-radius:.75rem; background:#fff; color:var(--ink);
+      border:1px solid rgba(0,0,0,.06); box-shadow: 0 12px 25px -18px rgba(0,0,0,.35);
+    }
+    .fab:hover{ color:var(--brand); }
+
+    @media (prefers-reduced-motion: reduce){
+      .hero-glow{ animation:none }
+      html{ scroll-behavior:auto }
+    }
+  </style>
+</head>
+
+<body class="bg-white text-slate-700">
+  <div id="top"></div>
+
+  <!-- =================== STATIC TOP BAR (not sticky) =================== -->
+  <header class="bg-white border-b border-slate-200">
+    <div class="max-w-7xl mx-auto px-6 py-6 flex items-center justify-between">
+      <!-- Vela wordmark -->
+      <a href="/" class="brand-hover text-slate-900 font-extrabold tracking-tight text-xl">Vela</a>
+
+      <!-- Desktop menu (neutral hover) -->
+      <nav class="hidden md:flex items-center gap-7 text-[0.95rem] text-slate-700 font-medium">
+        <a href="/#product" class="hover:text-slate-900">Product</a>
+        <a href="/#services" class="hover:text-slate-900">Services</a>
+        <a href="/#pricing" class="hover:text-slate-900">Pricing</a>
+        <a href="/#testimonials" class="hover:text-slate-900">Testimonials</a>
+        <a href="/#regions" class="hover:text-slate-900">Regions</a>
+        <a href="/#contact" class="hover:text-slate-900">Contact</a>
+      </nav>
+
+      <!-- Desktop CTAs -->
+      <div class="hidden md:flex items-center gap-3">
+        <a href="/signup" class="px-3 py-1.5 rounded bg-slate-100 text-slate-800 font-medium ring-1 ring-slate-200 hover:bg-slate-200/60">Log in</a>
+        <a href="/signup" class="px-4 py-2 rounded bg-[color:var(--brand)] text-white font-medium hover:opacity-95">Sign up for free</a>
+      </div>
+
+      <!-- Mobile: menu button -->
+      <button id="mnuBtn" class="md:hidden text-slate-700 text-sm px-3 py-1.5 rounded bg-slate-100 ring-1 ring-slate-200">Menu</button>
+    </div>
+  </header>
+
+  <!-- Mobile menu (overlay) -->
+  <div id="mnuPanel" class="hidden fixed inset-0 z-40 bg-black/60">
+    <div class="absolute inset-x-0 top-0 px-6 py-6 flex items-center justify-between">
+      <span class="brand-hover text-white font-extrabold tracking-tight text-2xl">Vela</span>
+      <button id="mnuClose" class="text-white/90 text-sm px-3 py-1.5 rounded bg-white/10 ring-1 ring-white/30">Close</button>
+    </div>
+    <nav class="h-full flex items-center justify-center">
+      <ul class="text-white text-2xl space-y-5 text-center font-medium">
+        <li><a href="/#product" class="hover:underline underline-offset-4">Product</a></li>
+        <li><a href="/#services" class="hover:underline underline-offset-4">Services</a></li>
+        <li><a href="/#pricing" class="hover:underline underline-offset-4">Pricing</a></li>
+        <li><a href="/#testimonials" class="hover:underline underline-offset-4">Testimonials</a></li>
+        <li><a href="/#regions" class="hover:underline underline-offset-4">Regions</a></li>
+        <li><a href="/#contact" class="hover:underline underline-offset-4">Contact</a></li>
+        <li class="pt-6 flex items-center justify-center gap-3">
+          <a href="/signup" class="inline-block px-5 py-2 rounded bg-white/10 text-white ring-1 ring-white/30 hover:bg-white/20 text-base">Log in</a>
+          <a href="/signup" class="inline-block px-5 py-2 rounded bg-white text-[color:var(--brand)] font-medium text-base">Sign up for free</a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+
+  <!-- =================== HERO =================== -->
+  <section class="hero-wrap">
+    <div class="mx-auto max-w-7xl px-6 py-16 md:py-20">
+      <div class="relative rounded-2xl bg-white/75 ring-1 ring-slate-200 shadow-xl overflow-hidden">
+        <span aria-hidden="true" class="hero-glow"></span>
+        <div class="relative px-6 py-10 md:px-10 md:py-12">
+          <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+            <div class="max-w-2xl">
+              <div class="inline-flex items-center gap-2 chip">
+                <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M4 3a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h8.586A2 2 0 0 0 14 16.586L17.586 13A2 2 0 0 0 18 11.586V5a2 2 0 0 0-2-2H4z"/></svg>
+                Legal & Terms
+              </div>
+              <h1 class="mt-4 text-3xl md:text-4xl font-extrabold tracking-tight text-[color:var(--ink)]">
+                Terms of Service
+              </h1>
+              <p class="mt-3 text-[1.05rem] text-slate-600">
+                Please read these terms carefully before using our Services.
+              </p>
+              <div class="mt-4 text-xs text-slate-500">
+                © 2026 Vela Group S.L • Last updated: <time datetime="2026-04-09">9 April 2026</time>
+              </div>
+            </div>
+
+            <div class="shrink-0">
+              <div class="grid place-items-center rounded-xl border border-emerald-200 bg-emerald-50 p-5">
+                <!-- Document icon -->
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-[color:var(--brand)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625A3.375 3.375 0 0016.125 8.25h-1.5A1.125 1.125 0 0113.5 7.125v-1.5A3.375 3.375 0 0010.125 2.25H5.625A1.125 1.125 0 004.5 3.375v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9"/>
+                </svg>
+                <div class="mt-2 text-xs text-emerald-700">Plain-English contracts • Fair use • EU consumer rights</div>
+                <div class="mt-3 flex gap-2">
+                  <button onclick="window.print()" class="rounded-lg bg-white px-3 py-1.5 text-xs font-semibold ring-1 ring-emerald-200 hover:bg-emerald-50">Print / Save PDF</button>
+                  <a href="mailto:legal@myvela.es" class="rounded-lg bg-[color:var(--brand)] px-3 py-1.5 text-xs font-semibold text-white hover:opacity-95">Contact legal</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div> <!-- /inner -->
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== BODY: TOC + CONTENT =================== -->
+  <div class="mx-auto max-w-7xl px-6 py-12 lg:grid lg:grid-cols-12 lg:gap-x-12">
+
+    <!-- Sticky TOC (desktop) -->
+    <aside class="toc hidden lg:block lg:col-span-3">
+      <div class="sticky top-28">
+        <h3 class="text-sm font-semibold uppercase tracking-wider text-slate-400">On this page</h3>
+        <ul id="tocList" class="mt-4 flex flex-col gap-1 text-sm">
+          <li><a href="#intro"    class="block rounded-md px-2 py-1 text-slate-600 hover:text-[color:var(--brand)] hover:bg-emerald-50/70 border border-transparent">1. Introduction</a></li>
+          <li><a href="#accept"   class="block rounded-md px-2 py-1 text-slate-600 hover:text-[color:var(--brand)] hover:bg-emerald-50/70 border border-transparent">2. Acceptance</a></li>
+          <li><a href="#account"  class="block rounded-md px-2 py-1 text-slate-600 hover:text-[color:var(--brand)] hover:bg-emerald-50/70 border border-transparent">3. Accounts</a></li>
+          <li><a href="#fees"     class="block rounded-md px-2 py-1 text-slate-600 hover:text-[color:var(--brand)] hover:bg-emerald-50/70 border border-transparent">4. Fees & Payments</a></li>
+          <li><a href="#use"      class="block rounded-md px-2 py-1 text-slate-600 hover:text-[color:var(--brand)] hover:bg-emerald-50/70 border border-transparent">5. Use of Service</a></li>
+          <li><a href="#content"  class="block rounded-md px-2 py-1 text-slate-600 hover:text-[color:var(--brand)] hover:bg-emerald-50/70 border border-transparent">6. User Content</a></li>
+          <li><a href="#conduct"  class="block rounded-md px-2 py-1 text-slate-600 hover:text-[color:var(--brand)] hover:bg-emerald-50/70 border border-transparent">7. Prohibited Conduct</a></li>
+          <li><a href="#term"     class="block rounded-md px-2 py-1 text-slate-600 hover:text-[color:var(--brand)] hover:bg-emerald-50/70 border border-transparent">8. Termination</a></li>
+          <li><a href="#disclaim" class="block rounded-md px-2 py-1 text-slate-600 hover:text-[color:var(--brand)] hover:bg-emerald-50/70 border border-transparent">9. Disclaimers</a></li>
+          <li><a href="#liab"     class="block rounded-md px-2 py-1 text-slate-600 hover:text-[color:var(--brand)] hover:bg-emerald-50/70 border border-transparent">10. Liability</a></li>
+          <li><a href="#indemn"   class="block rounded-md px-2 py-1 text-slate-600 hover:text-[color:var(--brand)] hover:bg-emerald-50/70 border border-transparent">11. Indemnity</a></li>
+          <li><a href="#law"      class="block rounded-md px-2 py-1 text-slate-600 hover:text-[color:var(--brand)] hover:bg-emerald-50/70 border border-transparent">12. Governing Law</a></li>
+          <li><a href="#changes"  class="block rounded-md px-2 py-1 text-slate-600 hover:text-[color:var(--brand)] hover:bg-emerald-50/70 border border-transparent">13. Changes</a></li>
+          <li><a href="#contact"  class="block rounded-md px-2 py-1 text-slate-600 hover:text-[color:var(--brand)] hover:bg-emerald-50/70 border border-transparent">14. Contact</a></li>
+        </ul>
+      </div>
+    </aside>
+
+    <!-- Mobile jump menu -->
+    <div class="lg:hidden mb-6">
+      <details class="rounded-xl border border-slate-200 bg-white px-4 py-3">
+        <summary class="cursor-pointer text-sm font-semibold text-slate-800">On this page</summary>
+        <nav class="mt-3 grid grid-cols-1 gap-1 text-sm">
+          <a class="rounded-md px-2 py-1 hover:bg-emerald-50 hover:text-[color:var(--brand)]" href="#intro">1. Introduction</a>
+          <a class="rounded-md px-2 py-1 hover:bg-emerald-50 hover:text-[color:var(--brand)]" href="#accept">2. Acceptance</a>
+          <a class="rounded-md px-2 py-1 hover:bg-emerald-50 hover:text-[color:var(--brand)]" href="#account">3. Accounts</a>
+          <a class="rounded-md px-2 py-1 hover:bg-emerald-50 hover:text-[color:var(--brand)]" href="#fees">4. Fees & Payments</a>
+          <a class="rounded-md px-2 py-1 hover:bg-emerald-50 hover:text-[color:var(--brand)]" href="#use">5. Use of Service</a>
+          <a class="rounded-md px-2 py-1 hover:bg-emerald-50 hover:text-[color:var(--brand)]" href="#content">6. User Content</a>
+          <a class="rounded-md px-2 py-1 hover:bg-emerald-50 hover:text-[color:var(--brand)]" href="#conduct">7. Prohibited Conduct</a>
+          <a class="rounded-md px-2 py-1 hover:bg-emerald-50 hover:text-[color:var(--brand)]" href="#term">8. Termination</a>
+          <a class="rounded-md px-2 py-1 hover:bg-emerald-50 hover:text-[color:var(--brand)]" href="#disclaim">9. Disclaimers</a>
+          <a class="rounded-md px-2 py-1 hover:bg-emerald-50 hover:text-[color:var(--brand)]" href="#liab">10. Liability</a>
+          <a class="rounded-md px-2 py-1 hover:bg-emerald-50 hover:text-[color:var(--brand)]" href="#indemn">11. Indemnity</a>
+          <a class="rounded-md px-2 py-1 hover:bg-emerald-50 hover:text-[color:var(--brand)]" href="#law">12. Governing Law</a>
+          <a class="rounded-md px-2 py-1 hover:bg-emerald-50 hover:text-[color:var(--brand)]" href="#changes">13. Changes</a>
+          <a class="rounded-md px-2 py-1 hover:bg-emerald-50 hover:text-[color:var(--brand)]" href="#contact">14. Contact</a>
+        </nav>
+      </details>
+    </div>
+
+    <!-- Content -->
+    <main class="lg:col-span-9">
+      <article class="prose lg:prose-lg max-w-none">
+        <!-- 1 -->
+        <section id="intro">
+          <h2>1. Introduction</h2>
+          <p>These Terms of Service (“<strong>Terms</strong>”) govern your access to and use of Vela’s websites, mobile applications, and dashboard tools (collectively, the “<strong>Services</strong>”) provided by <strong>Vela Group S.L.</strong> (“<strong>Vela</strong>,” “we,” “us,” or “our”). By accessing or using the Services, you agree to be bound by these Terms.</p>
+          <p>The Services include, as applicable, subscription plans, concierge bookings (such as cleaning, restocking, maintenance, check-in and related requests), digital add-ons, guest access tools, host/property management tools, and billing/account management features.</p>
+          <p>These Terms cover service use and commercial conditions. Personal data handling is described separately in our <a href="/privacy">Privacy Policy</a>.</p>
+        </section>
+
+        <hr/>
+
+        <!-- 2 -->
+        <section id="accept">
+          <h2>2. Acceptance of Terms</h2>
+          <p>You must be at least 18 years old (or the age of majority in your jurisdiction) to use the Services. If you use the Services on behalf of an organisation, you are agreeing to these Terms for that organisation and confirming that you have authority to bind it.</p>
+          <p>Additional service-specific terms presented in checkout flows, subscription screens, booking confirmations, or plan pages form part of your agreement with us in relation to those services.</p>
+        </section>
+
+        <hr/>
+
+        <!-- 3 -->
+        <section id="account">
+          <h2>3. Accounts &amp; Security</h2>
+          <p>To use the Services, you agree to the following:</p>
+          <div class="not-prose mt-6 space-y-4 text-base text-slate-600">
+            <div class="flex items-start gap-3"><svg class="h-6 w-6 flex-shrink-0 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" /></svg><span>You are responsible for safeguarding your password and account.</span></div>
+            <div class="flex items-start gap-3"><svg class="h-6 w-6 flex-shrink-0 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" /></svg><span>You will not share credentials, except where account seat/invite features explicitly allow managed access.</span></div>
+            <div class="flex items-start gap-3"><svg class="h-6 w-6 flex-shrink-0 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" /></svg><span>Information you provide (including property, booking, access, and guest details) must be accurate and kept up to date.</span></div>
+            <div class="flex items-start gap-3"><svg class="h-6 w-6 flex-shrink-0 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" /></svg><span>You will notify us immediately of any unauthorised use.</span></div>
+          </div>
+        </section>
+
+        <hr/>
+
+        <!-- 4 -->
+        <section id="fees">
+          <h2>4. Fees &amp; Payments</h2>
+          <p>Some Services require payment. Fees are shown at checkout and in your plan settings, and are in euros (€) unless stated otherwise.</p>
+          <div class="not-prose mt-6 space-y-4 text-base text-slate-600">
+            <div class="flex items-start gap-3"><svg class="h-6 w-6 flex-shrink-0 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" /></svg><span><strong>Subscriptions:</strong> Recurring plans continue until cancelled. Unless stated otherwise, cancellation takes effect at the end of the current billing period.</span></div>
+            <div class="flex items-start gap-3"><svg class="h-6 w-6 flex-shrink-0 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" /></svg><span><strong>Concierge and one-off services:</strong> Charges are applied when you confirm the booking/payment flow. Some services may include a non-refundable platform fee where permitted by law and disclosed at checkout.</span></div>
+            <div class="flex items-start gap-3"><svg class="h-6 w-6 flex-shrink-0 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" /></svg><span><strong>Payment processing:</strong> Payments are processed by third-party providers. You authorise us (and our processors) to charge your selected payment method for fees, taxes, and applicable adjustments.</span></div>
+            <div class="flex items-start gap-3"><svg class="h-6 w-6 flex-shrink-0 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" /></svg><span><strong>Refunds:</strong> Refund eligibility depends on service type, booking status, and applicable law. Statutory consumer rights remain unaffected.</span></div>
+            <div class="flex items-start gap-3"><svg class="h-6 w-6 flex-shrink-0 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" /></svg><span><strong>Withdrawal rights:</strong> where EU/EEA consumer withdrawal rights apply, you may exercise them as required by law. If you request immediate performance of a service, your withdrawal rights may be reduced or lost once performance starts, as permitted by law.</span></div>
+            <div class="flex items-start gap-3"><svg class="h-6 w-6 flex-shrink-0 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" /></svg><span><strong>Price changes:</strong> We may update pricing with prior notice where required, and any change applies prospectively.</span></div>
+          </div>
+        </section>
+
+        <hr/>
+
+        <!-- 5 -->
+        <section id="use">
+          <h2>5. Use of the Services</h2>
+          <p>Subject to these Terms, we grant you a limited, non-exclusive, non-transferable, revocable licence to use the Services for personal or internal business purposes.</p>
+          <p>You are responsible for ensuring you have the legal right to submit property, guest, and access information and to request services at the relevant location.</p>
+        </section>
+
+        <hr/>
+
+        <!-- 6 -->
+        <section id="content">
+          <h2>6. User Content</h2>
+          <p>You retain ownership of content you submit (for example property details, manuals, booking notes, and service instructions), but grant Vela a worldwide, royalty-free licence to host, store, reproduce, and display that content solely to operate, secure, and improve the Services.</p>
+          <p>You represent that you have the rights needed to submit such content and that it does not violate any third-party rights or applicable law.</p>
+        </section>
+
+        <hr/>
+
+        <!-- 7 -->
+        <section id="conduct">
+          <h2>7. Prohibited Conduct</h2>
+          <p>You agree not to engage in any of the following activities:</p>
+          <div class="not-prose mt-6 space-y-4 text-base text-slate-600">
+            <div class="flex items-start gap-3"><svg class="h-6 w-6 flex-shrink-0 text-red-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" /></svg><span>Violating any applicable law or regulation.</span></div>
+            <div class="flex items-start gap-3"><svg class="h-6 w-6 flex-shrink-0 text-red-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" /></svg><span>Infringing on intellectual property or privacy rights.</span></div>
+            <div class="flex items-start gap-3"><svg class="h-6 w-6 flex-shrink-0 text-red-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" /></svg><span>Uploading malware, viruses, or any other harmful code.</span></div>
+            <div class="flex items-start gap-3"><svg class="h-6 w-6 flex-shrink-0 text-red-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" /></svg><span>Attempting to interfere with or disrupt the Services.</span></div>
+            <div class="flex items-start gap-3"><svg class="h-6 w-6 flex-shrink-0 text-red-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" /></svg><span>Misusing guest links, access tokens, check-in tools, or keyless features to gain unauthorised access.</span></div>
+            <div class="flex items-start gap-3"><svg class="h-6 w-6 flex-shrink-0 text-red-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" /></svg><span>Creating fraudulent bookings, payment disputes, or chargebacks without valid basis.</span></div>
+          </div>
+        </section>
+
+        <hr/>
+
+        <!-- 8..14 -->
+        <section id="term">
+          <h2>8. Termination</h2>
+          <p>We may suspend or terminate access where reasonably necessary, including for non-payment, suspected fraud, misuse, security risk, or violation of these Terms. Upon termination, your right to use the Services ceases, but sections that by nature should survive (including payment obligations, liability limits, and dispute provisions) remain in effect.</p>
+        </section>
+
+        <hr/>
+
+        <section id="disclaim">
+          <h2>9. Service-Specific Terms &amp; Disclaimers</h2>
+          <p>The Services are provided on an “as available” basis. Availability, response times, and outcomes may vary by region, partner capacity, and circumstances outside our control.</p>
+          <div class="not-prose mt-6 space-y-4 text-base text-slate-600">
+            <div class="flex items-start gap-3"><svg class="h-6 w-6 flex-shrink-0 text-amber-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 4.5h.008v.008H12v-.008z"/></svg><span><strong>Concierge services:</strong> booking windows and completion times are estimates, not guarantees.</span></div>
+            <div class="flex items-start gap-3"><svg class="h-6 w-6 flex-shrink-0 text-amber-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0 1 18 0zm-9 4.5h.008v.008H12v-.008z"/></svg><span><strong>Third-party providers:</strong> some services are fulfilled by independent partners. We coordinate delivery but do not control all third-party acts or omissions.</span></div>
+            <div class="flex items-start gap-3"><svg class="h-6 w-6 flex-shrink-0 text-amber-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0 1 18 0zm-9 4.5h.008v.008H12v-.008z"/></svg><span><strong>Keyless/access tools:</strong> you remain responsible for safe operational use of locks, codes, and property access controls.</span></div>
+            <div class="flex items-start gap-3"><svg class="h-6 w-6 flex-shrink-0 text-amber-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0 1 18 0zm-9 4.5h.008v.008H12v-.008z"/></svg><span><strong>Host tools and insights:</strong> calendar sync, turnover automations, and performance indicators are operational aids and not a guarantee of occupancy, revenue, or business outcomes.</span></div>
+          </div>
+        </section>
+
+        <hr/>
+
+        <section id="liab">
+          <h2>10. Limitation of Liability</h2>
+          <p>To the fullest extent permitted by law, Vela Group S.L. is not liable for indirect, incidental, special, consequential, exemplary, or punitive damages, or for loss of profit, revenue, goodwill, data, or business opportunity.</p>
+          <p>Nothing in these Terms excludes or limits liability that cannot be excluded under applicable law, including mandatory consumer protections.</p>
+        </section>
+
+        <hr/>
+
+        <section id="indemn">
+          <h2>11. Indemnification</h2>
+          <p>To the extent permitted by law, you agree to indemnify and hold harmless Vela Group S.L. and its affiliates from third-party claims arising from your unlawful use of the Services, your content, or your breach of these Terms.</p>
+        </section>
+
+        <hr/>
+
+        <section id="law">
+          <h2>12. Governing Law &amp; Disputes</h2>
+          <p>These Terms are governed by the laws of Spain. If you are a consumer resident in the EU/EEA/UK, you also benefit from any mandatory protections of the law of your country of residence.</p>
+          <p>For non-consumer disputes, courts of Barcelona, Spain have exclusive jurisdiction unless otherwise required by mandatory law.</p>
+        </section>
+
+        <hr/>
+
+        <section id="changes">
+          <h2>13. Changes to the Terms</h2>
+          <p>We may revise these Terms from time to time. Material changes will be posted here with an updated “Last updated” date, and where required we will provide advance notice through the Services or by email. Continued use after the effective date constitutes acceptance of the updated Terms.</p>
+        </section>
+
+        <hr/>
+
+        <section id="contact">
+          <h2>14. Contact</h2>
+          <p>For questions about these Terms, contact us at <a href="mailto:legal@myvela.es">legal@myvela.es</a>. For data protection questions, use <a href="mailto:privacy@myvela.es">privacy@myvela.es</a> and review our <a href="/privacy">Privacy Policy</a>.</p>
+          <p>Postal contact: Vela Group S.L., Duquesa Village, Suite 400, Manilva, Spain.</p>
+        </section>
+      </article>
+    </main>
+  </div>
+
+  <!-- =================== FOOTER =================== -->
+  <footer class="border-t border-slate-200 bg-white">
+    <div class="mx-auto max-w-7xl px-6 py-10 text-center text-sm text-slate-500">
+      © 2026 Vela Group S.L — Last updated: 9 April 2026
+    </div>
+  </footer>
+
+  <!-- Back to top -->
+  <a href="#top" aria-label="Back to top" class="fab" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+    <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 5l7 7-1.4 1.4L13 10.8V19h-2v-8.2l-4.6 2.6L5 12l7-7z"/></svg>
+  </a>
+
+  <!-- Active section highlighter + mobile menu toggles -->
+  <script>
+    // TOC highlight
+    (function(){
+      const links=[...document.querySelectorAll('#tocList a')];
+      const sections=links.map(a=>document.querySelector(a.getAttribute('href'))).filter(Boolean);
+      const io=new IntersectionObserver(entries=>{
+        entries.forEach(entry=>{
+          const idx=sections.indexOf(entry.target);
+          if(idx>-1 && entry.isIntersecting){
+            links.forEach(l=>l.removeAttribute('aria-current'));
+            links[idx].setAttribute('aria-current','true');
+          }
+        });
+      },{ rootMargin:'-40% 0% -55% 0%', threshold:[0,1]});
+      sections.forEach(s=>io.observe(s));
+    })();
+
+    // Mobile menu
+    (function(){
+      const btn=document.getElementById('mnuBtn');
+      const panel=document.getElementById('mnuPanel');
+      const close=document.getElementById('mnuClose');
+      if(!btn||!panel||!close) return;
+      const toggle=(show)=>{ panel.classList[show?'remove':'add']('hidden'); document.documentElement.classList.toggle('overflow-hidden', show); };
+      btn.addEventListener('click', ()=>toggle(true));
+      close.addEventListener('click', ()=>toggle(false));
+      panel.addEventListener('click', (e)=>{ if(e.target===panel) toggle(false); });
+      document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') toggle(false); });
+    })();
+  </script>
+</body>
+</html>

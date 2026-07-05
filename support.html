@@ -1,0 +1,1011 @@
+<!doctype html>
+<html lang="en" class="scroll-smooth antialiased h-full">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Vela — Support Center</title>
+  <meta name="description" content="Vela Support: Find answers, manage bookings, and contact our team." />
+  
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+  <!-- Alpine.js -->
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+  <style>
+    :root {
+      --brand: #118A68;
+      --brand-light: #E6F4EF;
+    }
+    .text-brand { color: var(--brand); }
+    .bg-brand { background-color: var(--brand); }
+    .bg-brand-light { background-color: var(--brand-light); }
+    
+    /* Smooth fade for elements */
+    [x-cloak] { display: none !important; }
+    
+    /* Custom Scrollbar */
+    .custom-scroll::-webkit-scrollbar { height: 6px; }
+    .custom-scroll::-webkit-scrollbar-track { background: transparent; }
+    .custom-scroll::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 20px; }
+    
+    /* Subtle animations */
+    .fade-up { animation: fadeUp 0.5s ease-out forwards; opacity: 0; transform: translateY(10px); }
+    @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+    
+    .delay-100 { animation-delay: 100ms; }
+    .delay-200 { animation-delay: 200ms; }
+  </style>
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: { emerald: { 50: '#ecfdf5', 100: '#d1fae5', 500: '#10b981', 600: '#059669', 700: '#118A68', 800: '#065f46', 900: '#064e3b' } },
+          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="h-full bg-slate-50 text-slate-900 font-sans selection:bg-emerald-100 selection:text-emerald-900">
+
+  <div
+    x-data="supportCenter()"
+    x-init="init()"
+    @keydown.window="/^\//.test($event.key) && focusSearch($event)"
+    @keydown.escape="closeModal()"
+    class="relative min-h-screen flex flex-col"
+  >
+
+    <!-- Navigation -->
+    <nav class="sticky top-0 z-40 w-full bg-white/80 backdrop-blur-md border-b border-slate-200/60">
+      <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+        <a href="/" class="flex items-center gap-2 group">
+          <div class="w-8 h-8 bg-emerald-700 rounded-lg flex items-center justify-center text-white font-bold text-lg">V</div>
+          <span class="font-bold text-slate-800 tracking-tight group-hover:text-emerald-700 transition">Vela</span>
+          <span class="hidden sm:inline-block text-slate-300 mx-1">/</span>
+          <span class="hidden sm:inline-block font-medium text-slate-600">Support</span>
+        </a>
+        <div class="flex items-center gap-3">
+          <a href="/dashboard" class="text-sm font-medium text-slate-600 hover:text-slate-900 px-3 py-2 transition">Dashboard</a>
+          <a href="#contact" class="text-sm font-medium bg-slate-900 text-white px-4 py-2 rounded-lg hover:bg-slate-800 transition shadow-sm">Contact Us</a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="relative bg-white pt-16 pb-20 overflow-hidden">
+      <!-- Background Decorations -->
+      <div class="absolute top-0 inset-x-0 h-full bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-emerald-50 via-slate-50 to-white opacity-70"></div>
+      <div class="absolute -top-24 -right-24 w-96 h-96 bg-emerald-100 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
+      <div class="absolute -top-24 -left-24 w-96 h-96 bg-blue-100 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
+
+      <div class="relative max-w-3xl mx-auto px-6 text-center fade-up">
+        <h1 class="text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight mb-4">How can we help?</h1>
+        <p class="text-lg text-slate-600 mb-8 max-w-xl mx-auto">Search our knowledge base for answers on bookings, billing, and property management.</p>
+
+        <!-- Main Search Bar -->
+        <div class="relative group max-w-2xl mx-auto">
+          <div class="absolute -inset-1 bg-gradient-to-r from-emerald-200 to-blue-200 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-200"></div>
+          <div class="relative bg-white rounded-xl shadow-xl ring-1 ring-slate-200 flex items-center p-2">
+            <div class="pl-4 text-slate-400">
+              <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+            </div>
+            <input
+              x-ref="search"
+              x-model="q"
+              type="text"
+              class="w-full bg-transparent border-none focus:ring-0 text-lg placeholder-slate-400 text-slate-800 px-4 py-3"
+              placeholder="Search for articles (e.g. 'billing', 'check-in')..."
+            >
+            <div class="hidden md:flex items-center pr-4">
+              <kbd class="hidden sm:inline-block px-2 py-1 bg-slate-100 border border-slate-200 rounded-md text-xs text-slate-500 font-sans">Cmd K</kbd>
+            </div>
+          </div>
+        </div>
+
+        <!-- Trending Tags -->
+        <div class="mt-6 flex flex-wrap justify-center gap-2 text-sm">
+          <span class="text-slate-500 mr-1">Trending:</span>
+          <template x-for="t in trending" :key="t">
+            <button @click="q=t" class="px-3 py-1 rounded-full bg-slate-100 text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 transition border border-transparent hover:border-emerald-200">
+              <span x-text="t"></span>
+            </button>
+          </template>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow max-w-6xl mx-auto px-6 py-12 w-full">
+      
+      <!-- Category Grid (Only shows when not searching) -->
+      <section x-show="!q" class="mb-16 fade-up delay-100">
+        <h2 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-6">Browse by Category</h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <template x-for="c in categories.filter(x => x.id !== 'all')" :key="c.id">
+            <button 
+              @click="q = c.keywords" 
+              class="group flex flex-col items-center justify-center p-6 bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-emerald-300 hover:-translate-y-1 transition duration-200"
+            >
+              <div class="w-12 h-12 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mb-4 group-hover:scale-110 transition" x-html="c.icon"></div>
+              <span class="font-semibold text-slate-900 group-hover:text-emerald-700" x-text="c.label"></span>
+            </button>
+          </template>
+        </div>
+      </section>
+
+      <div class="grid lg:grid-cols-3 gap-10 items-start fade-up delay-200">
+        
+        <!-- Left Column: Results / Articles -->
+        <div class="lg:col-span-2 space-y-8">
+          
+          <!-- Quick Actions (Dashboard Widgets) -->
+          <div x-show="!q" class="grid sm:grid-cols-2 gap-4">
+            <div class="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm flex items-start gap-4">
+              <div class="p-3 bg-blue-50 text-blue-600 rounded-xl">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>
+              </div>
+              <div>
+                <h3 class="font-semibold text-slate-900">Billing & Invoices</h3>
+                <p class="text-sm text-slate-500 mt-1 mb-3">View past receipts or update payment methods.</p>
+                <a href="/settings/billing" class="text-sm font-medium text-blue-600 hover:text-blue-800">Manage Billing &rarr;</a>
+              </div>
+            </div>
+            <div class="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm flex items-start gap-4">
+              <div class="p-3 bg-emerald-50 text-emerald-600 rounded-xl">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+              </div>
+              <div>
+                <h3 class="font-semibold text-slate-900">System Status</h3>
+                <p class="text-sm text-slate-500 mt-1 mb-3">All systems operational.</p>
+                <a href="/status" class="text-sm font-medium text-emerald-600 hover:text-emerald-800">View History &rarr;</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Articles List -->
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <h2 class="text-xl font-bold text-slate-900" x-text="q ? 'Search Results' : 'Popular Articles'"></h2>
+              <button x-show="q" @click="q=''" class="text-sm text-slate-500 hover:text-red-500">Clear Search</button>
+            </div>
+
+            <div class="space-y-3">
+              <template x-for="a in filteredArticles" :key="a.id">
+                <article 
+                  @click="openArticle(a)"
+                  class="group relative bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md hover:border-emerald-200 transition cursor-pointer"
+                >
+                  <div class="flex items-start justify-between">
+                    <div class="flex items-start gap-4">
+                      <div class="mt-1 shrink-0 text-slate-400 group-hover:text-emerald-600 transition">
+                         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                      </div>
+                      <div>
+                        <div class="flex items-center gap-2 mb-1">
+                          <span class="text-xs font-medium px-2 py-0.5 rounded-md bg-slate-100 text-slate-600" x-text="a.categoryLabel"></span>
+                        </div>
+                        <h3 class="text-lg font-semibold text-slate-900 group-hover:text-emerald-700 transition" x-text="a.title"></h3>
+                        <p class="text-slate-500 text-sm mt-1 line-clamp-1" x-text="a.excerpt"></p>
+                      </div>
+                    </div>
+                    <div class="shrink-0 self-center">
+                       <svg class="w-5 h-5 text-slate-300 group-hover:text-emerald-500 -translate-x-2 group-hover:translate-x-0 opacity-0 group-hover:opacity-100 transition" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+                    </div>
+                  </div>
+                </article>
+              </template>
+              
+              <!-- Empty State -->
+              <div x-show="filteredArticles.length === 0" class="text-center py-12 bg-white rounded-2xl border border-dashed border-slate-300">
+                <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-slate-100 mb-4">
+                  <svg class="w-6 h-6 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                </div>
+                <h3 class="text-lg font-medium text-slate-900">No matches found</h3>
+                <p class="text-slate-500 mt-1">Try adjusting your search terms or browse categories.</p>
+                <button @click="q=''" class="mt-4 text-emerald-600 font-medium hover:underline">View all topics</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Sidebar -->
+        <aside class="space-y-6">
+          
+          <!-- Contact Card -->
+          <div id="contact" class="bg-slate-900 rounded-2xl p-6 text-white shadow-lg relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-500 rounded-full mix-blend-overlay filter blur-3xl opacity-20 transform translate-x-10 -translate-y-10"></div>
+            <h3 class="text-lg font-bold mb-2 relative z-10">Need human help?</h3>
+            <p class="text-slate-300 text-sm mb-6 relative z-10">Our support team is available Mon-Fri, 9am - 6pm CET.</p>
+            <div class="space-y-3 relative z-10">
+              <a href="/chat" class="flex items-center justify-center w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-medium rounded-lg transition">
+                Start Live Chat
+              </a>
+              <a href="mailto:support@vela.es" class="flex items-center justify-center w-full py-2.5 bg-white/10 hover:bg-white/20 text-white font-medium rounded-lg transition backdrop-blur-sm border border-white/10">
+                Email Support
+              </a>
+            </div>
+          </div>
+
+          <!-- Quick FAQs Accordion -->
+          <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+            <h3 class="font-bold text-slate-900 mb-4">Quick Answers</h3>
+            <div class="space-y-1">
+              <template x-for="(f, idx) in faqs" :key="idx">
+                <div x-data="{ open: false }" class="border-b border-slate-100 last:border-0">
+                  <button @click="open = !open" class="flex items-center justify-between w-full py-3 text-left">
+                    <span class="text-sm font-medium text-slate-700 hover:text-emerald-700 transition" x-text="f.q"></span>
+                    <svg class="w-4 h-4 text-slate-400 transform transition-transform duration-200" :class="{'rotate-180': open}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                  </button>
+                  <div x-show="open" x-collapse class="pb-3 text-sm text-slate-500 leading-relaxed" x-text="f.a"></div>
+                </div>
+              </template>
+            </div>
+          </div>
+
+        </aside>
+      </div>
+    </main>
+
+    <footer class="bg-white border-t border-slate-200 py-10 mt-auto">
+      <div class="max-w-6xl mx-auto px-6 text-center">
+        <p class="text-slate-500 text-sm">&copy; 2026 Vela Property Management. All rights reserved.</p>
+      </div>
+    </footer>
+
+    <!-- Article Modal -->
+    <div 
+      x-show="showModal" 
+      class="relative z-50" 
+      aria-labelledby="modal-title" 
+      role="dialog" 
+      aria-modal="true"
+    >
+      <div 
+        x-show="showModal"
+        x-transition:enter="ease-out duration-300"
+        x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100"
+        x-transition:leave="ease-in duration-200"
+        x-transition:leave-start="opacity-100"
+        x-transition:leave-end="opacity-0"
+        class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" 
+        @click="closeModal()"
+      ></div>
+
+      <div class="fixed inset-0 z-10 overflow-y-auto">
+        <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+          <div 
+            x-show="showModal"
+            x-transition:enter="ease-out duration-300"
+            x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+            x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+            x-transition:leave="ease-in duration-200"
+            x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+            x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+            class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-3xl border border-slate-200"
+            @click.stop
+          >
+            <!-- Modal Header -->
+            <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-start justify-between">
+              <div>
+                <span class="inline-block py-1 px-2 rounded bg-emerald-100 text-emerald-800 text-xs font-bold uppercase tracking-wide mb-2" x-text="activeArticle?.categoryLabel"></span>
+                <h3 class="text-xl font-bold text-slate-900" id="modal-title" x-text="activeArticle?.title"></h3>
+              </div>
+              <button @click="closeModal()" class="text-slate-400 hover:text-slate-600 bg-white hover:bg-slate-100 rounded-lg p-2 transition">
+                <span class="sr-only">Close</span>
+                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+              </button>
+            </div>
+
+            <!-- Modal Content -->
+            <div class="px-6 py-8 max-h-[70vh] overflow-y-auto custom-scroll">
+              <template x-if="activeArticle">
+                <div class="prose prose-slate prose-emerald max-w-none">
+                  <p class="lead text-lg text-slate-600" x-text="activeArticle.excerpt"></p>
+                  <hr class="my-6 border-slate-100">
+                  
+                  <template x-for="p in activeArticle.body">
+                    <p class="mb-4 text-slate-700" x-text="p"></p>
+                  </template>
+
+                  <template x-if="activeArticle.steps && activeArticle.steps.length">
+                    <div class="bg-slate-50 rounded-xl p-6 border border-slate-100 my-6">
+                      <h4 class="font-bold text-slate-900 mb-4">Steps to follow:</h4>
+                      <ol class="list-decimal list-inside space-y-2 text-slate-700">
+                        <template x-for="s in activeArticle.steps">
+                          <li class="pl-2" x-text="s"></li>
+                        </template>
+                      </ol>
+                    </div>
+                  </template>
+
+                  <div x-show="activeArticle.link" class="mt-8">
+                    <a :href="activeArticle.link" class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition font-medium no-underline">
+                      Go to Page
+                      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+                    </a>
+                  </div>
+                </div>
+              </template>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="bg-slate-50 px-6 py-4 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div class="text-sm text-slate-500">Did this answer your question?</div>
+              <div class="flex gap-2">
+                <button @click="toast('Thanks for your feedback!'); closeModal()" class="px-3 py-1.5 bg-white border border-slate-300 rounded-md text-sm font-medium text-slate-700 hover:bg-slate-50 shadow-sm">Yes, thanks</button>
+                <button @click="toast('Feedback sent.'); closeModal()" class="px-3 py-1.5 bg-white border border-slate-300 rounded-md text-sm font-medium text-slate-700 hover:bg-slate-50 shadow-sm">Not really</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Simple Toast Notification -->
+    <div 
+        x-show="toastMessage" 
+        x-transition.opacity.duration.500ms
+        class="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-slate-800 text-white px-4 py-2 rounded-full shadow-lg text-sm z-50 flex items-center gap-2"
+        style="display: none;"
+    >
+        <svg class="w-4 h-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+        <span x-text="toastMessage"></span>
+    </div>
+
+  </div>
+
+  <script>
+    function supportCenter() {
+      return {
+        q: '',
+        activeArticle: null,
+        showModal: false,
+        toastMessage: '',
+        
+        trending: ['cleaning', 'vela coins', 'restocking', 'guest portal', 'home monitoring'],
+
+        categories: [
+          {
+            id: 'getting-started',
+            label: 'Getting Started',
+            keywords: 'getting started onboarding account signup profile',
+            icon: '<svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>'
+          },
+          {
+            id: 'services',
+            label: 'Services',
+            keywords: 'cleaning restocking maintenance groceries concierge booking service',
+            icon: '<svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>'
+          },
+          {
+            id: 'rewards',
+            label: 'Rewards & Coins',
+            keywords: 'rewards coins vela points discount tier redeem earn',
+            icon: '<svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>'
+          },
+          {
+            id: 'billing',
+            label: 'Billing & Payments',
+            keywords: 'billing invoice payment plan cost checkout stripe subscription',
+            icon: '<svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>'
+          },
+          {
+            id: 'properties',
+            label: 'Properties',
+            keywords: 'property home house add listing address rental',
+            icon: '<svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>'
+          },
+          {
+            id: 'guest-portal',
+            label: 'Guest Portal',
+            keywords: 'guest portal check-in access key wifi visitor invite',
+            icon: '<svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" /></svg>'
+          },
+          {
+            id: 'hosting',
+            label: 'Vela Host',
+            keywords: 'host rental airbnb booking calendar stays turnover landlord',
+            icon: '<svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>'
+          },
+          {
+            id: 'troubleshooting',
+            label: 'Troubleshooting',
+            keywords: 'error bug fix login password issue reset problem',
+            icon: '<svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>'
+          },
+        ],
+
+        articles: [
+            // ── Getting Started ──
+            {
+              id: 1,
+              category: 'getting-started',
+              title: 'Create your Vela account',
+              excerpt: 'Sign up with email, Apple, or Google and get your dashboard ready in minutes.',
+              body: [
+                'Creating your Vela account is the first step to effortless property management on the Costa del Sol. You can register using your email address, Apple ID, or Google account — whichever is most convenient.',
+                'Once registered, you will be asked to complete your profile by providing your name, phone number, and the region where your property is located. This helps us tailor available services and connect you with local professionals in your area.',
+                'After confirming your email address, you will land on your main dashboard where you can add your first property and start exploring services like cleaning, restocking, and maintenance.'
+              ],
+              steps: [
+                'Tap "Sign Up" on the login screen.',
+                'Choose your sign-up method: Email, Apple, or Google.',
+                'Enter your name, phone number, and property region.',
+                'Verify your email address via the confirmation link.',
+                'You are in! Add your first property from the dashboard.'
+              ],
+              link: null
+            },
+            {
+              id: 2,
+              category: 'getting-started',
+              title: 'Complete your profile',
+              excerpt: 'Why filling out your profile matters and how to do it.',
+              body: [
+                'Your Vela profile helps us personalise your experience. We use your region and property details to show you the services available in your area and to match you with trusted local professionals.',
+                'You can update your profile at any time from the Account section. This includes your name, phone number, residential address, and billing address. If your billing address differs from your residential address, you can set them independently.',
+                'A complete profile also unlocks your Vela Rewards account automatically, so you can start earning coins from your very first booking.'
+              ],
+              steps: [
+                'Go to your Account page from the bottom navigation.',
+                'Tap "Edit Profile" to update your personal details.',
+                'Add or update your phone number and address.',
+                'Your changes are saved automatically.'
+              ],
+              link: null
+            },
+            {
+              id: 3,
+              category: 'getting-started',
+              title: 'Navigating the Vela dashboard',
+              excerpt: 'A quick tour of the main dashboard, services menu, and activity feed.',
+              body: [
+                'Your Vela dashboard is your command centre. The main screen gives you a quick overview of your properties, active bookings, and recent activity — all at a glance.',
+                'The Services tile opens the full services menu where you can access Cleaning, Grocery Restocking, Maintenance, Digital Mail, Keyholding, Smartbox, Home Monitoring, Vela Check-In, and Vela Host. Each service is represented by a visual tile with its own hero image.',
+                'The Activity tab shows your full booking history across all services and properties. You can filter by service type, property, and date range. Tap any event to see full details, leave a rating, or file a dispute if something was not right.',
+                'The bottom navigation bar gives you quick access to your Dashboard, Activity, Properties, and Account settings.'
+              ],
+              steps: [],
+              link: null
+            },
+            {
+              id: 4,
+              category: 'getting-started',
+              title: 'Book your first cleaning',
+              excerpt: 'A step-by-step walkthrough of placing your first service booking.',
+              body: [
+                'Booking a cleaning is the most common way to get started with Vela. From the dashboard, tap the Services tile to open the services menu, then select Cleaning.',
+                'You will see three cleaning packages displayed as visual cards: Quick Refresh (€45), Full Clean (€80), and Top-to-Bottom (€150). Each card describes exactly what is included so you can pick the right level for your needs.',
+                'After selecting a package, you can add optional extras like window cleaning, fridge deep clean, linen change, terrace sweep, cupboard organising, or a mattress refresh. Then pick your preferred date and 2-hour time window.',
+                'Select the property you would like cleaned, add any special instructions for the cleaner, and proceed to checkout. You will see a full price breakdown including any applicable tax and platform fee before confirming payment.'
+              ],
+              steps: [
+                'Open the Services menu from your dashboard.',
+                'Tap "Cleaning" to open the cleaning service.',
+                'Choose a package: Quick Refresh, Full Clean, or Top-to-Bottom.',
+                'Add any optional extras (windows, fridge, linen, etc.).',
+                'Select your preferred date and 2-hour time window.',
+                'Choose the property and add special notes if needed.',
+                'Review the summary and proceed to secure checkout.'
+              ],
+              link: null
+            },
+
+            // ── Services ──
+            {
+              id: 5,
+              category: 'services',
+              title: 'Cleaning service: packages and add-ons',
+              excerpt: 'Everything you need to know about our three cleaning tiers and optional extras.',
+              body: [
+                'Vela offers three cleaning packages designed to cover every scenario — from a quick guest turnover to a deep seasonal refresh.',
+                'Quick Refresh (€45) covers all the essentials: surface wiping, floor cleaning, kitchen and bathroom tidying. It is perfect for a fast turnaround between guest stays or a light touch-up.',
+                'Full Clean (€80) goes deeper with baseboards, inside cabinets, all fixtures, and detailed attention to every room. This is our most popular option for regular scheduled cleans.',
+                'Top-to-Bottom (€150) is the premium option. Every corner of your home is covered — move-in ready standard. Ideal for seasonal deep cleans or preparing your property after renovation work.',
+                'You can enhance any package with add-ons: Windows inside and outside (€25), Fridge empty and deep clean (€15), Linen change (€10, provided fresh linens are available), Terrace and patio sweep (€15), Cupboards interior wipe and organise (€15), and Mattress refresh with vacuum, deodorise and flip (€20).',
+                'A small weekend surcharge of €5 applies for Saturday and Sunday bookings. Time slots are available in 2-hour windows: 09:00–11:00, 11:00–13:00, 13:00–15:00, and 15:00–17:00.'
+              ],
+              steps: [],
+              link: null
+            },
+            {
+              id: 6,
+              category: 'services',
+              title: 'Grocery restocking: bundles and custom items',
+              excerpt: 'Pre-stock your property with curated bundles or a custom shopping list.',
+              body: [
+                'The Grocery Restocking service lets you have your property stocked and ready before you or your guests arrive. Choose from curated bundles or build a custom shopping list — we handle the rest.',
+                'Our curated bundles include: Arrival Essentials (~€20) with water, milk, bread, and eggs; Lazy Breakfast (~€18) with coffee, pastries, orange juice, and butter; BBQ Night (~€45) with charcoal, meats, and salad; and Sunset Drinks (~€35) with wine, beer, snacks, and olives.',
+                'You can also add individual items using quick-add tags for popular products like ice, lemons, sparkling water, garbage bags, dish soap, and olive oil. For anything else, simply type the item name and quantity.',
+                'Choose a preferred store using the built-in map and search, or let us pick the nearest supermarket. A flat €25 service fee covers shopping, transport, and restocking at your property. Active subscription holders may receive a discount on this fee.',
+                'You can specify whether out-of-stock items should be substituted with a similar product or simply removed from the order. Delivery is scheduled in the same 2-hour time windows as cleaning: 09:00–11:00, 11:00–13:00, 13:00–15:00, or 15:00–17:00.'
+              ],
+              steps: [
+                'Open Services and tap "Groceries".',
+                'Browse curated bundles or add custom items.',
+                'Choose your preferred store or let Vela pick one nearby.',
+                'Set your out-of-stock preference (substitute or remove).',
+                'Select your delivery date and time window.',
+                'Add special instructions and proceed to checkout.'
+              ],
+              link: null
+            },
+            {
+              id: 7,
+              category: 'services',
+              title: 'Requesting a maintenance visit',
+              excerpt: 'How to report plumbing, electrical, HVAC, appliance, or general issues.',
+              body: [
+                'When something breaks or needs attention at your property, the Maintenance service connects you with trusted local professionals fast.',
+                'Start by selecting the issue category: Plumbing, Electrical, HVAC/AC, Appliance, General, or Other. Then set the urgency level — Low (when possible), Medium (this week), High (ASAP), or Emergency (now). Emergency requests trigger an immediate priority dispatch.',
+                'Add a detailed description of the problem (up to 2,000 characters) so the assigned professional arrives prepared. Select which property needs the work, and submit your request.',
+                'Once submitted, you can track the status of your maintenance request in real time from your Activity feed and the Live Job card on your dashboard. You will be notified when a professional is assigned and when the job is completed.'
+              ],
+              steps: [
+                'Open Services and tap "Maintenance".',
+                'Choose the issue category (plumbing, electrical, etc.).',
+                'Set the urgency level.',
+                'Describe the issue in detail.',
+                'Select the property and submit your request.'
+              ],
+              link: null
+            },
+            {
+              id: 8,
+              category: 'services',
+              title: 'Digital Mail: never miss important post',
+              excerpt: 'We collect, scan, and forward your physical mail so you stay informed from anywhere.',
+              body: [
+                'Digital Mail is a subscription service for property owners who are not always on site. Vela collects physical mail delivered to your property, scans it, and uploads a digital preview to your dashboard.',
+                'Each mail item appears in your Digital Mail inbox with its status: Unread, Read, Archived, or Action Required. You can request that we forward the original to another address or keep it in secure storage.',
+                'Mail items are stored for 30 days after arrival. After 30 days, items are securely shredded unless you have requested forwarding or extended storage. You can also manually request immediate shredding of any item.',
+                'For international property owners, Digital Mail can help bridge the gap — you will know about utility bills, government notices, and community letters the moment they arrive, not weeks later.'
+              ],
+              steps: [
+                'Subscribe to Digital Mail from the Services menu.',
+                'Physical mail is collected at your property by the Vela team.',
+                'Scanned previews appear in your Digital Mail inbox.',
+                'Tap any item to read, archive, request forwarding, or shred.',
+                'Items are automatically shredded after 30 days unless actioned.'
+              ],
+              link: null
+            },
+            {
+              id: 9,
+              category: 'services',
+              title: 'Home Monitoring: sensors, climate, and energy',
+              excerpt: 'Keep tabs on your property\'s security, temperature, and energy usage remotely.',
+              body: [
+                'Home Monitoring is a subscription service that gives you a real-time window into your property — even when you are thousands of miles away.',
+                'Security sensors track the status of doors and windows (open or closed), show battery levels, and log the last event time. The alarm system status (armed or disarmed) and motion alerts are surfaced directly on your dashboard.',
+                'Climate monitoring shows your current indoor temperature versus your target, HVAC mode (Cool, Heat, or Auto), humidity levels, and whether the system is actively running.',
+                'Energy insights display your daily and monthly electricity usage in kWh with estimated costs. A 7-day trend chart helps you spot unusual consumption patterns that might indicate an issue — like a malfunctioning appliance or a door left open.',
+                'Water monitoring tracks daily and monthly usage in litres and provides leak detection alerts. If no leaks are detected, you will see a reassuring confirmation badge.',
+                'All sensor events are logged in a timeline with colour-coded entries so you can review exactly what happened and when. Home Monitoring comes with a 30-day money-back guarantee and can be cancelled at any time.'
+              ],
+              steps: [],
+              link: null
+            },
+            {
+              id: 10,
+              category: 'services',
+              title: 'Vela Check-In: welfare checks for peace of mind',
+              excerpt: 'Periodic check-in prompts with an escalation protocol for vulnerable residents.',
+              body: [
+                'Vela Check-In is a premium subscription designed for elderly residents, people living alone, or anyone whose family wants extra peace of mind.',
+                'Once activated, Check-In sends periodic prompts via the app or SMS at a frequency you choose: every 24 hours, 48 hours, or a custom interval. All you need to do is confirm you are okay with a single tap.',
+                'If a check-in is missed, the system enters a configurable grace window (6, 12, or 24 hours). After the grace period expires without a response, the escalation protocol begins: first your trusted contacts are notified by SMS, then the Vela Concierge team attempts a phone call, and as a last resort (with your explicit prior consent), emergency services can be dispatched.',
+                'You can add multiple trusted contacts with their names and phone numbers. Optional device telemetry features include location sharing (so your GPS is attached to emergency alerts) and battery reporting (so alerts trigger if your device goes offline unexpectedly).',
+                'Vela Check-In is available as a standalone subscription or as an add-on to an existing plan.'
+              ],
+              steps: [
+                'Subscribe to Vela Check-In from the Services menu.',
+                'Set your check-in frequency (24h, 48h, or custom).',
+                'Choose your grace window before escalation starts.',
+                'Add at least one trusted contact.',
+                'Optionally enable location sharing and battery reporting.',
+                'Respond to check-in prompts with a single tap when they arrive.'
+              ],
+              link: null
+            },
+            {
+              id: 11,
+              category: 'services',
+              title: 'Keyholding, Smartbox, and other services',
+              excerpt: 'An overview of key storage, smart delivery boxes, and additional concierge services.',
+              body: [
+                'Keyholding is a simple but essential service. Vela securely stores a set of your property keys so that our team can provide access for maintenance visits, guest check-ins, or emergencies without you needing to be present. Your dashboard shows whether keys are currently on file and their status.',
+                'Smartbox is our secure delivery box service. A smart lockbox is placed at your property so that packages, keys, or guest welcome packs can be securely deposited and collected without needing someone on site. You control access and can see the box status from your dashboard.',
+                'Additional services are regularly being added to the Vela platform. You can view all available services from the Services menu on your dashboard. Each service tile shows its current availability in your area.'
+              ],
+              steps: [],
+              link: null
+            },
+            {
+              id: 12,
+              category: 'services',
+              title: 'Tracking a live booking',
+              excerpt: 'How to follow your service in real time once a professional has been assigned.',
+              body: [
+                'After you place a booking, a Live Job card appears on your dashboard showing the current status of your request.',
+                'While we are finding a professional for your job, you will see a "Finding your pro..." message with a pulsing indicator. Once a trusted professional has been matched, their name appears on the card along with the service details and property address.',
+                'The Live Job card updates in real time as the job progresses through its stages: Pending, In Progress, and Completed. You will receive notifications at each stage so you always know what is happening.',
+                'If you need to reach the team during an active job, you can contact support directly from the app. After the job is completed, you will be prompted to leave a rating and optional feedback.'
+              ],
+              steps: [],
+              link: null
+            },
+
+            // ── Rewards & Coins ──
+            {
+              id: 13,
+              category: 'rewards',
+              title: 'How Vela Coins work',
+              excerpt: 'Earn coins on every booking, climb reward tiers, and save on future services.',
+              body: [
+                'Vela Coins are our built-in loyalty currency. You earn coins automatically every time you pay for a concierge service — cleaning, restocking, maintenance, or any other on-demand booking.',
+                'The base earn rate is 1 coin per €1 spent. As you climb through reward tiers, your earn rate increases with a multiplier — up to 2.5x at VIP level. So a €80 Full Clean at VIP tier earns you 200 coins instead of 80.',
+                'Your coin balance, lifetime earnings, and transaction history are all visible on the Vela Rewards page, accessible from your dashboard. Each transaction shows whether coins were earned, redeemed, reimbursed, or expired, along with the date and description.'
+              ],
+              steps: [],
+              link: null
+            },
+            {
+              id: 14,
+              category: 'rewards',
+              title: 'Redeeming Vela Coins at checkout',
+              excerpt: 'How to apply your coin balance for a discount on any service booking.',
+              body: [
+                'When you reach the checkout screen for any service, you will see a "Use Vela Coins" button showing your current balance. Tap it to open the coin redemption sheet.',
+                'The redemption sheet shows your available balance and the discount tiers: 150 coins saves €1, 300 coins saves €2, and 600 coins saves €4. Select the tier you want to apply — you can save up to 50% of the service cost with coins.',
+                'Once applied, the discount appears as a separate line in your price breakdown. Your coins are reserved at checkout and only finalised after your payment is successfully processed. If you cancel before payment, no coins are deducted.',
+                'If a completed booking is later cancelled and refunded, any coins that were spent are automatically reimbursed to your balance.'
+              ],
+              steps: [
+                'Proceed to checkout for any service.',
+                'Tap the "Use Vela Coins" button.',
+                'Select a redemption tier (150, 300, or 600 coins).',
+                'The discount is applied to your total.',
+                'Complete payment — coins are finalised after successful payment.'
+              ],
+              link: null
+            },
+            {
+              id: 15,
+              category: 'rewards',
+              title: 'Reward tiers and benefits',
+              excerpt: 'From Bronze to VIP — what each tier unlocks and how to reach the next level.',
+              body: [
+                'Vela Rewards has five tiers based on your lifetime spending across all services. Each tier unlocks a higher coin earn rate and exclusive perks.',
+                'Bronze is the starting tier with a 1x earn rate. Silver (€100+ lifetime spend) bumps you to 1.25x and adds priority support. Gold (€500+) gives you 1.5x earnings plus exclusive deals and early access to new services.',
+                'Platinum (€1,500+) doubles your earn rate to 2x and includes a free add-on service each quarter. VIP (€3,500+) is the top tier at 2.5x earnings with 3 free Priority deliveries per month, a dedicated concierge contact, and access to VIP-only deals.',
+                'Your current tier and progress toward the next one are displayed on the Rewards page with a visual milestone tracker. Tier status is based on lifetime spend, so you never lose progress.'
+              ],
+              steps: [],
+              link: null
+            },
+
+            // ── Billing & Payments ──
+            {
+              id: 16,
+              category: 'billing',
+              title: 'Understanding your checkout breakdown',
+              excerpt: 'What each line means: subtotal, IVA tax, platform fee, discounts, and total.',
+              body: [
+                'Every Vela checkout shows a transparent price breakdown so you know exactly what you are paying for.',
+                'The Subtotal is the base price of your selected service and any add-ons. IVA (tax) is calculated at the applicable rate for your region. The Platform Fee is a small non-refundable percentage that covers payment processing and platform operations.',
+                'If you have applied a promo code, the discount appears as a separate line reducing your total. Similarly, if you have redeemed Vela Coins, the coin discount is shown as its own line item.',
+                'The Total at the bottom is the final amount charged to your payment method. All prices are displayed in euros (€).'
+              ],
+              steps: [],
+              link: null
+            },
+            {
+              id: 17,
+              category: 'billing',
+              title: 'Payment methods and security',
+              excerpt: 'Which payment methods we accept and how your financial data is protected.',
+              body: [
+                'Vela uses Stripe — the same payment infrastructure trusted by millions of businesses worldwide — to process all transactions securely.',
+                'We accept Visa, Mastercard, American Express, Apple Pay, Google Pay, iDEAL, Klarna, and other regional payment methods. Your card details are never stored on Vela servers — they are handled entirely by Stripe with bank-level encryption.',
+                'You can update your payment method at any time from the Account section. If a payment fails, you will be notified immediately and can retry with a different method.'
+              ],
+              steps: [],
+              link: null
+            },
+            {
+              id: 18,
+              category: 'billing',
+              title: 'Subscriptions: manage, upgrade, or cancel',
+              excerpt: 'How to view active subscriptions, change plans, and cancel if needed.',
+              body: [
+                'Some Vela services — like Home Monitoring, Digital Mail, and Vela Check-In — are subscription-based with monthly billing. Each subscription is tied to a specific property.',
+                'You can view all your active subscriptions from the Account section. Each entry shows the service name, associated property, renewal date, and billing amount.',
+                'To cancel a subscription, open the service and follow the cancellation flow. You will be asked for a reason (this helps us improve) and then shown a confirmation screen. Cancellation takes effect at the end of your current billing period — you keep access until then.',
+                'Note: You cannot delete your Vela account while you have active subscriptions. Cancel all subscriptions first, then you can request account deletion from Account settings.'
+              ],
+              steps: [
+                'Go to Account from the bottom navigation.',
+                'Tap on the subscription you want to manage.',
+                'Choose "Upgrade", "Downgrade", or "Cancel".',
+                'Follow the confirmation steps.',
+                'Changes take effect at the end of your current billing period.'
+              ],
+              link: null
+            },
+            {
+              id: 19,
+              category: 'billing',
+              title: 'Using promo codes',
+              excerpt: 'Where to enter a promo code and what to do if it does not work.',
+              body: [
+                'Promo codes can be entered during checkout. Look for the "Add promo code" field on the checkout screen, type or paste your code, and tap Apply.',
+                'If the code is valid, the discount will appear immediately in your price breakdown. If the code is invalid, expired, or does not apply to the service you are booking, you will see an error message explaining why.',
+                'Promo codes cannot be combined with each other, but they can be used alongside Vela Coins. Only one promo code can be applied per booking.'
+              ],
+              steps: [],
+              link: null
+            },
+
+            // ── Properties ──
+            {
+              id: 20,
+              category: 'properties',
+              title: 'Add and manage properties',
+              excerpt: 'How to add a new property, edit details, and manage multiple homes.',
+              body: [
+                'Vela supports multiple properties on a single account. Whether you have a holiday apartment in Estepona and a villa in Marbella, you can manage them all from one dashboard.',
+                'To add a property, go to your Properties section and tap "Add Property". Enter the full address (street, city, postcode, region), give it a nickname for easy reference, and fill in details like the number of bedrooms, bathrooms, and guest capacity.',
+                'You can upload photos of your property (we recommend at least 5) and store practical details like WiFi credentials and access codes. These details are used when generating guest portal invitations and when coordinating service visits.',
+                'Each property can have its own subscriptions and service bookings. When placing a booking, you always select which property the service is for.'
+              ],
+              steps: [
+                'Go to Properties from the bottom navigation.',
+                'Tap "Add Property".',
+                'Enter the address, nickname, and property details.',
+                'Upload property photos.',
+                'Add WiFi and access information.',
+                'Save — your property is now ready for bookings.'
+              ],
+              link: null
+            },
+            {
+              id: 21,
+              category: 'properties',
+              title: 'Setting up WiFi and access details',
+              excerpt: 'Store your WiFi password and entry codes so guests and service pros have what they need.',
+              body: [
+                'Each property in Vela has dedicated fields for WiFi credentials (SSID and password) and access codes for smart locks or key safes.',
+                'These details are securely stored and can be shared automatically through the Guest Portal when you invite visitors to your property. They are also available to Vela professionals who need access for cleaning, maintenance, or restocking visits.',
+                'You can update these details at any time from the property settings page. If you change your WiFi password or lock code, update it in Vela so that future bookings and guest invitations use the correct information.'
+              ],
+              steps: [],
+              link: null
+            },
+
+            // ── Guest Portal ──
+            {
+              id: 22,
+              category: 'guest-portal',
+              title: 'Inviting guests to your property',
+              excerpt: 'Create a guest invitation with check-in details, WiFi, and house rules.',
+              body: [
+                'The Guest Portal lets you create professional, self-service check-in experiences for your visitors — whether they are holiday renters, friends, or family.',
+                'To invite a guest, go to your property and tap "Create Guest Invitation". This generates a unique, time-limited access link or QR code that you can share via WhatsApp, email, or any messaging app.',
+                'When your guest opens the link, they see a branded portal with everything they need: a trip countdown, property photos, WiFi credentials, access codes, house rules, emergency contacts, and local recommendations.',
+                'You control what information is shared and can revoke access at any time. Guest activity (like check-in confirmations and service requests) is logged in your dashboard.'
+              ],
+              steps: [
+                'Open the property you want to create an invitation for.',
+                'Tap "Guest Portal" or "Invite Guest".',
+                'Set the check-in and check-out dates.',
+                'Review the information that will be shared.',
+                'Share the generated link or QR code with your guest.'
+              ],
+              link: null
+            },
+            {
+              id: 23,
+              category: 'guest-portal',
+              title: 'Guest self check-in and digital key',
+              excerpt: 'How guests use the portal to unlock doors, view WiFi, and request services.',
+              body: [
+                'When a guest opens their portal link, they can confirm their arrival with a single tap. If your property uses a compatible smart lock, the portal includes a digital key with a slide-to-unlock interface.',
+                'The digital key can also be added to Apple Wallet for quick access. The unlock sequence shows a visual status — locked, unlocking, unlocked — and resets automatically after use.',
+                'Guests can also view the property WiFi credentials, house rules, amenities list, and local area information. If enabled, they can request services like cleaning or restocking directly through the portal.',
+                'A live trip countdown on the portal builds anticipation before arrival, showing days, hours, minutes, and seconds until check-in.'
+              ],
+              steps: [],
+              link: null
+            },
+
+            // ── Vela Host ──
+            {
+              id: 24,
+              category: 'hosting',
+              title: 'Getting started with Vela Host',
+              excerpt: 'Set up your rental property with the guided wizard: photos, rules, pricing, and turnovers.',
+              body: [
+                'Vela Host is the rental management side of the platform, designed for property owners who rent on Airbnb, Booking.com, or directly.',
+                'The Rental Setup Wizard walks you through five steps: First, confirm your property details and upload listing-quality photos. Second, set house rules including guest capacity, pet and smoking policies, quiet hours, and check-in/check-out times.',
+                'Third, configure your pricing: base nightly rate, seasonal adjustments, weekend rates, minimum stay requirements, and fee structure. Fourth, set turnover preferences — automatic cleaning scheduling, linen change preferences, maintenance checks, and inspection protocols.',
+                'Finally, review everything and publish. Your property is now ready to receive bookings and benefit from automated turnovers managed by Vela.'
+              ],
+              steps: [
+                'Open Vela Host from the Services menu.',
+                'Start the Rental Setup Wizard.',
+                'Step 1: Confirm property details and upload photos.',
+                'Step 2: Define house rules and guest policies.',
+                'Step 3: Set pricing and fees.',
+                'Step 4: Configure turnover and cleaning preferences.',
+                'Step 5: Review and publish your listing.'
+              ],
+              link: null
+            },
+            {
+              id: 25,
+              category: 'hosting',
+              title: 'Managing your availability calendar',
+              excerpt: 'Block dates, sync with Airbnb and Booking.com, and manage bookings visually.',
+              body: [
+                'The Vela Host availability calendar gives you a visual overview of your property schedule. Dates are colour-coded by type: Available (open for bookings), Booked (confirmed guest stay), Owner Stay, Blocked (unavailable), and Maintenance Window.',
+                'You can click and drag to select date ranges, then assign a type to the entire range at once. Add notes to any entry for context — like "painters coming" for a blocked period.',
+                'Calendar sync via iCalendar protocol keeps your Vela calendar in sync with Airbnb and Booking.com in real time. This prevents double bookings and ensures availability is always accurate across all platforms.'
+              ],
+              steps: [
+                'Open Vela Host and navigate to the Calendar tab.',
+                'Click and drag to select a date range.',
+                'Assign the entry type (Available, Blocked, Owner Stay, etc.).',
+                'To sync with Airbnb/Booking.com, go to Host Settings and add your iCal URLs.'
+              ],
+              link: null
+            },
+            {
+              id: 26,
+              category: 'hosting',
+              title: 'Automated turnovers between guests',
+              excerpt: 'How Vela handles cleaning, restocking, and inspections between stays automatically.',
+              body: [
+                'One of the biggest advantages of Vela Host is automated turnover management. When a guest checks out, Vela can automatically schedule a cleaning, restocking visit, and inspection before the next guest arrives.',
+                'Your turnover preferences — set during the Rental Setup Wizard or updated in Host Settings — define what happens between stays: which cleaning package to use, whether linen should be changed, what restocking items to include, and whether a property inspection is required.',
+                'From the Stay Management view, you can see each booking along with its turnover status. Tap any stay to see detailed turnover tracking: cleaning status, restocking completion, inspection results, and time-to-ready estimates.',
+                'You can also manually trigger a turnover for any stay if you need to override the automatic schedule.'
+              ],
+              steps: [],
+              link: null
+            },
+
+            // ── Troubleshooting ──
+            {
+              id: 27,
+              category: 'troubleshooting',
+              title: 'Reset your password',
+              excerpt: 'How to regain access if you have forgotten your password.',
+              body: [
+                'If you signed up with an email and password, you can reset your password from the login screen. Tap "Forgot Password" and enter the email address associated with your account.',
+                'We will send a password reset link to your email. Click the link, set a new password, and you will be able to log in immediately. The link expires after a short time for security.',
+                'If you signed up using Apple or Google, you do not have a Vela password — simply tap the Apple or Google sign-in button to access your account.'
+              ],
+              steps: [
+                'On the login screen, tap "Forgot Password".',
+                'Enter your registered email address.',
+                'Check your inbox for the reset link (check spam if needed).',
+                'Click the link and set a new password.',
+                'Log in with your new credentials.'
+              ],
+              link: null
+            },
+            {
+              id: 28,
+              category: 'troubleshooting',
+              title: 'A service booking did not go as expected',
+              excerpt: 'How to leave feedback, rate a service, or file a dispute.',
+              body: [
+                'After every completed service, you will be prompted to leave a star rating and optional written feedback. This helps us maintain quality and reward our best professionals.',
+                'If something was not right — missed areas in a cleaning, wrong items in a restocking order, or an unresolved maintenance issue — you can file a dispute directly from the event details in your Activity feed.',
+                'To file a dispute, open the completed event, tap the feedback or dispute option, describe the issue, and optionally attach photos as evidence. The Vela team will review your case and respond promptly.',
+                'For billing disputes (incorrect charges, double charges), contact our support team directly via live chat or email at support@vela.es.'
+              ],
+              steps: [
+                'Go to your Activity feed.',
+                'Find the completed event and tap to open details.',
+                'Tap "Rate" to leave a star rating and feedback.',
+                'If there is a problem, tap "Dispute" and describe the issue.',
+                'Attach photos if relevant and submit.'
+              ],
+              link: null
+            },
+            {
+              id: 29,
+              category: 'troubleshooting',
+              title: 'App not loading or displaying errors',
+              excerpt: 'Basic troubleshooting steps if the Vela app or dashboard is not working properly.',
+              body: [
+                'If the Vela app or web dashboard is not loading correctly, try these steps in order:',
+                'First, check your internet connection. Vela requires an active connection to load your dashboard and service data. Switch between WiFi and mobile data to rule out a network issue.',
+                'Second, force-close the app and reopen it. On iOS, swipe up from the bottom and swipe the Vela app away, then reopen from your home screen.',
+                'Third, check if there is an app update available. We regularly release improvements and bug fixes. Update to the latest version from the App Store.',
+                'If the issue persists, try logging out and back in. This refreshes your session and reloads your account data. If you are still experiencing problems after all these steps, contact our support team with a description of the issue and any error messages you see.'
+              ],
+              steps: [
+                'Check your internet connection.',
+                'Force-close and reopen the app.',
+                'Update to the latest app version.',
+                'Log out and log back in.',
+                'If still broken, contact support with details.'
+              ],
+              link: null
+            },
+            {
+              id: 30,
+              category: 'troubleshooting',
+              title: 'Cancelling a booking',
+              excerpt: 'How to cancel a service request and what happens to your payment and coins.',
+              body: [
+                'You can cancel a pending service booking from the event details in your Activity feed or from the Live Job card on your dashboard.',
+                'If you cancel before a professional has been dispatched, the cancellation is immediate and your payment is fully refunded. Any Vela Coins that were reserved at checkout are released back to your balance — they were never deducted.',
+                'If you cancel after the job has started or been completed, refund eligibility depends on the circumstances. Coins that were already finalised (deducted after payment) will be reimbursed to your balance if a refund is processed.',
+                'For subscription cancellations (Home Monitoring, Digital Mail, Check-In), see the "Subscriptions: manage, upgrade, or cancel" article.'
+              ],
+              steps: [],
+              link: null
+            },
+        ],
+
+        faqs: [
+            { q: 'Can I cancel a subscription anytime?', a: 'Yes. All Vela subscriptions are month-to-month with no long-term contracts. Cancel from your Account page — access continues until the end of your billing period.' },
+            { q: 'How do I earn Vela Coins?', a: 'You earn coins automatically on every paid service booking. The base rate is 1 coin per €1 spent, increasing up to 2.5x at VIP tier.' },
+            { q: 'Are my payments secure?', a: 'All payments are processed by Stripe with bank-level encryption. Vela never stores your card details directly.' },
+            { q: 'What happens if my cleaner does not show up?', a: 'Contact support immediately. We will either dispatch a replacement professional or issue a full refund.' },
+            { q: 'Can I book services for multiple properties?', a: 'Yes. You can add as many properties as you need and book services for each one independently.' },
+            { q: 'Is there a weekend surcharge?', a: 'Cleaning bookings on Saturday or Sunday include a small €5 weekend surcharge. Other services are not affected.' },
+            { q: 'How do I contact support?', a: 'Use the live chat (Mon–Fri, 9am–6pm CET) or email support@vela.es. We typically respond within a few hours.' },
+        ],
+
+        get filteredArticles() {
+          if (!this.q) return this.articles.slice(0, 8); // Default view
+          const lowerQ = this.q.toLowerCase();
+          return this.articles.filter(a =>
+            a.title.toLowerCase().includes(lowerQ) ||
+            a.excerpt.toLowerCase().includes(lowerQ) ||
+            a.body.some(p => p.toLowerCase().includes(lowerQ)) ||
+            (a.steps && a.steps.some(s => s.toLowerCase().includes(lowerQ))) ||
+            this.getCategoryLabel(a.category).toLowerCase().includes(lowerQ)
+          );
+        },
+
+        getCategoryLabel(catId) {
+          const cat = this.categories.find(c => c.id === catId);
+          return cat ? cat.label : 'General';
+        },
+
+        openArticle(article) {
+          this.activeArticle = { 
+            ...article, 
+            categoryLabel: this.getCategoryLabel(article.category) 
+          };
+          this.showModal = true;
+        },
+
+        closeModal() {
+          this.showModal = false;
+          setTimeout(() => this.activeArticle = null, 300);
+        },
+        
+        focusSearch(e) {
+          e.preventDefault();
+          this.$refs.search.focus();
+        },
+        
+        toast(message) {
+          this.toastMessage = message;
+          setTimeout(() => this.toastMessage = '', 3000);
+        }
+      }
+    }
+  </script>
+</body>
+</html>

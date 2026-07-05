@@ -1,0 +1,578 @@
+<!doctype html>
+<html lang="en" class="scroll-smooth antialiased h-full">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Vela — Status</title>
+  <meta name="description" content="Live status for Vela services: API, Dashboard, Authentication, Payments, Messaging and more." />
+  <link rel="canonical" href="/status" />
+
+  <!-- Tailwind (CDN for static). Swap to your build pipeline in prod -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Alpine.js -->
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+  <style>
+    :root{
+      --brand:#118A68;   /* Vela green */
+      --ink:#3B4552;     /* Dark gray */
+      --tint:#E6F4EF;    /* Soft mint */
+    }
+    .text-brand{color:var(--brand)}
+    .bg-brand{background:var(--brand)}
+    .ring-brand{--tw-ring-color:var(--brand)}
+    .bg-tint{background:var(--tint)}
+    :focus-visible{ outline:2px solid var(--brand); outline-offset:3px }
+
+    /* One animated accent (gentle drift) */
+    @keyframes drift { 0%{ transform:translateY(-8px) } 100%{ transform:translateY(8px) } }
+    .bg-drift{ animation:drift 16s ease-in-out infinite alternate }
+    @media (prefers-reduced-motion: reduce){ .bg-drift{ animation:none } }
+
+    /* Tiny uptime grid squares */
+    .dot{ width:10px; height:10px; border-radius:3px }
+    .legend-dot{ width:10px; height:10px; border-radius:2px }
+
+    /* Status colors */
+    .ok{ background:#10b981 }          /* emerald-500 */
+    .degraded{ background:#f59e0b }    /* amber-500 */
+    .partial{ background:#f97316 }     /* orange-500 */
+    .outage{ background:#ef4444 }      /* red-500 */
+    .maintenance{ background:#6366f1 } /* indigo-500 */
+    .unknown{ background:#cbd5e1 }     /* slate-300 */
+  </style>
+</head>
+<body class="h-full bg-gradient-to-b from-slate-50 via-white to-white text-slate-900">
+  <div x-data="statusPage()" x-init="init()" class="relative min-h-screen">
+    <!-- Soft brand accent -->
+    <div class="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+      <div class="bg-drift absolute -top-24 right-[-10%] h-72 w-72 rounded-full blur-3xl opacity-25" style="background:var(--brand)"></div>
+    </div>
+
+    <!-- Header / breadcrumb -->
+    <header class="relative max-w-7xl mx-auto px-6 pt-8 md:pt-12">
+      <nav class="text-sm text-slate-500">
+        <a href="/" class="hover:text-brand">Vela</a>
+        <span aria-hidden="true" class="mx-2 select-none">›</span>
+        <a href="/support" class="hover:text-brand">Support</a>
+        <span aria-hidden="true" class="mx-2 select-none">›</span>
+        <span class="text-slate-700 font-medium">Status</span>
+      </nav>
+
+      <!-- Overall status -->
+      <div class="mt-3 md:mt-4 rounded-2xl bg-white/80 backdrop-blur ring-1 ring-slate-200 shadow-lg p-5">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div class="flex items-center gap-3">
+            <span class="relative inline-flex">
+              <span class="h-3.5 w-3.5 rounded-full" :class="overallColorClass()"></span>
+              <span class="absolute inset-0 rounded-full animate-ping" :class="overallPingClass()" aria-hidden="true"></span>
+            </span>
+            <div>
+              <h1 class="text-lg md:text-xl font-extrabold tracking-tight">
+                <span x-text="overallText()"></span>
+              </h1>
+              <p class="text-xs text-slate-500 mt-0.5">
+                Last updated <span x-text="formatTime(now)"></span>
+                • Region: <span class="font-medium" x-text="regionLabel(currentRegion)"></span>
+              </p>
+              <span class="sr-only" aria-live="polite" x-text="'Current status: ' + overallText()"></span>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2">
+            <a :href="subscribeHref" class="rounded-lg px-3 py-2 text-sm font-semibold bg-white ring-1 ring-slate-200 text-slate-800 hover:bg-slate-50">Subscribe to updates</a>
+            <a href="/support" class="rounded-lg px-3 py-2 text-sm font-semibold text-white bg-brand hover:opacity-95">Report an issue</a>
+          </div>
+        </div>
+
+        <!-- Region selector -->
+        <div class="mt-4">
+          <nav class="flex flex-wrap items-center gap-1 rounded-xl bg-white/70 backdrop-blur ring-1 ring-slate-200 p-1" role="tablist" aria-label="Regions">
+            <template x-for="r in regions" :key="r.id">
+              <button
+                class="px-3 py-1.5 rounded-lg text-sm font-semibold transition"
+                :class="currentRegion===r.id ? 'bg-white shadow ring-1 ring-slate-200 text-brand' : 'text-slate-600 hover:bg-white'"
+                role="tab"
+                :aria-selected="currentRegion===r.id"
+                @click="selectRegion(r.id)"
+                x-text="r.label">
+              </button>
+            </template>
+          </nav>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main -->
+    <main class="relative max-w-7xl mx-auto px-6 pb-16 md:pb-24">
+      <section class="mt-8 grid lg:grid-cols-3 gap-6 items-start">
+        <!-- Components -->
+        <div class="lg:col-span-2 space-y-4">
+          <!-- Core Platform -->
+          <div class="rounded-2xl bg-white/80 backdrop-blur ring-1 ring-slate-200 shadow-lg">
+            <header class="px-5 py-4 flex items-center justify-between">
+              <h2 class="font-semibold">Core platform</h2>
+              <div class="flex items-center gap-3 text-xs text-slate-500">
+                <span class="inline-flex items-center gap-1"><span class="legend-dot ok"></span> Operational</span>
+                <span class="inline-flex items-center gap-1"><span class="legend-dot degraded"></span> Degraded</span>
+                <span class="inline-flex items-center gap-1"><span class="legend-dot partial"></span> Partial</span>
+                <span class="inline-flex items-center gap-1"><span class="legend-dot outage"></span> Outage</span>
+                <span class="inline-flex items-center gap-1"><span class="legend-dot maintenance"></span> Maintenance</span>
+              </div>
+            </header>
+            <div class="px-5 pb-5 grid sm:grid-cols-2 gap-4">
+              <template x-for="c in componentsByGroup('core')" :key="c.id">
+                <article class="rounded-xl bg-white ring-1 ring-slate-200 p-4 hover:-translate-y-0.5 transition">
+                  <div class="flex items-start justify-between gap-3">
+                    <div class="min-w-0">
+                      <div class="flex items-center gap-2">
+                        <span class="h-2.5 w-2.5 rounded-full" :class="classFor(statusFor(c))"></span>
+                        <h3 class="font-semibold truncate" x-text="c.name"></h3>
+                      </div>
+                      <p class="mt-1 text-xs text-slate-500">
+                        <span class="font-medium" x-text="statusLabel(statusFor(c))"></span>
+                        • <span x-text="uptime30(c) + '% 30d uptime'"></span>
+                      </p>
+                    </div>
+                    <button @click="openComponent(c)" class="text-xs font-semibold underline underline-offset-4 text-slate-600 hover:text-slate-900">Details</button>
+                  </div>
+                  <!-- 30-day history (15x2 grid) -->
+                  <div class="mt-3 grid gap-1 [grid-template-columns:repeat(15,minmax(0,1fr))]">
+                    <template x-for="d in c.history" :key="c.id + '-' + d.date">
+                      <span class="dot" :title="historyTooltip(d)" :class="classFor(d.status)"></span>
+                    </template>
+                  </div>
+                </article>
+              </template>
+            </div>
+          </div>
+
+          <!-- Integrations -->
+          <div class="rounded-2xl bg-white/80 backdrop-blur ring-1 ring-slate-200 shadow-lg">
+            <header class="px-5 py-4 flex items-center justify-between">
+              <h2 class="font-semibold">Integrations</h2>
+              <span class="text-xs text-slate-500">Latency may vary by region</span>
+            </header>
+            <div class="px-5 pb-5 grid sm:grid-cols-2 gap-4">
+              <template x-for="c in componentsByGroup('integrations')" :key="c.id">
+                <article class="rounded-xl bg-white ring-1 ring-slate-200 p-4 hover:-translate-y-0.5 transition">
+                  <div class="flex items-start justify-between gap-3">
+                    <div class="min-w-0">
+                      <div class="flex items-center gap-2">
+                        <span class="h-2.5 w-2.5 rounded-full" :class="classFor(statusFor(c))"></span>
+                        <h3 class="font-semibold truncate" x-text="c.name"></h3>
+                      </div>
+                      <p class="mt-1 text-xs text-slate-500">
+                        <span class="font-medium" x-text="statusLabel(statusFor(c))"></span>
+                        • <span x-text="uptime30(c) + '% 30d uptime'"></span>
+                      </p>
+                    </div>
+                    <button @click="openComponent(c)" class="text-xs font-semibold underline underline-offset-4 text-slate-600 hover:text-slate-900">Details</button>
+                  </div>
+                  <!-- 30-day history (15x2 grid) -->
+                  <div class="mt-3 grid gap-1 [grid-template-columns:repeat(15,minmax(0,1fr))]">
+                    <template x-for="d in c.history" :key="c.id + '-' + d.date">
+                      <span class="dot" :title="historyTooltip(d)" :class="classFor(d.status)"></span>
+                    </template>
+                  </div>
+                </article>
+              </template>
+            </div>
+          </div>
+        </div>
+
+        <!-- Incidents / Maintenance -->
+        <aside class="space-y-6">
+          <!-- Recent incidents -->
+          <div class="rounded-2xl bg-white/80 backdrop-blur ring-1 ring-slate-200 shadow-lg p-5">
+            <div class="flex items-center justify-between">
+              <h2 class="font-semibold">Recent incidents</h2>
+              <button @click="toggleDays(30)" class="text-xs text-slate-500 hover:text-slate-700 underline underline-offset-4" x-text="rangeDays + 'd'"></button>
+            </div>
+
+            <template x-if="filteredIncidents().length === 0">
+              <p class="mt-3 text-sm text-slate-600">No incidents in the last <span x-text="rangeDays"></span> days.</p>
+            </template>
+
+            <ul class="mt-3 space-y-3">
+              <template x-for="inc in filteredIncidents()" :key="inc.id">
+                <li class="rounded-lg bg-white ring-1 ring-slate-200 p-4">
+                  <div class="flex items-start justify-between gap-3">
+                    <div class="min-w-0">
+                      <div class="flex items-center gap-2">
+                        <span class="h-2.5 w-2.5 rounded-full" :class="classFor(inc.impact)"></span>
+                        <p class="font-semibold" x-text="inc.title"></p>
+                      </div>
+                      <p class="mt-1 text-xs text-slate-500">
+                        <span x-text="formatRange(inc.start, inc.end)"></span>
+                        • Affected: <span class="font-medium" x-text="inc.components.map(id=>componentById(id)?.name).filter(Boolean).join(', ')"></span>
+                      </p>
+                    </div>
+                    <details class="text-xs">
+                      <summary class="cursor-pointer list-none underline underline-offset-4 text-slate-600 hover:text-slate-900">Updates</summary>
+                      <ul class="mt-2 space-y-1">
+                        <template x-for="u in inc.updates" :key="u.time">
+                          <li><span class="text-slate-500" x-text="formatTime(u.time)"></span> — <span x-text="u.text"></span></li>
+                        </template>
+                      </ul>
+                    </details>
+                  </div>
+                </li>
+              </template>
+            </ul>
+          </div>
+
+          <!-- Scheduled maintenance -->
+          <div class="rounded-2xl bg-white/80 backdrop-blur ring-1 ring-slate-200 shadow-lg p-5">
+            <div class="flex items-center justify-between">
+              <h2 class="font-semibold">Scheduled maintenance</h2>
+              <span class="text-xs text-slate-500">Upcoming windows</span>
+            </div>
+
+            <template x-if="upcomingMaintenance().length === 0">
+              <p class="mt-3 text-sm text-slate-600">No maintenance scheduled.</p>
+            </template>
+
+            <ul class="mt-3 space-y-3">
+              <template x-for="m in upcomingMaintenance()" :key="m.id">
+                <li class="rounded-lg bg-white ring-1 ring-slate-200 p-4">
+                  <div class="flex items-start justify-between gap-3">
+                    <div class="min-w-0">
+                      <div class="flex items-center gap-2">
+                        <span class="h-2.5 w-2.5 rounded-full maintenance"></span>
+                        <p class="font-semibold" x-text="m.title"></p>
+                      </div>
+                      <p class="mt-1 text-xs text-slate-500">
+                        <span x-text="formatRange(m.windowStart, m.windowEnd)"></span>
+                        • Impact: <span class="font-medium">brief read-only</span>
+                        • Components: <span class="font-medium" x-text="m.components.map(id=>componentById(id)?.name).filter(Boolean).join(', ')"></span>
+                      </p>
+                      <p class="mt-1 text-xs text-slate-600" x-text="m.notes"></p>
+                    </div>
+                    <a :href="icsHref(m)" download class="text-xs font-semibold underline underline-offset-4 text-slate-600 hover:text-slate-900">Add to calendar</a>
+                  </div>
+                </li>
+              </template>
+            </ul>
+          </div>
+        </aside>
+      </section>
+    </main>
+
+    <!-- Component modal -->
+    <div x-show="showModal" x-cloak x-transition.opacity class="fixed inset-0 z-50 flex items-end sm:items-center justify-center">
+      <div class="absolute inset-0 bg-black/50" @click="closeModal()" aria-hidden="true"></div>
+      <div role="dialog" aria-modal="true" class="relative w-full sm:max-w-2xl max-h-[85vh] overflow-hidden rounded-2xl bg-white/95 backdrop-blur ring-1 ring-slate-200 shadow-2xl">
+        <header class="px-5 py-4 flex items-start justify-between">
+          <div class="pr-6">
+            <p class="text-xs text-slate-500">Component</p>
+            <h3 class="text-lg font-semibold leading-tight" x-text="activeComponent?.name"></h3>
+            <p class="text-xs text-slate-500 mt-1">
+              Current status:
+              <span class="inline-flex items-center gap-1 font-medium">
+                <span class="h-2 w-2 rounded-full" :class="classFor(statusFor(activeComponent))"></span>
+                <span x-text="statusLabel(statusFor(activeComponent))"></span>
+              </span>
+            </p>
+          </div>
+          <button class="p-2 rounded-md hover:bg-slate-100 focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2" @click="closeModal()" aria-label="Close">
+            <svg class="w-5 h-5 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 6l12 12M18 6L6 18" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </header>
+        <div class="px-5 pb-5 overflow-y-auto">
+          <div class="rounded-lg bg-white ring-1 ring-slate-200 p-4">
+            <p class="text-sm text-slate-700"><span class="font-semibold" x-text="uptime30(activeComponent) + '%'"></span> uptime over the last 30 days.</p>
+            <div class="mt-3 grid gap-1 [grid-template-columns:repeat(15,minmax(0,1fr))]">
+              <template x-for="d in (activeComponent?.history||[])" :key="(activeComponent?.id||'') + '-h-' + d.date">
+                <span class="dot" :title="historyTooltip(d)" :class="classFor(d.status)"></span>
+              </template>
+            </div>
+          </div>
+
+          <!-- Related incidents -->
+          <div class="mt-4">
+            <h4 class="text-sm font-semibold text-slate-900">Related incidents</h4>
+            <template x-if="relatedIncidents().length===0">
+              <p class="mt-2 text-sm text-slate-600">No incidents affecting this component in the last 90 days.</p>
+            </template>
+            <ul class="mt-2 space-y-2">
+              <template x-for="i in relatedIncidents()" :key="'rel-'+i.id">
+                <li class="rounded-lg bg-white ring-1 ring-slate-200 p-3">
+                  <div class="flex items-center gap-2">
+                    <span class="h-2 w-2 rounded-full" :class="classFor(i.impact)"></span>
+                    <p class="text-sm font-medium" x-text="i.title"></p>
+                  </div>
+                  <p class="mt-1 text-xs text-slate-500" x-text="formatRange(i.start,i.end)"></p>
+                </li>
+              </template>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="relative max-w-7xl mx-auto px-6 pb-10 text-center text-sm text-slate-500">
+      <p>
+        Need help? <a href="/support" class="underline underline-offset-4 hover:text-brand">Visit Support</a>
+        • <a href="/privacy" class="underline underline-offset-4 hover:text-brand">Privacy</a>
+        • <a href="/terms" class="underline underline-offset-4 hover:text-brand">Terms</a>
+      </p>
+    </footer>
+  </div>
+
+  <script>
+    function statusPage(){
+      return {
+        now: new Date().toISOString(),
+        subscribeHref: 'mailto:support@vela.es?subject=Subscribe%20to%20status%20updates&body=Please%20subscribe%20me%20to%20Vela%20status%20emails.',
+        rangeDays: 30,
+        showModal:false,
+        activeComponent:null,
+
+        regions: [
+          { id:'all',     label:'All regions' },
+          { id:'global',  label:'Global' },
+          { id:'costa',   label:'Costa del Sol' },
+          { id:'ibiza',   label:'Ibiza' },
+          { id:'mallorca',label:'Mallorca' }
+        ],
+        currentRegion: 'all',
+
+        // Components (sample data; wire to backend or /status.json in production)
+        components: [
+          {
+            id:'api', group:'core', name:'API',
+            status:'operational',
+            statusOverrides:{},
+            history: historyDays(30, 'operational', [{d:6,s:'maintenance'}]) // day offsets: 0=today
+          },
+          {
+            id:'dashboard', group:'core', name:'Dashboard',
+            status:'operational',
+            statusOverrides:{},
+            history: historyDays(30, 'operational', [])
+          },
+          {
+            id:'auth', group:'core', name:'Authentication',
+            status:'operational',
+            statusOverrides:{},
+            history: historyDays(30, 'operational', [{d:13,s:'degraded'}])
+          },
+          {
+            id:'webhooks', group:'core', name:'Webhooks',
+            status:'operational',
+            statusOverrides:{},
+            history: historyDays(30, 'operational', [])
+          },
+          {
+            id:'media', group:'core', name:'Media uploads',
+            status:'operational',
+            statusOverrides:{ ibiza:'degraded' },
+            history: historyDays(30, 'operational', [{d:1,s:'degraded'}])
+          },
+          {
+            id:'payments', group:'integrations', name:'Payments (Stripe)',
+            status:'operational',
+            statusOverrides:{},
+            history: historyDays(30, 'operational', [])
+          },
+          {
+            id:'messaging', group:'integrations', name:'Messaging (WhatsApp)',
+            status:'operational',
+            statusOverrides:{ ibiza:'degraded' },
+            history: historyDays(30, 'operational', [{d:0,s:'degraded'},{d:1,s:'degraded'}])
+          }
+        ],
+
+        // Incidents & maintenances (example)
+        incidents: [
+          {
+            id:'wa-delay-2025-08-15',
+            title:'WhatsApp delivery delays',
+            impact:'degraded',
+            regions:['global','ibiza'],
+            components:['messaging'],
+            start:'2025-08-15T07:10:00Z',
+            end:'2025-08-15T09:05:00Z',
+            updates:[
+              { time:'2025-08-15T07:25:00Z', text:'Investigating elevated message latencies.' },
+              { time:'2025-08-15T07:50:00Z', text:'Identified downstream provider impact.' },
+              { time:'2025-08-15T08:30:00Z', text:'Mitigation in place; latency improving.' },
+              { time:'2025-08-15T09:05:00Z', text:'Resolved. Monitoring.' }
+            ]
+          }
+        ],
+
+        maintenances:[
+          {
+            id:'db-maint-2025-08-20',
+            title:'Database maintenance',
+            windowStart:'2025-08-20T02:00:00Z',
+            windowEnd:'2025-08-20T03:30:00Z',
+            regions:['global'],
+            components:['api','dashboard'],
+            notes:'Read-only mode for up to 5 minutes during the window.'
+          }
+        ],
+
+        init(){
+          // If you later fetch live data, replace arrays above and call this.now = new Date().toISOString()
+        },
+
+        // Region helpers
+        selectRegion(r){ this.currentRegion=r },
+        regionLabel(id){ return (this.regions.find(x=>x.id===id)||{label:'All'}).label },
+
+        // Component helpers
+        componentsByGroup(group){
+          return this.components.filter(c=> c.group===group );
+        },
+        statusFor(c){
+          if(this.currentRegion==='all') return c.statusOverrides?.global || c.status;
+          return (c.statusOverrides?.[this.currentRegion]) || c.status;
+        },
+        statusLabel(s){
+          return ({
+            operational:'Operational',
+            degraded:'Degraded performance',
+            partial:'Partial outage',
+            outage:'Major outage',
+            maintenance:'Maintenance',
+            unknown:'Unknown'
+          })[s] || 'Unknown';
+        },
+        classFor(s){
+          return ({
+            operational:'ok',
+            degraded:'degraded',
+            partial:'partial',
+            outage:'outage',
+            maintenance:'maintenance',
+            unknown:'unknown'
+          })[s] || 'unknown';
+        },
+        componentById(id){ return this.components.find(c=>c.id===id) || null },
+
+        // Uptime
+        uptime30(c){
+          const okCount = c.history.filter(h=>h.status==='operational').length;
+          const pct = Math.round((okCount / c.history.length) * 1000) / 10; // one decimal
+          return pct.toFixed(1);
+        },
+        historyTooltip(d){
+          return `${this.statusLabel(d.status)} — ${new Date(d.date).toDateString()}`;
+        },
+
+        // Overall status (worst-of)
+        overallText(){
+          const s = this.overallSeverity();
+          return ({
+            outage:'Major outage',
+            partial:'Partial outage',
+            degraded:'Some systems degraded',
+            maintenance:'Under maintenance',
+            operational:'All systems operational'
+          })[s];
+        },
+        overallSeverity(){
+          const order = { outage:4, partial:3, degraded:2, maintenance:1, operational:0, unknown:0 };
+          let worst = 'operational';
+          this.components.forEach(c=>{
+            const s = this.statusFor(c);
+            if(order[s] > order[worst]) worst = s;
+          });
+          return worst;
+        },
+        overallColorClass(){
+          return {
+            operational:'ok',
+            degraded:'degraded',
+            partial:'partial',
+            outage:'outage',
+            maintenance:'maintenance'
+          }[this.overallSeverity()];
+        },
+        overallPingClass(){
+          const base = this.overallColorClass();
+          const map = { ok:'bg-emerald-300', degraded:'bg-amber-300', partial:'bg-orange-300', outage:'bg-red-300', maintenance:'bg-indigo-300' };
+          return map[base] || 'bg-slate-300';
+        },
+
+        // Incidents
+        filteredIncidents(){
+          const cutoff = Date.now() - (this.rangeDays*24*60*60*1000);
+          return this.incidents
+            .filter(i => new Date(i.start).getTime() >= cutoff)
+            .filter(i => this.currentRegion==='all' ? true : (i.regions||[]).includes(this.currentRegion))
+            .sort((a,b)=> new Date(b.start) - new Date(a.start));
+        },
+        toggleDays(){ const set=[7,14,30,90]; const idx=set.indexOf(this.rangeDays); this.rangeDays = set[(idx+1)%set.length]; },
+
+        // Maintenance
+        upcomingMaintenance(){
+          const now = Date.now();
+          return this.maintenances
+            .filter(m => new Date(m.windowEnd).getTime() >= now)
+            .filter(m => this.currentRegion==='all' ? true : (m.regions||[]).includes(this.currentRegion))
+            .sort((a,b)=> new Date(a.windowStart) - new Date(b.windowStart));
+        },
+        icsHref(m){
+          const dt = (s)=> new Date(s).toISOString().replace(/[-:]/g,'').replace(/\.\d{3}Z$/,'Z');
+          const ics = [
+            'BEGIN:VCALENDAR',
+            'VERSION:2.0',
+            'PRODID:-//Vela//Status//EN',
+            'BEGIN:VEVENT',
+            `UID:${m.id}@vela.es`,
+            `DTSTAMP:${dt(new Date().toISOString())}`,
+            `DTSTART:${dt(m.windowStart)}`,
+            `DTEND:${dt(m.windowEnd)}`,
+            `SUMMARY:${m.title}`,
+            `DESCRIPTION:${(m.notes||'')}`,
+            'END:VEVENT',
+            'END:VCALENDAR'
+          ].join('\r\n');
+          return 'data:text/calendar;charset=utf-8,' + encodeURIComponent(ics);
+        },
+
+        // Modal
+        openComponent(c){ this.activeComponent = c; this.showModal = true },
+        closeModal(){ this.showModal = false; this.activeComponent = null },
+        relatedIncidents(){
+          if(!this.activeComponent) return [];
+          const ids = [this.activeComponent.id];
+          return this.incidents.filter(i => i.components.some(id=>ids.includes(id)));
+        },
+
+        // Formatting utils
+        formatTime(t){
+          try{
+            const d = new Date(t);
+            return new Intl.DateTimeFormat(undefined, { dateStyle:'medium', timeStyle:'short' }).format(d);
+          }catch(_){ return t }
+        },
+        formatRange(a,b){
+          const da = new Date(a), db = b ? new Date(b) : null;
+          if(!db) return `${this.formatTime(a)} — ongoing`;
+          const sameDay = da.toDateString() === db.toDateString();
+          const df = new Intl.DateTimeFormat(undefined, { dateStyle: sameDay?'medium':'medium', timeStyle:'short' });
+          return `${df.format(da)} → ${df.format(db)}`;
+        }
+      }
+    }
+
+    // ---- Helpers (outside Alpine) ----
+    function historyDays(n, base='operational', overrides=[]){
+      // Returns an array of {date, status} from oldest -> newest for last n days
+      const out = [];
+      for(let i=n-1;i>=0;i--){
+        const d = new Date(); d.setHours(0,0,0,0); d.setDate(d.getDate()-i);
+        const hit = overrides.find(o=>o.d===i);
+        out.push({ date:d.toISOString(), status: hit ? hit.s : base });
+      }
+      return out;
+    }
+  </script>
+</body>
+</html>
