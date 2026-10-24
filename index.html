@@ -424,8 +424,8 @@
         </div>
 
         <!-- The Content Area -->
-        <div class="relative aspect-[16/10] bg-slate-50 w-full overflow-hidden rounded-b-2xl">
-          
+        <div x-ref="demoWrap" class="relative aspect-[16/10] bg-slate-50 w-full overflow-hidden rounded-b-2xl">
+
           <!-- Loading State Overlay -->
           <div x-show="loading" 
                x-transition:enter="transition ease-out duration-300"
@@ -441,11 +441,14 @@
              </div>
           </div>
 
-          <!-- IFRAME -->
-          <iframe 
+          <!-- IFRAME — rendered at a 1440x900 desktop viewport, then scaled to
+               fit the frame, so the demo shows the app's real `lg:` layout
+               instead of collapsing to the tablet stack at ~800px. -->
+          <iframe
             x-ref="demoFrame"
-            class="absolute inset-0 w-full h-full transition-opacity duration-700"
-            :class="loading ? 'opacity-0 scale-[0.98]' : 'opacity-100 scale-100'"
+            class="absolute top-0 left-0 origin-top-left transition-opacity duration-700"
+            :class="loading ? 'opacity-0' : 'opacity-100'"
+            :style="`width:${DEMO_W}px; height:${DEMO_H}px; transform: scale(${scale});`"
             :src="computedIframeSrc()"
             allowfullscreen
             loading="lazy"
@@ -461,7 +464,8 @@
             x-transition:enter-end="opacity-100 translate-y-0 translate-x-0"
             class="absolute -bottom-6 -right-6 md:-right-10 bg-white rounded-xl shadow-2xl p-4 w-64 ring-1 ring-slate-100 z-30 transform hover:scale-105 transition-transform cursor-default">
           <div class="flex items-start gap-3">
-            <div class="h-10 w-10 shrink-0 rounded-full bg-[#118A68]/10 flex items-center justify-center text-[#118A68]">
+            <!-- No tinted chip behind the icon: green stroke on the surface (RULE-icon-no-mint-background). -->
+            <div class="h-10 w-10 shrink-0 flex items-center justify-center text-[#118A68]">
                <!-- Dynamic Icon based on scene -->
                <span x-html="current().icon"></span>
             </div>
@@ -546,9 +550,16 @@
       return {
         active: 'dashboard',
         loading: false, // controls fade/blur
-        iframeSrcBase: '/demo1/', 
+        iframeSrcBase: '/demo1/',
         iframeLoaded: false,
         iframeError: false,
+
+        // The demo renders at a desktop viewport and is scaled down to the
+        // frame. 1440x900 is 16:10, the frame's own ratio, so one factor fits
+        // both axes with no letterboxing.
+        DEMO_W: 1440,
+        DEMO_H: 900,
+        scale: 1,
         
         // ADDED: Icon SVG strings and Widget text for the "WOW" floaty card
         scenes: [
@@ -566,7 +577,7 @@
           { 
             id:'clean',     
             label:'Cleanings', 
-            route:'cleaning.html',    
+            route:'?view=cleaning', 
             title:'Premium cleanings, on schedule.', 
             desc:'Book once or set a cadence. Vetted teams, clear checklists, and visual proof sent to your phone immediately.', 
             bullets:['Hotel-level standards','Eco supplies on request','Photo receipts after visit'],
@@ -577,7 +588,7 @@
           { 
             id:'groceries', 
             label:'Groceries', 
-            route:'groceries.html',   
+            route:'?view=groceries', 
             title:'Fridge stocked before you land.', 
             desc:'Your staples saved as presets. Timed delivery to match arrivals so you never waste a minute of your holiday shopping.', 
             bullets:['Arrival-timed delivery','Substitution approvals','Digital receipts'],
@@ -585,8 +596,8 @@
             widgetText: 'Mercadona delivery received at 14:00. Fridge stocked.',
             icon: `<svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" /></svg>`
           },
-          { id:'checkins', label:'Check-ins', route:'check-ins.html', title:'Guest arrivals, effortless.', desc:'Smart codes, welcome notes, and arrival confirmation. We handle the "Where is the key?" texts so you do not have to.', bullets:['Auto code rotation','Messaging templates','Arrival confirmation'], widgetTitle: 'Guest Access', widgetText: 'Code generated for "Smith Family". Valid from 15:00 today.', icon: `<svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" /></svg>` },
-          { id:'mail', label:'Digital mail', route:'mail.html', title:'Your post, digitized.', desc:'We receive, scan and sort physical mail in Ibiza. Open, forward or archive real letters directly from your phone.', bullets:['OCR search','Forward to contact','Tag & archive'], widgetTitle: 'New Mail Scanned', widgetText: 'Letter from "Endesa" scanned. Action required?', icon: `<svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" /></svg>` }
+          { id:'checkins', label:'Check-ins', route:'?view=guests', title:'Guest arrivals, effortless.', desc:'Smart codes, welcome notes, and arrival confirmation. We handle the "Where is the key?" texts so you do not have to.', bullets:['Auto code rotation','Messaging templates','Arrival confirmation'], widgetTitle: 'Guest Access', widgetText: 'Code generated for "Smith Family". Valid from 15:00 today.', icon: `<svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" /></svg>` },
+          { id:'mail', label:'Digital mail', route:'?view=mail', title:'Your post, digitized.', desc:'We receive, scan and sort physical mail in Ibiza. Open, forward or archive real letters directly from your phone.', bullets:['OCR search','Forward to contact','Tag & archive'], widgetTitle: 'New Mail Scanned', widgetText: 'Letter from "Endesa" scanned. Action required?', icon: `<svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" /></svg>` }
         ],
 
         current(){ return this.scenes.find(s=>s.id===this.active) || this.scenes[0]; },
@@ -614,7 +625,19 @@
           });
         },
 
+        measure(){
+          const w = this.$refs.demoWrap?.clientWidth;
+          if (w) this.scale = w / this.DEMO_W;
+        },
+
         async init(){
+           this.measure();
+           if (window.ResizeObserver && this.$refs.demoWrap){
+             new ResizeObserver(() => this.measure()).observe(this.$refs.demoWrap);
+           } else {
+             window.addEventListener('resize', () => this.measure());
+           }
+
            // Probing logic (same as before)
            const candidates = [this.iframeSrcBase, this.iframeSrcBase.endsWith('/') ? this.iframeSrcBase + 'index.html' : this.iframeSrcBase];
            for (const url of candidates){

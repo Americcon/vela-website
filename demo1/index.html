@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<!-- VELA CUSTOMER DASHBOARD — DEMO / MOCK DATA, safe for iframe.
+     Rebuilt from the live app (vela-dashboard App.tsx, SubscriptionCard.tsx,
+     ConciergeTicker.tsx, Cleaning.tsx, Restocking.tsx, DigitalMail.tsx and
+     index.css) in Oct 2026. Scenes are chosen with ?view=. -->
+<html lang="en" class="scroll-smooth">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Vela Dashboard — demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: {
+        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+        display: ['"Plus Jakarta Sans"', 'sans-serif'],
+      },
+      colors: { vela: { green: '#118A68', dark: '#0e7458', surface: '#FDFBF7' } },
+      boxShadow: {
+        glass: '0 8px 32px 0 rgba(31, 38, 135, 0.07)',
+        'glass-hover': '0 12px 40px 0 rgba(31, 38, 135, 0.12)',
+        island: '0 8px 30px rgba(0,0,0,0.12)',
+      },
+      animation: { breathe: 'breathe 4s ease-in-out infinite' },
+      keyframes: {
+        breathe: {
+          '0%, 100%': { transform: 'scale(1)', boxShadow: '0 4px 20px -2px rgba(17, 138, 104, 0.1)' },
+          '50%': { transform: 'scale(1.01)', boxShadow: '0 10px 25px -3px rgba(17, 138, 104, 0.25)' },
+        },
+      },
+    },
+  },
+};
+</script>
+<style>
+/* ── Lifted verbatim from vela-dashboard/index.css ──────────────── */
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: linear-gradient(135deg, #FDFBF7 0%, #F1F5F9 100%);
+  background-attachment: fixed;
+  color: #1e293b;
+}
+
+.glass-panel {
+  background: rgba(255, 255, 255, 0.72);
+  -webkit-backdrop-filter: blur(24px);
+  backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
+}
+.glass-card-hover { transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); }
+.glass-card-hover:hover {
+  background: rgba(255, 255, 255, 0.85);
+  border-color: rgba(255, 255, 255, 0.9);
+  transform: translateY(-2px);
+  box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.08);
+}
+
+@keyframes hueShift {
+  0%   { background-position: 0% 50% }
+  50%  { background-position: 100% 50% }
+  100% { background-position: 0% 50% }
+}
+.animated-gradient-bg {
+  background: linear-gradient(120deg, #e2e1ff, #ffffff, #ffedd5);
+  background-size: 200% 200%;
+  animation: hueShift 15s ease infinite;
+}
+
+@keyframes navRise {
+  0%   { opacity: 0; transform: translateY(12px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+.dash-stagger > *:nth-child(n+2) { animation: navRise 0.5s ease-out backwards; }
+.dash-stagger > *:nth-child(2) { animation-delay: 0ms; }
+.dash-stagger > *:nth-child(3) { animation-delay: 70ms; }
+.dash-stagger > *:nth-child(4) { animation-delay: 140ms; }
+.dash-rise-late { animation: navRise 0.5s ease-out 210ms backwards; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .stagger-in > * { animation: navRise 0.45s ease-out backwards; }
+  .stagger-in > *:nth-child(1) { animation-delay: 0ms; }
+  .stagger-in > *:nth-child(2) { animation-delay: 50ms; }
+  .stagger-in > *:nth-child(3) { animation-delay: 100ms; }
+  .stagger-in > *:nth-child(4) { animation-delay: 150ms; }
+  .stagger-in > *:nth-child(5) { animation-delay: 200ms; }
+  .stagger-in > *:nth-child(6) { animation-delay: 250ms; }
+  .stagger-in > *:nth-child(n+7) { animation-delay: 300ms; }
+}
+
+@keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
+
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* ── Concierge V2 — "living service board" ─────────────────────── */
+.concierge-item { will-change: transform, opacity, filter; }
+.concierge-item--in  { animation: conciergeRollIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.concierge-item--out { animation: conciergeRollOut 0.6s cubic-bezier(0.22, 1, 0.36, 1) both; pointer-events: none; }
+@keyframes conciergeRollIn {
+  0%   { transform: translateY(115%); opacity: 0; filter: blur(5px); }
+  55%  { opacity: 1; }
+  100% { transform: translateY(0); opacity: 1; filter: blur(0); }
+}
+@keyframes conciergeRollOut {
+  0%   { transform: translateY(0); opacity: 1; filter: blur(0); }
+  100% { transform: translateY(-115%); opacity: 0; filter: blur(5px); }
+}
+.concierge-chip {
+  display: grid; place-items: center;
+  width: 34px; height: 34px; border-radius: 12px; flex-shrink: 0;
+  color: #118A68;
+  background: rgba(255, 255, 255, 0.55);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  box-shadow: 0 6px 14px -6px rgba(17, 138, 104, 0.4), inset 0 0 0 1px rgba(255, 255, 255, 0.6);
+  animation: conciergePop 0.6s cubic-bezier(0.22, 1.5, 0.4, 1);
+}
+@media (min-width: 768px) { .concierge-chip { width: 40px; height: 40px; border-radius: 14px; } }
+@keyframes conciergePop {
+  0%   { transform: scale(0.55) rotate(-14deg); }
+  60%  { transform: scale(1.12) rotate(5deg); }
+  100% { transform: scale(1) rotate(0); }
+}
+.concierge-sheen {
+  position: absolute; top: 0; left: -60%; width: 45%; height: 100%;
+  pointer-events: none; z-index: 6; transform: skewX(-18deg);
+  background: linear-gradient(105deg, transparent, rgba(255, 255, 255, 0.55), transparent);
+  animation: conciergeSheen 6.5s ease-in-out infinite;
+}
+@keyframes conciergeSheen { 0% { left: -60%; } 55%, 100% { left: 135%; } }
+.concierge-blob {
+  position: absolute; right: -28px; bottom: -38px; width: 130px; height: 130px;
+  border-radius: 50%; pointer-events: none; z-index: 1;
+  background: radial-gradient(circle, rgba(17, 138, 104, 0.2), transparent 70%);
+  filter: blur(14px);
+  animation: conciergeDrift 9s ease-in-out infinite;
+}
+@keyframes conciergeDrift { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(-16px, -12px); } }
+.concierge-dot {
+  position: relative; width: 6px; height: 6px; border-radius: 999px; overflow: hidden;
+  background: rgba(17, 138, 104, 0.22);
+  transition: width 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.concierge-dot--on { width: 22px; }
+.concierge-dot-fill {
+  position: absolute; inset: 0; border-radius: 999px; background: #118A68;
+  transform-origin: left; animation: conciergeFill linear forwards;
+}
+@keyframes conciergeFill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+/* ── Subscription card sheen ────────────────────────────────────── */
+.subscription-sheen { overflow: hidden; }
+.subscription-sheen::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(120deg, transparent 0%, rgba(255, 255, 255, 0.35) 50%, transparent 100%);
+  opacity: var(--sheen-opacity, 0.1);
+  animation: subscriptionSheen 5s ease-in-out infinite;
+  will-change: transform;
+}
+@keyframes subscriptionSheen { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+
+/* ── Animated weather icon ──────────────────────────────────────── */
+@keyframes vwi-spin { to { transform: rotate(360deg); } }
+@keyframes vwi-breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); } }
+.vwi-rays { transform-box: fill-box; transform-origin: center; animation: vwi-spin 20s linear infinite; }
+.vwi-core { transform-box: fill-box; transform-origin: center; animation: vwi-breathe 3.6s ease-in-out infinite; }
+
+.text-shadow-sm { text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35); }
+
+@media (prefers-reduced-motion: reduce) {
+  .concierge-sheen, .concierge-blob, .concierge-chip, .concierge-dot-fill,
+  .vwi-rays, .vwi-core, .subscription-sheen::after,
+  .animated-gradient-bg, .dash-stagger > *, .dash-rise-late { animation: none !important; }
+}
+
+[data-view] { display: none; }
+[data-view].is-active { display: block; }
+
+/* Framed in the marketing site's browser mock, this is a product shot, not a
+   scrollable page: no scrollbar chrome, and no wheel trapping inside the
+   parent's own scroll. Opened on its own it scrolls normally. */
+html.is-framed, html.is-framed body { overflow: hidden; }
+</style>
+<script>try { if (window.self !== window.top) document.documentElement.classList.add('is-framed'); } catch (e) { document.documentElement.classList.add('is-framed'); }</script>
+</head>
+
+<body class="min-w-0">
+<div class="flex-1 flex flex-col min-w-0">
+
+  <!-- ── Header ──────────────────────────────────────────────── -->
+  <header class="flex items-center justify-between md:bg-white/70 md:backdrop-blur-md md:border-b md:border-white/50 md:sticky md:top-0 z-20 px-4 md:px-6 py-2 md:py-4">
+    <div class="flex items-center gap-4">
+      <button class="p-2 hidden md:block hover:bg-black/5 rounded-full transition" aria-label="Open menu">
+        <span class="w-5 h-5 flex flex-col justify-center gap-1.5">
+          <span class="block w-full h-0.5 bg-[#118A68] rounded-full"></span>
+          <span class="block w-3/4 h-0.5 bg-[#118A68] rounded-full"></span>
+          <span class="block w-full h-0.5 bg-[#118A68] rounded-full"></span>
+        </span>
+      </button>
+      <h1 class="text-2xl font-black text-[#118A68] tracking-tight">Vela</h1>
+    </div>
+
+    <div class="flex items-center gap-4 z-20">
+      <div class="flex items-center gap-2 pl-1 pr-2 py-1 rounded-full hover:bg-black/5 transition cursor-pointer">
+        <span class="w-9 h-9 rounded-full bg-[#118A68] text-white grid place-items-center font-bold text-sm shadow-sm">A</span>
+        <span class="hidden md:block text-sm font-bold text-slate-700">Alexandra</span>
+        <svg class="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/></svg>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── Main ────────────────────────────────────────────────── -->
+  <main class="px-4 pt-4 pb-8 space-y-6 md:px-6 md:pt-6 md:pb-10 md:space-y-10 max-w-[1600px] mx-auto w-full min-w-0">
+
+    <!-- ══ DASHBOARD ═══════════════════════════════════════════ -->
+    <div data-view="dashboard" class="space-y-5 md:space-y-10">
+
+      <div class="flex flex-col gap-0.5 md:gap-1">
+        <div class="text-2xl md:text-3xl font-display font-light text-slate-800">
+          Good afternoon, <span class="font-bold text-[#118A68]">Alexandra</span>.
+        </div>
+        <p class="text-slate-500 font-medium">Here's what's happening at your home.</p>
+      </div>
+
+      <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6 dash-stagger">
+
+        <!-- Property hero -->
+        <div id="hero" class="col-span-2 lg:col-span-2 relative rounded-[1.5rem] md:rounded-[2.5rem] shadow-sm hover:shadow-xl transition-all duration-500 cursor-pointer overflow-hidden group aspect-[16/10] md:aspect-auto md:min-h-[140px] border border-white/20">
+          <div class="absolute inset-0">
+            <img id="hero-photo" src="../img/mallorca-800.webp" alt="Casa Lluna, Pollença" width="800" height="600"
+                 class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+            <div class="absolute inset-x-0 bottom-0 top-1/3 bg-gradient-to-t from-black/90 via-black/40 to-transparent"></div>
+          </div>
+
+          <!-- Sky Line: condition wash + temperature straight on the photograph -->
+          <div aria-hidden="true" class="absolute inset-x-0 top-0 h-[56%] z-[9] pointer-events-none"
+               style="background: linear-gradient(180deg,rgba(255,196,92,0.34),rgba(255,170,80,0.10) 45%,transparent)"></div>
+
+          <div class="absolute top-2.5 right-4 md:top-4 md:right-6 z-20 flex flex-col items-end gap-2 md:gap-2.5 text-white pointer-events-none"
+               style="animation: fadeIn 1s; text-shadow: 0 2px 20px rgba(0,0,0,0.45)">
+            <div class="flex items-start gap-1.5 md:gap-2.5">
+              <svg viewBox="0 0 64 64" class="w-8 h-8 md:w-9 md:h-9 shrink-0 mt-1 md:mt-1.5" role="img" aria-label="Clear" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <g class="vwi-rays">
+                  <line x1="46.5" y1="31" x2="51" y2="31" stroke="#F6B84B" stroke-width="3.08" stroke-linecap="round"/>
+                  <line x1="42.25" y1="41.25" x2="45.43" y2="44.43" stroke="#F6B84B" stroke-width="3.08" stroke-linecap="round"/>
+                  <line x1="32" y1="45.5" x2="32" y2="50" stroke="#F6B84B" stroke-width="3.08" stroke-linecap="round"/>
+                  <line x1="21.75" y1="41.25" x2="18.57" y2="44.43" stroke="#F6B84B" stroke-width="3.08" stroke-linecap="round"/>
+                  <line x1="17.5" y1="31" x2="13" y2="31" stroke="#F6B84B" stroke-width="3.08" stroke-linecap="round"/>
+                  <line x1="21.75" y1="20.75" x2="18.57" y2="17.57" stroke="#F6B84B" stroke-width="3.08" stroke-linecap="round"/>
+                  <line x1="32" y1="16.5" x2="32" y2="12" stroke="#F6B84B" stroke-width="3.08" stroke-linecap="round"/>
+                  <line x1="42.25" y1="20.75" x2="45.43" y2="17.57" stroke="#F6B84B" stroke-width="3.08" stroke-linecap="round"/>
+                </g>
+                <circle class="vwi-core" cx="32" cy="31" r="11" fill="#F6B84B"/>
+                <circle cx="28.92" cy="27.92" r="6.82" fill="#FFD27A" opacity="0.55"/>
+              </svg>
+
+              <span class="flex items-start font-extralight tabular-nums tracking-[-0.05em] leading-[0.86] text-[40px] md:text-[56px]">
+                24<span class="text-base md:text-xl font-light leading-none mt-0.5 md:mt-1">°</span>
+              </span>
+
+              <span class="text-right pt-1.5 md:pt-2.5">
+                <span class="block text-[9px] md:text-[10px] font-extrabold uppercase tracking-[0.14em]">Clear</span>
+                <span class="block text-[10px] font-medium text-white/70 mt-0.5">Sunset 18:42</span>
+              </span>
+            </div>
+          </div>
+
+          <button class="absolute left-4 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md text-white border border-white/10 transition-all opacity-0 group-hover:opacity-100 hidden md:flex items-center justify-center" aria-label="Previous home" onclick="event.stopPropagation(); step(-1)">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5"/></svg>
+          </button>
+          <button class="absolute right-4 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md text-white border border-white/10 transition-all opacity-0 group-hover:opacity-100 hidden md:flex items-center justify-center" aria-label="Next home" onclick="event.stopPropagation(); step(1)">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
+          </button>
+
+          <div class="relative z-10 p-4 md:p-6 flex flex-col h-full justify-between text-white pointer-events-none">
+            <div class="flex justify-between items-start">
+              <p class="text-[10px] md:text-xs font-bold uppercase tracking-widest text-white/80">Properties</p>
+            </div>
+
+            <div class="flex justify-between items-end pointer-events-auto">
+              <div class="min-w-0">
+                <div class="flex items-center gap-1.5 md:gap-2 mb-0.5">
+                  <p id="hero-name" class="text-lg md:text-xl font-bold truncate leading-tight text-shadow-sm">Casa Lluna</p>
+                  <svg class="w-4 h-4 md:w-5 md:h-5 text-emerald-400 shrink-0 drop-shadow" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><title>Verified home</title><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 0 1-1.043 3.296 3.745 3.745 0 0 1-3.296 1.043A3.745 3.745 0 0 1 12 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 0 1-3.296-1.043 3.745 3.745 0 0 1-1.043-3.296A3.745 3.745 0 0 1 3 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 0 1 1.043-3.296 3.746 3.746 0 0 1 3.296-1.043A3.746 3.746 0 0 1 12 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 0 1 3.296 1.043 3.746 3.746 0 0 1 1.043 3.296A3.745 3.745 0 0 1 21 12Z"/></svg>
+                  <span class="px-2 py-0.5 rounded-full text-[10px] font-bold border border-white/20 backdrop-blur-md bg-white/10 uppercase tracking-wide shrink-0">Active</span>
+                </div>
+                <p id="hero-address" class="text-xs text-white/80 truncate font-medium">Carrer de la Lluna 14, Pollença, Mallorca</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="absolute bottom-4 right-4 z-20 flex gap-1" id="hero-dots">
+            <button class="p-1.5 focus:outline-none group/dot" onclick="event.stopPropagation(); go(0)"><span class="block h-1 rounded-full transition-all w-4 bg-white"></span></button>
+            <button class="p-1.5 focus:outline-none group/dot" onclick="event.stopPropagation(); go(1)"><span class="block h-1 rounded-full transition-all w-1 bg-white/40 group-hover/dot:bg-white/70"></span></button>
+            <button class="p-1.5 focus:outline-none group/dot" onclick="event.stopPropagation(); go(2)"><span class="block h-1 rounded-full transition-all w-1 bg-white/40 group-hover/dot:bg-white/70"></span></button>
+          </div>
+        </div>
+
+        <!-- RIGHT REGION — nested bento, 6 cols × 2 rows -->
+        <div class="col-span-2 lg:col-span-2 grid grid-cols-1 lg:grid-cols-6 lg:grid-rows-2 gap-3 md:gap-6 lg:h-full">
+
+          <!-- Concierge -->
+          <div class="lg:col-span-3 lg:row-start-1 animated-gradient-bg rounded-[1.5rem] md:rounded-[2.5rem] p-4 md:p-6 shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer flex flex-col justify-between min-h-[100px] md:min-h-[140px] border border-white/60 relative overflow-hidden group">
+            <span class="concierge-sheen" aria-hidden="true"></span>
+            <span class="concierge-blob" aria-hidden="true"></span>
+
+            <p class="relative z-10 text-[10px] md:text-xs font-bold text-slate-500 uppercase tracking-widest">Services</p>
+
+            <div id="ticker" class="relative z-10 w-full flex-grow mt-1.5 md:mt-2 h-9 md:h-10 overflow-hidden"></div>
+
+            <div class="relative z-10 flex items-center gap-1.5 mt-2">
+              <span class="concierge-dot concierge-dot--on" data-dot="0"></span>
+              <span class="concierge-dot" data-dot="1"></span>
+              <span class="concierge-dot" data-dot="2"></span>
+              <span class="concierge-dot" data-dot="3"></span>
+              <span class="ml-auto flex items-center gap-1 text-[11px] font-bold text-[#118A68] opacity-0 group-hover:opacity-100 translate-x-1 group-hover:translate-x-0 transition-all duration-300">
+                Explore
+                <span class="w-6 h-6 rounded-full bg-white/50 backdrop-blur flex items-center justify-center">
+                  <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
+                </span>
+              </span>
+            </div>
+          </div>
+
+          <!-- Get your home Vela ready -->
+          <button class="lg:col-span-3 lg:col-start-4 lg:row-start-1 relative group text-left overflow-hidden glass-panel glass-card-hover rounded-[1.5rem] md:rounded-[2.5rem] p-4 md:p-6 flex flex-col justify-between min-h-[110px] md:min-h-[140px]">
+            <div class="absolute -right-8 -top-12 w-44 h-44 rounded-full blur-3xl pointer-events-none bg-amber-400/12"></div>
+            <div class="relative z-10 flex items-center gap-3 md:gap-4">
+              <div class="w-11 h-11 md:w-12 md:h-12 rounded-2xl bg-[#118A68] text-white flex items-center justify-center shrink-0 shadow-lg shadow-green-900/20">
+                <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 5.25a3 3 0 0 1 3 3m3 0a6 6 0 0 1-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1 1 21.75 8.25Z"/></svg>
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="text-[10px] font-black uppercase tracking-widest text-[#118A68] mb-0.5">Get your home Vela ready</p>
+                <p class="text-sm md:text-base font-bold text-slate-900 leading-tight truncate">Give us a way in to Casa Lluna</p>
+              </div>
+              <div class="w-9 h-9 rounded-full bg-white border border-slate-100 flex items-center justify-center text-[#118A68] shrink-0 group-hover:translate-x-0.5 transition-transform">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
+              </div>
+            </div>
+            <div class="relative z-10 flex items-center gap-2 mt-3">
+              <div class="flex-1 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                <div class="h-full bg-gradient-to-r from-emerald-400 to-[#118A68] rounded-full transition-all duration-500" style="width: 75%"></div>
+              </div>
+              <span class="text-[11px] font-bold text-slate-400 tabular-nums shrink-0">3/4</span>
+            </div>
+          </button>
+
+          <!-- Next check-in -->
+          <div class="lg:col-span-2 lg:col-start-1 lg:row-start-2 glass-panel glass-card-hover rounded-[1.5rem] md:rounded-[2.5rem] p-4 md:p-6 flex flex-col justify-between min-h-[110px] md:min-h-[140px] cursor-pointer">
+            <div>
+              <p class="text-[10px] md:text-xs font-bold text-gray-400 uppercase tracking-widest mb-1 md:mb-2">Next Check-in</p>
+              <p class="text-xl md:text-2xl font-bold text-slate-800 tracking-tight">Fri, 14 Nov</p>
+            </div>
+            <div class="flex justify-end">
+              <span class="text-[10px] md:text-xs font-bold text-[#118A68] bg-green-50 px-2 py-0.5 md:py-1 rounded-lg">Confirmed</span>
+            </div>
+          </div>
+
+          <!-- Plan — premium -->
+          <div class="lg:col-span-4 lg:col-start-3 lg:row-start-2 flex">
+            <div class="w-full">
+              <div class="rounded-[1.5rem] md:rounded-[2.5rem] p-4 md:p-6 flex flex-col justify-between h-full min-h-[110px] md:min-h-[140px] relative overflow-hidden cursor-pointer transition-all duration-300 md:hover:shadow-[0_12px_40px_rgba(31,38,135,0.12)] md:hover:-translate-y-0.5"
+                   style="background: linear-gradient(135deg, rgba(212,175,55,0.20) 0%, rgba(212,175,55,0.06) 100%); border: 1px solid rgba(212,175,55,0.35)">
+                <div class="absolute inset-0 pointer-events-none subscription-sheen" style="--sheen-opacity: 0.12"></div>
+                <div class="relative z-[1]">
+                  <div class="flex items-center justify-between mb-1 md:mb-2">
+                    <p class="text-[10px] md:text-xs font-bold uppercase tracking-widest" style="color:#7A8696">Subscription</p>
+                    <span class="px-2 py-0.5 md:px-2.5 md:py-1 rounded-full text-[9px] md:text-[10px] font-bold uppercase tracking-wider"
+                          style="background: rgba(212,175,55,0.25); color:#8C6F1A">Active</span>
+                  </div>
+                  <p class="text-lg md:text-2xl font-bold tracking-tight truncate" style="color:#B8962E">Vela Premium</p>
+                </div>
+                <div class="flex justify-end items-center relative z-[1]">
+                  <button class="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-white bg-[#118A68] shadow-sm hover:bg-[#0e7458] transition-colors duration-200">Manage</button>
+                  <svg class="md:hidden w-4 h-4" style="color:#B8962E; opacity:.5" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Tabs panel -->
+      <div class="glass-panel rounded-2xl md:rounded-3xl overflow-hidden shadow-sm dash-rise-late">
+        <div class="px-3 pt-3 md:px-6 md:pt-6 border-b border-white/50 overflow-x-auto">
+          <nav class="flex gap-3 md:gap-6 relative min-w-max" id="tabnav">
+            <button data-tab="timeline" class="tab pb-3 md:pb-4 text-xs md:text-sm font-bold capitalize transition-colors duration-200 flex items-center gap-1.5 md:gap-2 whitespace-nowrap text-[#118A68]">
+              <svg class="w-4 h-4" viewBox="0 0 640 640" fill="currentColor"><path d="M64 160C64 142.3 78.3 128 96 128L480 128C497.7 128 512 142.3 512 160C512 177.7 497.7 192 480 192L96 192C78.3 192 64 177.7 64 160zM128 320C128 302.3 142.3 288 160 288L544 288C561.7 288 576 302.3 576 320C576 337.7 561.7 352 544 352L160 352C142.3 352 128 337.7 128 320zM512 480C512 497.7 497.7 512 480 512L96 512C78.3 512 64 497.7 64 480C64 462.3 78.3 448 96 448L480 448C497.7 448 512 462.3 512 480z"/></svg>
+              Timeline
+            </button>
+            <button data-tab="guests" class="tab pb-3 md:pb-4 text-xs md:text-sm font-bold capitalize transition-colors duration-200 flex items-center gap-1.5 md:gap-2 whitespace-nowrap text-slate-400 hover:text-slate-600">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z"/></svg>
+              Guests
+            </button>
+            <button data-tab="inspection" class="tab pb-3 md:pb-4 text-xs md:text-sm font-bold capitalize transition-colors duration-200 flex items-center gap-1.5 md:gap-2 whitespace-nowrap text-slate-400 hover:text-slate-600">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"/></svg>
+              Inspection
+            </button>
+            <button data-tab="messages" class="tab pb-3 md:pb-4 text-xs md:text-sm font-bold capitalize transition-colors duration-200 flex items-center gap-1.5 md:gap-2 whitespace-nowrap text-slate-400 hover:text-slate-600">
+              <span class="relative inline-flex" title="2 unread">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15A2.25 2.25 0 0 1 2.25 17.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15A2.25 2.25 0 0 0 2.25 6.75m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91"/></svg>
+                <span class="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-[#118A68] ring-2 ring-white"></span>
+              </span>
+              Messages
+            </button>
+            <button data-tab="billing" class="tab pb-3 md:pb-4 text-xs md:text-sm font-bold capitalize transition-colors duration-200 flex items-center gap-1.5 md:gap-2 whitespace-nowrap text-slate-400 hover:text-slate-600">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z"/></svg>
+              Billing
+            </button>
+            <div id="tabbar" class="absolute bottom-0 h-[2px] bg-[#118A68] rounded-full transition-all duration-300 ease-in-out" style="left:0; width:0"></div>
+          </nav>
+        </div>
+
+        <div class="p-3 md:p-6 bg-white/40" style="animation: fadeIn 0.25s ease-out">
+          <div class="space-y-6">
+
+            <div class="flex justify-center md:justify-start mb-5">
+              <div class="animate-breathe relative group cursor-pointer rounded-full bg-white border border-white/60 p-2 pr-6 shadow-island flex items-center gap-4 transition-transform hover:scale-[1.02] max-w-md w-full">
+                <div class="w-12 h-12 rounded-full bg-[#118A68] flex items-center justify-center text-white shrink-0 shadow-lg shadow-green-900/20 relative overflow-hidden">
+                  <div class="absolute inset-0 rounded-full border-2 border-white/30 animate-ping"></div>
+                  <div class="relative z-10 w-6 h-6">
+                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456ZM16.894 20.567 16.5 21.75l-.394-1.183a2.25 2.25 0 0 0-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 0 0 1.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 0 0 1.423 1.423l1.183.394-1.183.394a2.25 2.25 0 0 0-1.423 1.423Z"/></svg>
+                  </div>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center gap-2">
+                    <span class="text-[10px] font-extrabold uppercase tracking-wider text-[#118A68] bg-green-50 px-2 py-0.5 rounded-full">Live Update</span>
+                    <span class="text-[10px] text-slate-400 font-medium">Just now</span>
+                  </div>
+                  <p class="text-sm font-bold text-slate-800 truncate leading-tight mt-0.5">Cleaning in progress</p>
+                </div>
+                <div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-xs font-bold text-slate-600 shrink-0 border border-slate-200">+1</div>
+                <div class="w-8 h-8 rounded-full flex items-center justify-center group-hover:bg-slate-50 transition-colors">
+                  <svg class="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
+                </div>
+              </div>
+            </div>
+
+            <div class="relative pt-2">
+              <div class="relative flex gap-4 pb-8 group">
+                <div class="absolute left-[19px] top-10 bottom-0 w-[2px] bg-[#118A68]/20 group-hover:bg-[#118A68]/40 transition-colors"></div>
+                <div class="relative z-10 flex-shrink-0 w-10 h-10 rounded-full border-2 border-[#118A68] bg-white flex items-center justify-center text-[#118A68] shadow-sm group-hover:scale-110 transition-transform">
+                  <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 5.25a3 3 0 0 1 3 3m3 0a6 6 0 0 1-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1 1 21.75 8.25Z"/></svg>
+                </div>
+                <div class="pt-2">
+                  <p class="text-sm font-bold text-slate-800">Keyholding</p>
+                  <p class="text-xs text-slate-500 mt-0.5">Completed by Marta R. • 22 Oct</p>
+                </div>
+              </div>
+
+              <div class="relative flex gap-4 pb-8 group">
+                <div class="absolute left-[19px] top-10 bottom-0 w-[2px] bg-[#118A68]/20 group-hover:bg-[#118A68]/40 transition-colors"></div>
+                <div class="relative z-10 flex-shrink-0 w-10 h-10 rounded-full border-2 border-[#118A68] bg-white flex items-center justify-center text-[#118A68] shadow-sm group-hover:scale-110 transition-transform">
+                  <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z"/></svg>
+                </div>
+                <div class="pt-2">
+                  <p class="text-sm font-bold text-slate-800">Restocking</p>
+                  <p class="text-xs text-slate-500 mt-0.5">Completed by Vela team • 19 Oct</p>
+                </div>
+              </div>
+
+              <div class="relative flex gap-4 pb-0 group">
+                <div class="relative z-10 flex-shrink-0 w-10 h-10 rounded-full border-2 border-[#118A68] bg-white flex items-center justify-center text-[#118A68] shadow-sm group-hover:scale-110 transition-transform">
+                  <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M11.42 15.17 17.25 21A2.652 2.652 0 0 0 21 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 1 1-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 0 0 4.486-6.336l-3.276 3.277a3.004 3.004 0 0 1-2.25-2.25l3.276-3.276a4.5 4.5 0 0 0-6.336 4.486c.091 1.076-.071 2.264-.904 2.95l-.102.085m-1.745 1.437L5.909 7.5H4.5L2.25 3.75l1.5-1.5L7.5 4.5v1.409l4.26 4.26m-1.745 1.437 1.745-1.437m6.615 8.206L15.75 15.75M4.867 19.125h.008v.008h-.008v-.008Z"/></svg>
+                </div>
+                <div class="pt-2">
+                  <p class="text-sm font-bold text-slate-800">Maintenance</p>
+                  <p class="text-xs text-slate-500 mt-0.5">Completed by Joan P. • 16 Oct</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="pt-1 text-center">
+              <button class="text-[#118A68] text-sm font-bold hover:underline">View Full Activity Feed</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ══ CLEANING ════════════════════════════════════════════ -->
+    <div data-view="cleaning" class="w-full min-w-0 max-w-7xl mx-auto pb-28 md:pb-32 overflow-x-hidden stagger-in">
+      <div class="flex flex-col mb-3 md:mb-5 mt-1 md:mt-2">
+        <span class="text-xs md:text-sm text-slate-500 font-medium flex items-center gap-1 w-fit mb-2 md:mb-4">
+          <svg class="w-3.5 h-3.5 md:w-4 md:h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5"/></svg> Back
+        </span>
+        <h1 class="text-lg md:text-3xl font-extrabold text-[#118A68] tracking-tight">Cleaning</h1>
+        <p class="text-slate-600 font-medium tracking-wide mt-0 text-sm md:text-base">A spotless home, every time.</p>
+      </div>
+
+      <div class="mb-4 md:mb-5 min-w-0">
+        <p class="text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5 md:mb-2">Property</p>
+        <div class="flex w-full min-w-0 overflow-x-auto gap-2 md:gap-3 pb-2 no-scrollbar" id="clean-props"></div>
+      </div>
+
+      <div class="mb-4 md:mb-5">
+        <div class="relative grid grid-cols-2 w-full max-w-[300px] rounded-full bg-gray-100 p-1">
+          <div class="absolute top-1 bottom-1 rounded-full bg-white shadow-sm transition-all duration-300 left-1 right-1/2 mr-0.5"></div>
+          <button class="relative z-10 py-2 md:py-2.5 rounded-full text-sm font-bold text-[#118A68]">Book</button>
+          <button class="relative z-10 py-2 md:py-2.5 rounded-full text-sm font-bold text-slate-500 flex items-center justify-center gap-1.5">
+            Scheduled <span class="w-1.5 h-1.5 rounded-full bg-[#118A68]"></span>
+          </button>
+        </div>
+      </div>
+
+      <div class="space-y-5 md:space-y-7">
+        <section>
+          <h2 class="text-base md:text-lg font-bold text-slate-900 mb-2 md:mb-3 px-1">What does your home need?</h2>
+          <div class="grid min-w-0 grid-cols-2 md:grid-cols-3 gap-2 md:gap-4" id="clean-packages"></div>
+        </section>
+
+        <section>
+          <h2 class="text-base md:text-lg font-bold text-slate-900 mb-2 md:mb-3 px-1">Need any extras?</h2>
+          <div class="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-3" id="clean-addons"></div>
+        </section>
+
+        <section>
+          <h2 class="text-base md:text-lg font-bold text-slate-900 mb-2 md:mb-4 px-1">Anything we should know?</h2>
+          <div class="w-full p-3 md:p-4 rounded-xl md:rounded-2xl border border-gray-100 bg-white shadow-sm text-sm text-gray-400 h-20 md:h-24">Gate code, pets, special requests...</div>
+        </section>
+      </div>
+    </div>
+
+    <!-- ══ GROCERIES ═══════════════════════════════════════════ -->
+    <div data-view="groceries" class="w-full min-w-0 max-w-7xl mx-auto pb-28 md:pb-32 overflow-x-hidden stagger-in">
+      <div class="flex flex-col mb-3 md:mb-5 mt-1 md:mt-2">
+        <span class="text-xs md:text-sm text-slate-500 font-medium flex items-center gap-1 w-fit mb-2 md:mb-4">
+          <svg class="w-3.5 h-3.5 md:w-4 md:h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5"/></svg> Back
+        </span>
+        <h1 class="text-lg md:text-3xl font-extrabold text-[#118A68] tracking-tight">Groceries</h1>
+        <p class="text-slate-600 font-medium tracking-wide mt-0 text-sm md:text-base">Arrive to a stocked kitchen.</p>
+      </div>
+
+      <div class="mb-4 md:mb-5 min-w-0">
+        <p class="text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5 md:mb-2">Delivery Location</p>
+        <div class="flex w-full min-w-0 overflow-x-auto gap-2 md:gap-3 pb-2 no-scrollbar" id="groc-props"></div>
+      </div>
+
+      <div class="grid min-w-0 lg:grid-cols-[1fr_360px] gap-6 lg:gap-10 items-start">
+        <div class="min-w-0 space-y-5 md:space-y-10">
+          <section>
+            <h2 class="text-base md:text-lg font-bold text-slate-900 mb-2 md:mb-3 px-1">What should be waiting for you?</h2>
+            <div class="grid min-w-0 grid-cols-2 gap-2 md:gap-4 mb-3 md:mb-6" id="groc-baskets"></div>
+
+            <div class="min-w-0 bg-white rounded-xl md:rounded-3xl p-3 md:p-8 border border-gray-100 shadow-sm">
+              <div class="flex items-center justify-between mb-3 md:mb-4">
+                <h3 class="font-bold text-sm md:text-base text-slate-800">Custom Items</h3>
+                <span class="text-[10px] md:text-xs font-bold text-slate-400 bg-slate-100 px-2 py-0.5 md:py-1 rounded-full">4 items</span>
+              </div>
+              <div class="flex flex-wrap gap-1 md:gap-2 mb-3 md:mb-6" id="groc-tags"></div>
+              <div class="space-y-1.5 md:space-y-3" id="groc-items"></div>
+            </div>
+          </section>
+        </div>
+
+        <aside class="min-w-0 bg-white rounded-xl md:rounded-3xl p-4 md:p-6 border border-gray-100 shadow-sm lg:sticky lg:top-24">
+          <h3 class="font-bold text-sm md:text-base text-slate-800 mb-4">Delivery</h3>
+          <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Arrival day</p>
+          <div class="grid grid-cols-4 gap-2 mb-5" id="groc-days"></div>
+          <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Time slot</p>
+          <div class="grid grid-cols-2 gap-2" id="groc-slots"></div>
+        </aside>
+      </div>
+    </div>
+
+    <!-- ══ GUESTS / CHECK-INS ══════════════════════════════════ -->
+    <div data-view="guests" class="w-full min-w-0 max-w-5xl mx-auto pb-16 overflow-x-hidden stagger-in">
+      <div class="flex flex-col mb-3 md:mb-5 mt-1 md:mt-2">
+        <span class="text-xs md:text-sm text-slate-500 font-medium flex items-center gap-1 w-fit mb-2 md:mb-4">
+          <svg class="w-3.5 h-3.5 md:w-4 md:h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5"/></svg> Back
+        </span>
+        <h1 class="text-lg md:text-3xl font-extrabold text-[#118A68] tracking-tight">Guests</h1>
+        <p class="text-slate-600 font-medium tracking-wide mt-0 text-sm md:text-base">Arrivals, handled before they land.</p>
+      </div>
+
+      <div class="glass-panel rounded-2xl md:rounded-3xl p-4 md:p-6 shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="font-bold text-slate-900">Current &amp; Upcoming</h3>
+          <button class="text-xs font-bold text-[#118A68] hover:underline">Manage &amp; Invite</button>
+        </div>
+        <div class="grid gap-4" id="guest-list"></div>
+      </div>
+
+      <div class="mt-6 bg-white rounded-2xl md:rounded-3xl p-4 md:p-6 border border-gray-100 shadow-sm">
+        <div class="flex items-center gap-3 md:gap-4">
+          <div class="w-11 h-11 md:w-12 md:h-12 rounded-2xl bg-[#118A68] text-white flex items-center justify-center shrink-0 shadow-lg shadow-green-900/20">
+            <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 5.25a3 3 0 0 1 3 3m3 0a6 6 0 0 1-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1 1 21.75 8.25Z"/></svg>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-[10px] font-black uppercase tracking-widest text-[#118A68] mb-0.5">Access</p>
+            <p class="text-sm md:text-base font-bold text-slate-900 leading-tight">Keybox code rotates after every stay</p>
+            <p class="text-xs text-slate-500 mt-0.5">The Smith family's code is live from 15:00 on 14 Nov.</p>
+          </div>
+          <span class="text-[10px] md:text-xs font-bold text-[#118A68] bg-green-50 px-2 py-1 rounded-lg shrink-0">Live</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ DIGITAL MAIL ════════════════════════════════════════ -->
+    <div data-view="mail" class="w-full min-w-0 max-w-7xl mx-auto pb-16 overflow-x-hidden stagger-in">
+      <div class="flex items-center justify-between mb-6 py-2 px-1">
+        <div class="flex items-center gap-3">
+          <span class="p-2 rounded-full text-gray-600">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5"/></svg>
+          </span>
+          <h1 class="text-xl font-bold text-[#118A68] flex items-center gap-2">
+            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15A2.25 2.25 0 0 1 2.25 17.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15A2.25 2.25 0 0 0 2.25 6.75m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91"/></svg>
+            Digital Mail
+          </h1>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap gap-2 mb-6 px-1" id="mail-props"></div>
+
+      <div class="flex gap-2 overflow-x-auto pb-2 no-scrollbar mb-6" id="mail-filters"></div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="mail-grid"></div>
+    </div>
+
+  </main>
+
+  <!-- Sticky footer — cleaning and groceries only -->
+  <div id="sticky-total" class="hidden fixed bottom-0 inset-x-0 bg-white/90 backdrop-blur-xl border-t border-gray-200 px-4 py-3 z-40 shadow-[0_-10px_40px_-10px_rgba(0,0,0,0.1)]">
+    <div class="flex items-center justify-between gap-3 max-w-7xl mx-auto">
+      <div class="flex flex-col">
+        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total</span>
+        <span id="sticky-amount" class="text-lg md:text-2xl font-black text-slate-900 tracking-tight">€0.00</span>
+      </div>
+      <button id="sticky-cta" class="flex-1 max-w-sm py-3 md:py-4 bg-[#118A68] text-white rounded-xl font-bold shadow-lg shadow-emerald-900/20 hover:bg-[#0e7458] transition active:scale-95 text-sm md:text-base">Book Cleaning</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Shared mock data ──────────────────────────────────────────────
+const HOMES = [
+  { name: 'Casa Lluna',   addr: 'Carrer de la Lluna 14, Pollença, Mallorca', img: '../img/mallorca-800.webp' },
+  { name: 'Villa Sal',    addr: 'Camí de Sa Caleta 7, Sant Josep, Ibiza',    img: '../img/ibiza-800.webp' },
+  { name: 'Casa Mirador', addr: 'Paseo del Mediterráneo 3, Jávea, Alicante', img: '../img/costa-800.webp' },
+];
+const EUR = n => '€' + n.toFixed(2);
+const CHEV = '<svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>';
+const TICK = '<svg class="w-3 h-3 md:w-3.5 md:h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>';
+const PLUS = '<svg class="w-3 h-3 md:w-3.5 md:h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>';
+
+// ── Concierge ticker — mirrors components/ConciergeTicker.tsx ─────
+const SERVICES = [
+  { text: 'Groceries',   icon: '<path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z"/>' },
+  { text: 'Cleaning',    icon: '<path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456ZM16.894 20.567 16.5 21.75l-.394-1.183a2.25 2.25 0 0 0-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 0 0 1.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 0 0 1.423 1.423l1.183.394-1.183.394a2.25 2.25 0 0 0-1.423 1.423Z"/>' },
+  { text: 'Maintenance', icon: '<path stroke-linecap="round" stroke-linejoin="round" d="M11.42 15.17 17.25 21A2.652 2.652 0 0 0 21 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 1 1-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 0 0 4.486-6.336l-3.276 3.277a3.004 3.004 0 0 1-2.25-2.25l3.276-3.276a4.5 4.5 0 0 0-6.336 4.486c.091 1.076-.071 2.264-.904 2.95l-.102.085m-1.745 1.437L5.909 7.5H4.5L2.25 3.75l1.5-1.5L7.5 4.5v1.409l4.26 4.26m-1.745 1.437 1.745-1.437m6.615 8.206L15.75 15.75M4.867 19.125h.008v.008h-.008v-.008Z"/>' },
+  { text: 'Keyholding',  icon: '<path stroke-linecap="round" stroke-linejoin="round" d="M15.75 5.25a3 3 0 0 1 3 3m3 0a6 6 0 0 1-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1 1 21.75 8.25Z"/>' },
+];
+const INTERVAL = 2000, ROLL = 600;
+const ticker = document.getElementById('ticker');
+const dots = [...document.querySelectorAll('[data-dot]')];
+
+function itemHTML(s, dir) {
+  return '<div class="concierge-item concierge-item--' + dir + ' absolute inset-0 flex items-center gap-2.5 md:gap-3">' +
+    '<span class="concierge-chip"><svg class="w-4 h-4 md:w-5 md:h-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">' + s.icon + '</svg></span>' +
+    '<p class="text-lg md:text-2xl font-bold text-slate-800 tracking-tight truncate">' + s.text + '</p></div>';
+}
+
+let idx = 0;
+function paintTicker(first) {
+  if (first) {
+    ticker.innerHTML = itemHTML(SERVICES[0], 'in');
+  } else {
+    const prev = (idx - 1 + SERVICES.length) % SERVICES.length;
+    ticker.innerHTML = itemHTML(SERVICES[prev], 'out') + itemHTML(SERVICES[idx], 'in');
+    setTimeout(() => { const o = ticker.querySelector('.concierge-item--out'); if (o) o.remove(); }, ROLL);
+  }
+  dots.forEach((d, i) => {
+    d.classList.toggle('concierge-dot--on', i === idx);
+    d.innerHTML = i === idx ? '<span class="concierge-dot-fill" style="animation-duration:' + INTERVAL + 'ms"></span>' : '';
+  });
+}
+
+// ── Property carousel ─────────────────────────────────────────────
+let hi = 0;
+function go(i) {
+  hi = (i + HOMES.length) % HOMES.length;
+  const h = HOMES[hi];
+  const photo = document.getElementById('hero-photo');
+  photo.src = h.img;
+  photo.alt = h.name + ', ' + h.addr.split(', ').pop();
+  document.getElementById('hero-name').textContent = h.name;
+  document.getElementById('hero-address').textContent = h.addr;
+  [...document.querySelectorAll('#hero-dots span')].forEach((s, j) => {
+    s.className = 'block h-1 rounded-full transition-all ' + (j === hi ? 'w-4 bg-white' : 'w-1 bg-white/40 group-hover/dot:bg-white/70');
+  });
+}
+function step(d) { go(hi + d); }
+
+// ── Tab indicator ─────────────────────────────────────────────────
+const tabs = [...document.querySelectorAll('.tab')];
+const bar = document.getElementById('tabbar');
+function moveBar(el) { bar.style.left = el.offsetLeft + 'px'; bar.style.width = el.offsetWidth + 'px'; }
+tabs.forEach(t => t.addEventListener('click', () => {
+  tabs.forEach(o => { o.classList.remove('text-[#118A68]'); o.classList.add('text-slate-400', 'hover:text-slate-600'); });
+  t.classList.add('text-[#118A68]'); t.classList.remove('text-slate-400', 'hover:text-slate-600');
+  moveBar(t);
+}));
+
+// ── Property pills (shared by the service screens) ────────────────
+function pillHTML(h, on) {
+  return '<button class="shrink-0 flex items-center gap-2.5 pl-1.5 pr-4 py-1.5 rounded-full border transition-all ' +
+    (on ? 'border-[#118A68] bg-[#118A68]/5 ring-1 ring-[#118A68]/20' : 'border-gray-200 bg-white hover:border-gray-300') + '">' +
+    '<img src="' + h.img + '" alt="" width="32" height="32" class="w-8 h-8 rounded-full object-cover">' +
+    '<span class="text-sm font-bold ' + (on ? 'text-[#118A68]' : 'text-slate-700') + '">' + h.name + '</span></button>';
+}
+function fillPills(id) {
+  const el = document.getElementById(id);
+  if (el) el.innerHTML = HOMES.map((h, i) => pillHTML(h, i === 0)).join('');
+}
+
+// ── Cleaning ──────────────────────────────────────────────────────
+const PACKAGES = [
+  { id: 'quick', title: 'Quick Refresh', subtitle: 'Surfaces, floors, kitchen & bathrooms. Perfect between stays.', price: 45, img: '../img/velagirl-1280.webp' },
+  { id: 'full',  title: 'Full Clean',    subtitle: 'Deep scrub, baseboards, inside cabinets, all fixtures.',        price: 80, img: '../img/crew2-1280.webp' },
+  { id: 'top',   title: 'Top-to-Bottom', subtitle: 'Every corner covered. Move-in ready for your next guest.',      price: 150, img: '../img/signup-1280.webp' },
+];
+const ADDONS = [
+  { id: 'windows',   name: 'Windows',          price: 25, desc: 'Inside & outside' },
+  { id: 'fridge',    name: 'Fridge',           price: 15, desc: 'Empty & deep clean' },
+  { id: 'linen',     name: 'Linen Change',     price: 10, desc: 'Using linens provided at the property' },
+  { id: 'terrace',   name: 'Terrace & Patio',  price: 15, desc: 'Sweep & wipe furniture' },
+  { id: 'cupboards', name: 'Cupboards',        price: 15, desc: 'Interior wipe & organize' },
+  { id: 'mattress',  name: 'Mattress Refresh', price: 20, desc: 'Vacuum, deodorize & flip' },
+];
+let pkgSel = 'full';
+const addonSel = new Set(['linen']);
+
+function paintCleaning() {
+  document.getElementById('clean-packages').innerHTML = PACKAGES.map(p => {
+    const on = pkgSel === p.id;
+    return '<button data-pkg="' + p.id + '" class="relative text-left h-32 md:h-44 rounded-lg md:rounded-2xl overflow-hidden group shadow border-2 transition-all ' +
+      (on ? 'border-[#118A68] ring-4 ring-emerald-50' : 'border-transparent hover:shadow-md') + '">' +
+      '<div class="absolute inset-0 bg-slate-200"><img src="' + p.img + '" alt="' + p.title + '" class="w-full h-full object-cover transition-all duration-500 group-hover:scale-110"></div>' +
+      '<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>' +
+      '<div class="absolute top-2 right-2 md:top-3 md:right-3 z-10">' +
+        (on ? '<div class="w-5 h-5 md:w-6 md:h-6 rounded-full bg-[#118A68] flex items-center justify-center shadow-lg">' + TICK + '</div>'
+            : '<div class="w-5 h-5 md:w-6 md:h-6 rounded-full bg-black/30 backdrop-blur border border-white/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">' + PLUS + '</div>') +
+      '</div>' +
+      '<div class="absolute top-2 left-2 md:top-3 md:left-3 z-10"><span class="bg-white/90 backdrop-blur-sm text-slate-800 text-[10px] md:text-xs font-bold px-1.5 md:px-2 py-0.5 md:py-1 rounded-full shadow-sm">' + EUR(p.price) + '</span></div>' +
+      '<div class="absolute bottom-0 left-0 p-2.5 md:p-4"><h3 class="text-white font-bold text-sm md:text-lg leading-tight">' + p.title + '</h3>' +
+      '<p class="text-white/80 text-[10px] md:text-xs mt-0.5">' + p.subtitle + '</p></div></button>';
+  }).join('');
+
+  document.getElementById('clean-addons').innerHTML = ADDONS.map(a => {
+    const on = addonSel.has(a.id);
+    return '<button data-addon="' + a.id + '" class="text-left p-3 md:p-4 rounded-lg md:rounded-2xl border-2 transition-all ' +
+      (on ? 'border-[#118A68] bg-[#118A68]/5 ring-1 ring-[#118A68]' : 'border-gray-200 bg-white hover:border-gray-300') + '">' +
+      '<div class="flex items-center justify-between mb-1"><span class="text-xs md:text-sm font-bold ' + (on ? 'text-[#118A68]' : 'text-slate-800') + '">' + a.name + '</span>' +
+      '<span class="w-4 h-4 md:w-5 md:h-5 rounded-full border flex items-center justify-center ' + (on ? 'border-[#118A68] bg-[#118A68]' : 'border-gray-300') + '">' + (on ? TICK : '') + '</span></div>' +
+      '<p class="text-[10px] md:text-[11px] text-slate-500 leading-tight">' + a.desc + '</p>' +
+      '<span class="text-[10px] md:text-xs font-bold text-slate-400 mt-1 block">+' + EUR(a.price) + '</span></button>';
+  }).join('');
+
+  document.querySelectorAll('[data-pkg]').forEach(b => b.onclick = () => { pkgSel = b.dataset.pkg; paintCleaning(); });
+  document.querySelectorAll('[data-addon]').forEach(b => b.onclick = () => {
+    const k = b.dataset.addon;
+    addonSel.has(k) ? addonSel.delete(k) : addonSel.add(k);
+    paintCleaning();
+  });
+
+  const total = (PACKAGES.find(p => p.id === pkgSel)?.price || 0) + [...addonSel].reduce((s, k) => s + (ADDONS.find(a => a.id === k)?.price || 0), 0);
+  document.getElementById('sticky-amount').textContent = EUR(total);
+}
+
+// ── Groceries ─────────────────────────────────────────────────────
+const BASKETS = [
+  { id: 'essentials', title: 'Arrival Essentials', subtitle: 'Water, Milk, Bread, Eggs', price: 20, img: '../img/demo/essentials-400.webp' },
+  { id: 'breakfast',  title: 'Lazy Breakfast',     subtitle: 'Coffee, Pastries, OJ',    price: 18, img: '../img/demo/breakfast-400.webp' },
+  { id: 'bbq',        title: 'BBQ Night',          subtitle: 'Charcoal, Meats, Salad',  price: 45, img: '../img/demo/bbq-400.webp' },
+  { id: 'drinks',     title: 'Sunset Drinks',      subtitle: 'Wine, Beer, Snacks',      price: 35, img: '../img/demo/drinks-400.webp' },
+];
+const POPULAR_TAGS = ['Ice Bag', 'Lemons', 'Sparkling Water', 'Garbage Bags', 'Dish Soap', 'Olive Oil'];
+const TIME_SLOTS = ['09:00-11:00', '11:00-13:00', '13:00-15:00', '15:00-17:00'];
+const BASKET_ITEMS = [
+  { qty: '6', desc: 'Large Mineral Water' }, { qty: '1', desc: 'Fresh Milk' },
+  { qty: '1', desc: 'Sourdough Bread' },     { qty: '6', desc: 'Free-range Eggs' },
+];
+const basketSel = new Set(['essentials']);
+let daySel = 1, slotSel = '13:00-15:00';
+
+function paintGroceries() {
+  document.getElementById('groc-baskets').innerHTML = BASKETS.map(b => {
+    const on = basketSel.has(b.id);
+    return '<button data-basket="' + b.id + '" class="relative text-left h-24 md:h-36 rounded-lg md:rounded-2xl overflow-hidden group shadow border-2 transition-all ' +
+      (on ? 'border-[#118A68] ring-4 ring-emerald-50' : 'border-transparent hover:shadow-md') + '">' +
+      '<div class="absolute inset-0 bg-slate-200"><img src="' + b.img + '" alt="' + b.title + '" width="400" height="300" class="w-full h-full object-cover transition-all duration-500 group-hover:scale-110"></div>' +
+      '<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>' +
+      '<div class="absolute top-2 right-2 md:top-3 md:right-3 z-10">' +
+        (on ? '<div class="w-5 h-5 md:w-6 md:h-6 rounded-full bg-[#118A68] flex items-center justify-center shadow-lg">' + TICK + '</div>'
+            : '<div class="w-5 h-5 md:w-6 md:h-6 rounded-full bg-black/30 backdrop-blur border border-white/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">' + PLUS + '</div>') +
+      '</div>' +
+      '<div class="absolute bottom-0 left-0 p-2.5 md:p-4"><h3 class="text-white font-bold text-sm md:text-lg leading-tight">' + b.title + '</h3>' +
+      '<p class="text-white/80 text-[10px] md:text-xs mt-0.5">' + b.subtitle + '</p></div></button>';
+  }).join('');
+
+  document.getElementById('groc-tags').innerHTML = POPULAR_TAGS.map(t =>
+    '<span class="px-2 py-0.5 md:px-3 md:py-1.5 rounded-full bg-emerald-50 text-emerald-700 text-[11px] md:text-xs font-bold flex items-center gap-0.5 md:gap-1 cursor-pointer hover:bg-emerald-100 transition-colors">' +
+    '<svg class="w-2.5 h-2.5 md:w-3 md:h-3" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg> ' + t + '</span>').join('');
+
+  document.getElementById('groc-items').innerHTML = BASKET_ITEMS.map(i =>
+    '<div class="flex min-w-0 gap-1 md:gap-2">' +
+    '<span class="w-12 md:w-14 p-1.5 md:p-3 rounded-lg md:rounded-xl border border-gray-200 bg-gray-50 text-center font-bold text-sm text-slate-700">' + i.qty + '</span>' +
+    '<span class="flex-1 p-1.5 md:p-3 rounded-lg md:rounded-xl border border-gray-200 bg-gray-50 font-medium text-sm text-slate-800">' + i.desc + '</span></div>').join('');
+
+  const days = ['Today', 'Tomorrow', 'Thu 30', 'Fri 31'];
+  document.getElementById('groc-days').innerHTML = days.map((d, i) =>
+    '<button data-day="' + i + '" class="py-2 rounded-xl text-[11px] font-bold transition-all border ' +
+    (i === daySel ? 'bg-slate-800 text-white border-slate-800' : 'bg-white text-slate-500 border-gray-100 hover:border-gray-200') + '">' + d + '</button>').join('');
+
+  document.getElementById('groc-slots').innerHTML = TIME_SLOTS.map(s =>
+    '<button data-slot="' + s + '" class="py-2.5 rounded-xl text-xs font-bold transition-all border ' +
+    (s === slotSel ? 'bg-[#118A68] text-white border-[#118A68]' : 'bg-white text-slate-500 border-gray-100 hover:border-gray-200') + '">' + s + '</button>').join('');
+
+  document.querySelectorAll('[data-basket]').forEach(b => b.onclick = () => {
+    const k = b.dataset.basket;
+    basketSel.has(k) ? basketSel.delete(k) : basketSel.add(k);
+    paintGroceries();
+  });
+  document.querySelectorAll('[data-day]').forEach(b => b.onclick = () => { daySel = +b.dataset.day; paintGroceries(); });
+  document.querySelectorAll('[data-slot]').forEach(b => b.onclick = () => { slotSel = b.dataset.slot; paintGroceries(); });
+
+  const total = [...basketSel].reduce((s, k) => s + (BASKETS.find(b => b.id === k)?.price || 0), 0);
+  document.getElementById('sticky-amount').textContent = EUR(total);
+}
+
+// ── Guests ────────────────────────────────────────────────────────
+const GUESTS = [
+  { name: 'The Smith Family', dates: '14 Nov - 21 Nov', current: false },
+  { name: 'Clara Rossi',      dates: '22 Oct - 29 Oct', current: true },
+  { name: 'Tom & Ana',        dates: '2 Dec - 9 Dec',   current: false },
+];
+function paintGuests() {
+  document.getElementById('guest-list').innerHTML = GUESTS.map(g =>
+    '<div class="flex items-center justify-between p-4 bg-white border border-slate-100 rounded-2xl shadow-sm hover:shadow-md transition-all group">' +
+    '<div class="flex items-center gap-4">' +
+    '<div class="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg ' + (g.current ? 'bg-[#118A68]' : 'bg-slate-300') + '">' + g.name.charAt(0) + '</div>' +
+    '<div><h4 class="font-bold text-slate-900">' + g.name + '</h4>' +
+    '<div class="flex items-center gap-2 text-xs text-slate-500 mt-0.5"><span>' + g.dates + '</span>' +
+    (g.current ? '<span class="bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-bold text-[10px] uppercase">Active</span>' : '') +
+    '</div></div></div>' +
+    '<span class="p-2 text-slate-300 group-hover:text-[#118A68] transition">' +
+    '<svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Z"/></svg></span></div>').join('');
+}
+
+// ── Digital mail ──────────────────────────────────────────────────
+const MAIL = [
+  { sender: 'Comunidad de Propietarios', desc: 'Annual community fee statement for 2027, due 15 December.', status: 'action_required', date: '21 Oct', tag: 'Notice', shred: 44 },
+  { sender: 'Endesa',                    desc: 'Electricity bill, October. Charged to the card on file.',     status: 'unread',          date: '18 Oct', tag: '',       shred: 41 },
+  { sender: 'Banco Santander',           desc: 'Quarterly account statement, no action needed.',              status: 'read',            date: '12 Oct', tag: 'Statement', shred: 35 },
+  { sender: 'Ajuntament de Pollença',    desc: 'Municipal waste tax, IBI period notice. Translated inside.',  status: 'read',            date: '4 Oct',  tag: 'Notice', shred: 27 },
+];
+const MAIL_FILTERS = [['', 'All Mail'], ['unread', 'unread'], ['action_required', 'action required'], ['archived', 'archived']];
+let mailFilter = '';
+
+function paintMail() {
+  document.getElementById('mail-filters').innerHTML = MAIL_FILTERS.map(([k, label]) =>
+    '<button data-mf="' + k + '" class="px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wide transition-all whitespace-nowrap ' +
+    (mailFilter === k ? 'bg-slate-800 text-white shadow-md' : 'bg-white border border-gray-200 text-gray-500 hover:border-gray-300') + '">' + label + '</button>').join('');
+
+  const shown = MAIL.filter(m => !mailFilter || m.status === mailFilter);
+  document.getElementById('mail-grid').innerHTML = shown.length ? shown.map(m =>
+    '<div class="group relative bg-white rounded-[1.5rem] border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer overflow-hidden flex flex-col">' +
+    '<div class="absolute top-4 right-4 w-3 h-3 rounded-full border-2 border-white shadow-sm z-10 ' +
+      (m.status === 'unread' ? 'bg-blue-500' : m.status === 'action_required' ? 'bg-amber-500 animate-pulse' : 'bg-transparent') + '"></div>' +
+    '<div class="h-40 bg-slate-50 relative border-b border-gray-100 overflow-hidden flex items-center justify-center text-gray-300">' +
+    '<svg class="w-12 h-12" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15A2.25 2.25 0 0 1 2.25 17.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15A2.25 2.25 0 0 0 2.25 6.75m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91"/></svg>' +
+    '<div class="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent"></div></div>' +
+    '<div class="p-5 flex-1 flex flex-col">' +
+    '<div class="flex justify-between items-start mb-2"><span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">' + m.date + '</span>' +
+      (m.tag === 'Statement' ? '<span class="bg-gray-100 text-gray-600 text-[9px] font-bold px-2 py-0.5 rounded">Statement</span>' : '') +
+      (m.tag === 'Notice' ? '<span class="bg-blue-50 text-blue-600 text-[9px] font-bold px-2 py-0.5 rounded">Notice</span>' : '') +
+    '</div>' +
+    '<h4 class="font-bold text-slate-900 text-lg leading-tight mb-1 truncate">' + m.sender + '</h4>' +
+    '<p class="text-sm text-gray-500 leading-relaxed mb-4 flex-1">' + m.desc + '</p>' +
+    '<div class="pt-3 border-t border-dashed border-gray-100 flex items-center justify-between text-xs">' +
+    '<span class="font-bold ' + (m.status === 'action_required' ? 'text-amber-600' : 'text-gray-400') + '">' + m.status.replace('_', ' ') + '</span>' +
+    '<div class="flex items-center gap-1 text-gray-400">' +
+    '<svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"/></svg>' +
+    '<span>' + m.shred + 'd left</span></div></div></div></div>').join('')
+    : '<div class="col-span-full py-24 text-center"><div class="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4 border border-gray-100">' +
+      '<svg class="w-10 h-10 text-gray-300" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>' +
+      '<p class="text-gray-500 font-medium">You\'re all caught up.</p></div>';
+
+  document.querySelectorAll('[data-mf]').forEach(b => b.onclick = () => { mailFilter = b.dataset.mf; paintMail(); });
+}
+
+// ── View routing ──────────────────────────────────────────────────
+const VIEWS = ['dashboard', 'cleaning', 'groceries', 'guests', 'mail'];
+const CTA = { cleaning: 'Book Cleaning', groceries: 'Confirm Delivery' };
+
+function showView(name) {
+  const v = VIEWS.includes(name) ? name : 'dashboard';
+  document.querySelectorAll('[data-view]').forEach(el => el.classList.toggle('is-active', el.dataset.view === v));
+  const sticky = document.getElementById('sticky-total');
+  if (CTA[v]) {
+    sticky.classList.remove('hidden');
+    document.getElementById('sticky-cta').textContent = CTA[v];
+  } else {
+    sticky.classList.add('hidden');
+  }
+  if (v === 'cleaning') paintCleaning();
+  if (v === 'groceries') paintGroceries();
+  if (v === 'dashboard') moveBar(tabs[0]);
+}
+
+fillPills('clean-props');
+fillPills('groc-props');
+document.getElementById('mail-props').innerHTML = HOMES.map((h, i) => pillHTML(h, i === 0)).join('');
+paintGuests();
+paintMail();
+paintTicker(true);
+setInterval(() => { idx = (idx + 1) % SERVICES.length; paintTicker(false); }, INTERVAL);
+showView(new URLSearchParams(location.search).get('view') || 'dashboard');
+addEventListener('resize', () => {
+  const on = document.querySelector('.tab.text-\\[\\#118A68\\]') || tabs[0];
+  if (document.querySelector('[data-view="dashboard"]').classList.contains('is-active')) moveBar(on);
+});
+</script>
+</body>
+</html>
