@@ -165,7 +165,7 @@ body { overflow-y: scroll; }
 <body class="page pt-safe">
   <!-- Background (fixed) -->
   <div class="hero-img" aria-hidden="true">
-    <img src="/img/signup.png" alt="" loading="eager" fetchpriority="high" decoding="async" />
+    <img src="/img/signup-1920.webp" srcset="/img/signup-1280.webp 1280w, /img/signup-1920.webp 1920w" sizes="100vw" alt="" width="1920" height="1047" loading="eager" fetchpriority="high" decoding="async" />
     <div class="hero-overlay"></div>
   </div>
 

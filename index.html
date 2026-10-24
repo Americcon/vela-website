@@ -7,6 +7,7 @@
   <title>Vela — Second home, first-class care</title>
   <meta name="description" content="Concierge care for second homes across the Mediterranean. Keyholding, premium cleaning, maintenance, restocking and guest support—handled to your standards.">
   <link rel="canonical" href="https://vela.es/">
+  <link rel="preload" as="image" href="img/velagradient-1280.webp" fetchpriority="high">
   <meta property="og:title" content="Vela — Second home, first-class care">
   <meta property="og:description" content="Concierge care for second homes across the Mediterranean.">
   <meta name="twitter:card" content="summary_large_image">
@@ -48,7 +49,7 @@
     webkit-playsinline
     loop
     preload="auto"
-    poster="img/velagradient.png"
+    poster="img/velagradient-1280.webp"
     aria-hidden="true"
   ></video>
 
@@ -286,14 +287,24 @@
 
       init () {
         // ===== Video boot =====
-        const v = document.querySelector('.hero-video');
+        // The hero video is decoration: the poster carries the same image and is
+        // already painted. Skip the 2.2 MB download on small screens, on metered
+        // or slow connections, and when the visitor has asked for reduced motion.
+        const conn = navigator.connection || {};
+        const skipVideo =
+          window.matchMedia('(max-width: 767px)').matches ||
+          window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
+          conn.saveData === true ||
+          ['slow-2g','2g','3g'].includes(conn.effectiveType);
+
+        const v = skipVideo ? null : document.querySelector('.hero-video');
         if (v) {
           v.muted = true;
           v.defaultMuted = true;
           v.setAttribute('muted','');
           v.setAttribute('playsinline','');
           v.setAttribute('webkit-playsinline','');
-          v.src = 'img/velavideotest.mp4';
+          v.src = 'img/hero-1280.mp4';
           v.load();
           const tryPlay = () => v.play().catch(() => {});
           if (document.readyState === 'complete') tryPlay();
@@ -1214,7 +1225,7 @@
 <section id="pricing" x-data="velaStaticPlans()" class="relative isolate" @keydown.window.escape="closeWizard()">
   <!-- background = same as hero -->
   <div class="absolute inset-0 -z-10 pointer-events-none">
-    <img src="img/velagirl.png" alt="" class="h-full w-full object-cover" loading="lazy" decoding="async" fetchpriority="low">
+    <img src="img/velagirl-1280.webp" srcset="img/velagirl-1280.webp 1280w, img/velagirl-1536.webp 1536w" sizes="100vw" alt="" width="1536" height="1024" class="h-full w-full object-cover" loading="lazy" decoding="async" fetchpriority="low">
     <div class="absolute inset-0 bg-black/60"></div>
   </div>
 
@@ -1806,7 +1817,7 @@
               </div>
               <p class="text-[14px] text-gray-600 leading-relaxed line-clamp-4 italic group-hover:text-gray-900 transition-colors" x-text="t.quote"></p>
               <div class="flex items-center gap-3 pt-3 border-t border-emerald-50/50">
-                <img :src="t.img" :alt="t.name" class="w-10 h-10 rounded-full object-cover ring-2 ring-white shadow-sm" loading="lazy" />
+                <img :src="t.img" :alt="t.name" width="160" height="160" class="w-10 h-10 rounded-full object-cover ring-2 ring-white shadow-sm" loading="lazy" decoding="async" />
                 <div class="flex flex-col items-start">
                   <div class="text-xs font-bold text-gray-900" x-text="t.name"></div>
                   <span class="mt-1 inline-block rounded-md bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-[#118A68] border border-emerald-100" x-text="t.plan"></span>
@@ -1828,7 +1839,7 @@
               </div>
               <p class="text-[14px] text-gray-600 leading-relaxed line-clamp-4 italic group-hover:text-gray-900 transition-colors" x-text="t.quote"></p>
               <div class="flex items-center gap-3 pt-3 border-t border-emerald-50/50">
-                <img :src="t.img" :alt="t.name" class="w-10 h-10 rounded-full object-cover ring-2 ring-white shadow-sm" loading="lazy" />
+                <img :src="t.img" :alt="t.name" width="160" height="160" class="w-10 h-10 rounded-full object-cover ring-2 ring-white shadow-sm" loading="lazy" decoding="async" />
                 <div class="flex flex-col items-start">
                   <div class="text-xs font-bold text-gray-900" x-text="t.name"></div>
                   <span class="mt-1 inline-block rounded-md bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-[#118A68] border border-emerald-100" x-text="t.plan"></span>
@@ -1869,9 +1880,9 @@
 
         <!-- Avatar Stack -->
         <div class="mt-4 flex items-center justify-center -space-x-2">
-            <img src="img/testimonials/manuel.png" class="w-8 h-8 rounded-full ring-2 ring-white object-cover shadow-sm" />
-            <img src="img/testimonials/oliver_june.png" class="w-8 h-8 rounded-full ring-2 ring-white object-cover shadow-sm" />
-            <img src="img/testimonials/lotte.png" class="w-8 h-8 rounded-full ring-2 ring-white object-cover shadow-sm" />
+            <img src="img/testimonials/manuel-160.webp" alt="" width="160" height="160" loading="lazy" decoding="async" class="w-8 h-8 rounded-full ring-2 ring-white object-cover shadow-sm" />
+            <img src="img/testimonials/oliver_june-160.webp" alt="" width="160" height="160" loading="lazy" decoding="async" class="w-8 h-8 rounded-full ring-2 ring-white object-cover shadow-sm" />
+            <img src="img/testimonials/lotte-160.webp" alt="" width="160" height="160" loading="lazy" decoding="async" class="w-8 h-8 rounded-full ring-2 ring-white object-cover shadow-sm" />
             <div class="w-8 h-8 rounded-full ring-2 ring-white bg-[#118A68] text-white grid place-items-center text-[10px] font-bold shadow-sm z-10 relative">+5</div>
         </div>
         <div class="mt-1 text-[10px] text-gray-400 font-medium">Genuine owners, verified accounts</div>
@@ -1908,7 +1919,7 @@
       
       <div class="relative flex flex-col items-center gap-3">
         <!-- Logo (Larger: h-12) -->
-        <img src="img/trust.png" alt="Trustpilot" class="h-12 w-auto object-contain drop-shadow-sm" />
+        <img src="img/trust-192.webp" alt="Trustpilot" width="192" height="98" class="h-12 w-auto object-contain drop-shadow-sm" loading="lazy" decoding="async" />
         
         <!-- Text (Larger font: text-[17px]) -->
         <div class="flex items-center gap-3 text-[17px] leading-none text-slate-800 tracking-tight">
@@ -1928,9 +1939,9 @@
         hasStarted: false,
         stats: { cleanings: '0', checkins: '0', regions: '0', responseMins: '0', cities: '0', trustScore: '0.0', trustReviews: '0' },
         testimonials: [
-          { name: 'Manuel R.', plan: 'PREMIUM PLAN', img: 'img/testimonials/manuel.png', quote: '“I’m in Madrid most of the year. Vela handles keyholding, quick WhatsApp replies and small fixes. I arrive to a home that’s clean, secure, and ready.”' },
-          { name: 'Oliver & June', plan: 'PLUS PLAN', img: 'img/testimonials/oliver_june.png', quote: '“Our flight landed after midnight. The beds were made, the house spotless. Vela checked in on WhatsApp earlier and took care of everything.”' },
-          { name: 'Lotte V.', plan: 'ESSENTIAL PLAN', img: 'img/testimonials/lotte.png', quote: '“Running my Málaga Airbnb from the Netherlands is finally calm. Vela manages guest check-ins, cleanings, and maintenance.”' },
+          { name: 'Manuel R.', plan: 'PREMIUM PLAN', img: 'img/testimonials/manuel-160.webp', quote: '“I’m in Madrid most of the year. Vela handles keyholding, quick WhatsApp replies and small fixes. I arrive to a home that’s clean, secure, and ready.”' },
+          { name: 'Oliver & June', plan: 'PLUS PLAN', img: 'img/testimonials/oliver_june-160.webp', quote: '“Our flight landed after midnight. The beds were made, the house spotless. Vela checked in on WhatsApp earlier and took care of everything.”' },
+          { name: 'Lotte V.', plan: 'ESSENTIAL PLAN', img: 'img/testimonials/lotte-160.webp', quote: '“Running my Málaga Airbnb from the Netherlands is finally calm. Vela manages guest check-ins, cleanings, and maintenance.”' },
           { name: 'Sarah J.', plan: 'ESSENTIAL PLAN', img: 'placeholder.png', quote: '“Peace of mind is priceless. Vela sends me video updates of the apartment after every storm. Knowing they are checking for humidity is a relief.”' },
           { name: 'David & Tom', plan: 'PREMIUM PLAN', img: 'placeholder.png', quote: '“We renovated our kitchen while back in the UK. Vela acted as our eyes and ears, managing the contractors and sending daily photo reports. Flawless.”' },
           { name: 'Elena M.', plan: 'PLUS PLAN', img: 'placeholder.png', quote: '“The gardening team they recommended is fantastic. My villa looks lived-in and vibrant even when I haven’t visited for months. Highly recommend.”' },
@@ -2051,7 +2062,7 @@
       <template x-for="r in filtered()" :key="r.slug">
         <article class="region-card group relative overflow-hidden rounded-2xl ring-1 ring-white/20 shadow-xl p-0 snap-center" role="listitem">
           <!-- Background image -->
-          <img class="media-img" :src="r.img" :alt="`${r.name} scenery`" loading="lazy" decoding="async" sizes="(min-width:768px) 33vw, 85vw">
+          <img class="media-img" :src="`${r.img}-800.webp`" :srcset="`${r.img}-400.webp 400w, ${r.img}-800.webp 800w`" :alt="`${r.name} scenery`" width="1408" height="768" loading="lazy" decoding="async" sizes="(min-width:768px) 33vw, 85vw">
           <!-- On-brand scrim -->
           <span aria-hidden="true" class="media-scrim"></span>
 
@@ -2136,7 +2147,7 @@
           {
             slug:'costa-del-sol',
             name:'Costa del Sol',
-            img:'img/costa.png',
+            img:'img/costa',
             status:'open',
             tagline:'Estepona to Sotogrande with Marbella at the core.',
             cities:['Estepona','Marbella','Mijas','Benahavís','Sotogrande'],
@@ -2148,7 +2159,7 @@
           {
             slug:'mallorca',
             name:'Mallorca',
-            img:'/img/mallorca.png',
+            img:'img/mallorca',
             status:'limited',
             tagline:'From Palma to the Tramuntana villages.',
             cities:['Palma','Sóller','Pollença','Port d’Andratx','Deià'],
@@ -2160,7 +2171,7 @@
           {
             slug:'ibiza',
             name:'Ibiza',
-            img:'img/ibiza.png',
+            img:'img/ibiza',
             status:'open',
             tagline:'Island-wide with a focus on central & south.',
             cities:['Ibiza Town','Santa Eulària','Sant Josep','Santa Gertrudis','Sant Antoni'],
@@ -2170,7 +2181,7 @@
             services:['Cleaning','Check-ins','Restocking','Maintenance']
           },
           // Example of waitlist-ready expansion (kept for future)
-          // { slug:'menorca', name:'Menorca', img:'img/menorca.png', status:'waitlist', tagline:'North & south coasts.', cities:['Maó','Ciutadella'], hubs:['Maó'], onboarding:'—', coverage:'—', services:['Cleaning','Check-ins'] }
+          // { slug:'menorca', name:'Menorca', img:'img/menorca', /* TODO: needs img/menorca-400.webp + -800.webp before uncommenting */ status:'waitlist', tagline:'North & south coasts.', cities:['Maó','Ciutadella'], hubs:['Maó'], onboarding:'—', coverage:'—', services:['Cleaning','Check-ins'] }
         ],
 
         init(){
